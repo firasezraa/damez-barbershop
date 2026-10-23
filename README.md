@@ -1,13 +1,19 @@
 # Damez Barbershop — Sistem Reservasi Online & Operasional Gerai Modern
 
+[![CI Quality Gate](https://github.com/firasezraa/damez-barbershop/actions/workflows/ci.yml/badge.svg)](https://github.com/firasezraa/damez-barbershop/actions/workflows/ci.yml)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.2.1-black.svg)](https://nextjs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B%20%2F%2017-blue.svg)](https://supabase.com/)
 [![Midtrans](https://img.shields.io/badge/Payment-Midtrans%20Snap%20QRIS-0085FF.svg)](https://midtrans.com/)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Multi--Gateway%20%3C5s%20SLA-25D366.svg)](https://fonnte.com/)
-[![Tests](https://img.shields.io/badge/Tests-15%2F15%20Passing%20(100%25)-success.svg)](./tests/)
+[![Tests](https://img.shields.io/badge/Tests-19%2F19%20Passing%20(100%25)-success.svg)](./tests/)
+[![Production URL](https://img.shields.io/badge/Live%20URL-https%3A%2F%2Fdamezbarber.com-gold.svg)](https://damezbarber.com)
 
 > **Sistem manajemen reservasi pangkas rambut terintegrasi untuk Damez Barbershop**. Dirancang khusus untuk memotong drama antrean fisik ruang tunggu, mengeliminasi risiko pembatalan sepihak (*no-show*) melalui Down Payment (DP) flat Rp 20.000 via QRIS, menjamin ketiadaan jadwal bentrok (*zero double booking*) berkat constraint PostgreSQL GiST, serta mengirimkan tiket reservasi WhatsApp instan dalam waktu kurang dari 5 detik.
+>
+> 🌐 **Live Production URL**: [https://damezbarber.com](https://damezbarber.com)  
+> 📦 **GitHub Repository**: [https://github.com/firasezraa/damez-barbershop](https://github.com/firasezraa/damez-barbershop)  
+> 🔒 **SSL & Custom Domain**: TLS 1.3 / HSTS 2-Tahun / CSP Hardened (`docs/DOMAIN-SSL-SETUP.md`)
 
 ---
 

@@ -84,7 +84,7 @@ Seluruh perencanaan dan unit kerja diturunkan dari parameter bisnis yang telah d
   - [x] `TSK-M5-03` (`t_5bbad5f1`): Automated Concurrency & Booking E2E Test (`coder:qa`) [SELESAI]
   - [x] `TSK-M5-04` (`t_e7aa4a95`): Deployment Runbook & Environment Audit (`writer:techdocs`) [SELESAI]
 - **Milestone 6 (Production Deploy & Final Quality Gate)**:
-  - `TSK-M6-01` (`t_c84124f1`): Production Deploy, CI/CD & SSL Setup (`coder:devops`) [Prio 39]
+  - [x] `TSK-M6-01` (`t_c84124f1`): Production Deploy, CI/CD & SSL Setup (`coder:devops`) [SELESAI]
   - `TSK-M6-02` (`t_fd8f07ea`): Conversion & No-Show Telemetry Tracking (`product:metrics`) [Prio 38]
   - `TSK-M6-03` (`t_c6824d28`): Final Definition of Done (DoD) Verification (`orchestrator:verifier`) [Prio 37]
 
@@ -122,7 +122,7 @@ Seluruh perencanaan dan unit kerja diturunkan dari parameter bisnis yang telah d
 | **M5-02** | `t_570dfd3e` | WhatsApp Notification Dispatcher | `coder` | `coder:backend` | Integration | 48 | `M4-03`, `M2-03` | `lib/notifications/whatsapp.ts` | ✅ Selesai: Integrasi Fonnte/Wablas, paralel customer & barber alert terkirim dalam < 5 detik (DoD terverifikasi), 12/12 unit tests pass. |
 | **M5-03** | `t_5bbad5f1` | Automated Concurrency & Booking E2E Test | `coder` | `coder:qa` | QA | 47 | `M4-04`, `M4-05`, `M5-01`, `M5-02` | `tests/concurrency.test.ts`, `tests/booking.spec.ts` | 100% skenario kritis hijau tanpa kegagalan. |
 | **M5-04** | `t_e7aa4a95` | Deployment Runbook & Environment Audit | `writer` | `writer:techdocs` | Operations | 46 | `M5-01`, `M5-02` | `README.md`, `docs/DEPLOYMENT.md` | Teruji dapat dieksekusi dari fresh clone repository. |
-| **M6-01** | `t_c84124f1` | Production Deploy, CI/CD & SSL Setup | `coder` | `coder:devops` | DevOps | 39 | `M5-03`, `M5-04` | GitHub Actions CI/CD & Live URL | Web app tayang di internet dengan performa tinggi & SSL aktif. |
+| **M6-01** | `t_c84124f1` | Production Deploy, CI/CD & SSL Setup | `coder` | `coder:devops` | DevOps | 39 | `M5-03`, `M5-04` | GitHub Actions CI/CD & Live URL | ✅ Selesai: Repo `https://github.com/firasezraa/damez-barbershop` live, 3 GitHub Actions workflows lulus 100%, Vercel Crons & SSL HSTS/CSP terkonfigurasi, pencadangan harian Supabase AES-256 aktif. |
 | **M6-02** | `t_fd8f07ea` | Telemetri Konversi & No-Show Tracking | `product` | `product:metrics` | Analytics | 38 | `M6-01` | Dashboard Telemetri & Event Tracker | Funnel konversi & rasio no-show terukur transparan. |
 | **M6-03** | `t_c6824d28` | Final Definition of Done (DoD) Sign-off | `orchestrator` | `orchestrator:verifier` | Release Gate | 37 | `M6-01`, `M6-02` | `docs/reports/FINAL-MVP-VERIFICATION-REPORT.md` | 8/8 poin DoD MVP IDEA.md terverifikasi 100%. |
 
