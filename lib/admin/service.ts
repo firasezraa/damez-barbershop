@@ -13,6 +13,7 @@
 import { getSupabaseClient } from '../supabase/client.ts';
 import { inMemoryHoldsStore } from '../slots/auto-expire.ts';
 import { SEED_BARBERS, SEED_SERVICES } from '../slots/service.ts';
+import { trackTelemetryEvent } from '../analytics/telemetry.ts';
 import {
   getJakartaDateString,
   getJakartaTimeString,
@@ -829,6 +830,14 @@ export async function startBookingService(
   if (inMemoryHoldsStore.has(bookingId)) {
     inMemoryHoldsStore.get(bookingId)!.status = 'in_progress';
   }
+
+  // Telemetri: Tamu hadir di kursi
+  trackTelemetryEvent({
+    event_type: 'customer_arrived',
+    barber_id: existing.barber_id,
+    booking_code: existing.booking_code
+  }).catch(() => {});
+
   return { success: true, booking: updated };
 }
 
@@ -896,6 +905,15 @@ export async function completeBookingCheckout(
   if (inMemoryHoldsStore.has(params.booking_id)) {
     inMemoryHoldsStore.get(params.booking_id)!.status = 'completed';
   }
+
+  // Telemetri: Layanan cukur selesai & transaksi kasir tuntas
+  trackTelemetryEvent({
+    event_type: 'service_completed',
+    barber_id: existing.barber_id,
+    booking_code: existing.booking_code,
+    amount: existing.total_price_idr
+  }).catch(() => {});
+
   return { success: true, booking: updated, change };
 }
 
@@ -943,6 +961,18 @@ export async function markBookingNoShow(
   if (inMemoryHoldsStore.has(params.booking_id)) {
     inMemoryHoldsStore.get(params.booking_id)!.status = 'no_show';
   }
+
+  // Telemetri: Tamu dinyatakan No-Show, DP hangus
+  trackTelemetryEvent({
+    event_type: 'booking_no_show',
+    barber_id: existing.barber_id,
+    booking_code: existing.booking_code,
+    amount: existing.down_payment_idr,
+    metadata: {
+      reason: updated.cancellation_reason
+    }
+  }).catch(() => {});
+
   return { success: true, booking: updated };
 }
 

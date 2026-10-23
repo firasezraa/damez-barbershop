@@ -22,6 +22,7 @@
 9. [SOP 6: Rekap Kas Harian & Unduh Laporan Keuangan (.CSV)](#9-sop-6-rekap-kas-harian--unduh-laporan-keuangan-csv)
 10. [Panduan Komunikasi & Solusi Situasi Khusus Meja Depan](#10-panduan-komunikasi--solusi-situasi-khusus-meja-depan)
 11. [Lembar Ceklis Kerja Harian (Daily Checklist)](#11-lembar-ceklis-kerja-harian-daily-checklist)
+12. [Pemantauan Telemetri Konversi & Rasio No-Show (< 10%)](#12-pemantauan-telemetri-konversi--rasio-no-show--10)
 
 ---
 
@@ -521,6 +522,25 @@ Gunakan lembar ceklis ini sebagai panduan membuka dan menutup gerai setiap hari.
 | **Tamu Minta Ganti Jadwal (WA)** | Buka Kartu ➔ Tekan **[ Ubah Jadwal ]** | Gratis jika >= 3 jam; ditolak jika kurang dari 3 jam. |
 | **Barber Izin Sakit / Kursi Rusak**| Slot Kosong ➔ Tekan **[ Blokir Kursi ]** | Slot terkunci abu-abu, tamu online tidak bisa memesan. |
 | **Tutup Kasir Malam (21:00 WIB)** | Pojok Kanan ➔ Tekan **[ Unduh CSV ]** | Mengunduh file laporan keuangan harian otomatis. |
+
+---
+
+## 12. Pemantauan Telemetri Konversi & Rasio No-Show (< 10%)
+
+### 12.1 Akses Tab Telemetri di Dashboard Tablet
+1. Di atas kalender antrean, klik tab berikon grafik batang: **[Telemetri & Konversi]**.
+2. Sistem akan memuat data 4-stage funnel (Pengunjung &rarr; Klik Booking &rarr; Bayar DP &rarr; Hadir di Lokasi) dan evaluasi no-show real-time.
+
+### 12.2 Indikator Status Target No-Show
+- **Batas Maksimum Target**: **< 10.0%** (Sesuai mandat bisnis IDEA.md Section 3).
+- **Hijau (`TARGET TERCAPAI`)**: Rasio no-show &le; 10.0%. Pertahankan performa pengingat WhatsApp.
+- **Kuning (`PERINGATAN`)**: Rasio antara 10.1% – 15.0%. Kasir wajib memeriksa apakah ada kendala pada koneksi gateway WhatsApp pengingat H-2 jam.
+- **Merah (`KRITIS`)**: Rasio > 15.0%. Eskalasi langsung ke Owner untuk peninjauan jam sibuk.
+
+### 12.3 Alokasi Kompensasi DP Hangus
+Ketika tombol **[Tandai No-Show]** ditekan pada menit ke-15 keterlambatan, uang muka Rp 20.000 otomatis tercatat di kartu **"Dana DP Hangus Terlindungi"** untuk menutup biaya waktu kursi barber yang menganggur.
+
+*Panduan lengkap audit dan interpretasi metrik tersedia di: `docs/metrics/TELEMETRY-OPERATIONS-GUIDE.md`.*
 
 ---
 

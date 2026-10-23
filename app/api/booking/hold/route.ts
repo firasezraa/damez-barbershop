@@ -30,6 +30,7 @@ import {
   verifyAndCalculateBookingPrice,
   FLAT_DOWN_PAYMENT_AMOUNT_IDR
 } from '../../../../lib/security/price-calculator.ts'
+import { trackTelemetryEvent } from '../../../../lib/analytics/telemetry.ts'
 
 interface HoldApiResponse {
   success: boolean
@@ -276,6 +277,14 @@ export async function POST(request: Request): Promise<Response> {
         ipRateLimit.headers
       )
     }
+
+    // Dispatch telemetri booking hold
+    trackTelemetryEvent({
+      event_type: 'booking_hold_created',
+      barber_id: result.booking?.barber_id,
+      booking_code: result.booking?.booking_code,
+      amount: result.booking?.down_payment_idr
+    }).catch(() => {});
 
     return jsonResponse(
       {

@@ -12,6 +12,7 @@ import {
   type WebhookProcessResult
 } from '../../../../lib/payment/webhook.ts'
 import { dispatchBookingConfirmedWhatsApp } from '../../../../lib/notifications/whatsapp.ts'
+import { trackTelemetryEvent } from '../../../../lib/analytics/telemetry.ts'
 
 /**
  * Handles CORS Preflight
@@ -89,6 +90,12 @@ export async function POST(request: Request): Promise<Response> {
       } catch (waError: unknown) {
         console.error('[Webhook] WhatsApp notification dispatch warning:', waError)
       }
+
+      // Telemetri: Pembayaran DP sukses diverifikasi
+      trackTelemetryEvent({
+        event_type: 'payment_settled',
+        amount: 20000
+      }).catch(() => {});
     }
 
     return new Response(JSON.stringify(result), {

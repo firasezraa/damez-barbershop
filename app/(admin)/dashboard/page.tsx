@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StatsBanner } from '@/components/admin/StatsBanner.tsx';
 import { CalendarMatrixView } from '@/components/admin/CalendarMatrixView.tsx';
 import { BookingListView } from '@/components/admin/BookingListView.tsx';
+import { TelemetryDashboardView } from '@/components/admin/TelemetryDashboardView.tsx';
 import { CashierCheckoutModal } from '@/components/admin/CashierCheckoutModal.tsx';
 import { NoShowModal } from '@/components/admin/NoShowModal.tsx';
 import { QuickWalkInModal } from '@/components/admin/QuickWalkInModal.tsx';
@@ -28,11 +29,11 @@ import type {
   MarkNoShowParams,
   CreateBlockSlotParams
 } from '@/lib/admin/types.ts';
-import { Calendar, ListFilter, Scissors, CheckCircle2 } from 'lucide-react';
+import { Calendar, ListFilter, Scissors, CheckCircle2, BarChart3 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const [currentDate, setCurrentDate] = useState<string>(getJakartaDateString());
-  const [activeTab, setActiveTab] = useState<'calendar' | 'list'>('calendar');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'list' | 'telemetry'>('calendar');
   const [loading, setLoading] = useState<boolean>(true);
 
   const [bookings, setBookings] = useState<AdminBookingItem[]>([]);
@@ -280,6 +281,19 @@ export default function AdminDashboardPage() {
               {bookings.length}
             </span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('telemetry')}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === 'telemetry'
+                ? 'bg-[#D97706] text-[#121212] shadow-md shadow-[#D97706]/20'
+                : 'bg-[#1A1A1A] text-[#A8A29E] hover:text-[#F5F5F0] hover:bg-[#242424]'
+            }`}
+          >
+            <BarChart3 className="size-4" />
+            <span>Telemetri &amp; Konversi</span>
+          </button>
         </div>
 
         <div className="hidden sm:flex items-center gap-2 text-xs text-[#78716C]">
@@ -288,7 +302,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 3. Konten Utama: Kalender vs Daftar Reservasi */}
+      {/* 3. Konten Utama: Kalender vs Daftar Reservasi vs Telemetri */}
       {activeTab === 'calendar' ? (
         <CalendarMatrixView
           columns={columns}
@@ -302,13 +316,15 @@ export default function AdminDashboardPage() {
             setBlockModal({ isOpen: true, barberId, time })
           }
         />
-      ) : (
+      ) : activeTab === 'list' ? (
         <BookingListView
           bookings={bookings}
           onStartService={handleStartService}
           onOpenCheckout={(booking) => setCheckoutModal({ isOpen: true, booking })}
           onOpenNoShow={(booking) => setNoShowModal({ isOpen: true, booking })}
         />
+      ) : (
+        <TelemetryDashboardView initialDate={currentDate} />
       )}
 
       {/* 4. Modals */}
