@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damez Barbershop — Master Wireframes & Interactive Mobile Booking Flow</title>
+  <!-- Google Fonts: Cinzel (Display), Plus Jakarta Sans (UI Body), JetBrains Mono (Codes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#121212',
+            surface: {
+              DEFAULT: '#1A1A1A',
+              elevated: '#242424',
+              hover: '#2C2C2C',
+            },
+            primary: {
+              DEFAULT: '#D97706',
+              hover: '#F59E0B',
+              foreground: '#121212',
+            },
+            secondary: {
+              DEFAULT: '#784C25',
+              hover: '#8C582B',
+              foreground: '#FFFFFF',
+            },
+            muted: {
+              DEFAULT: '#262626',
+              foreground: '#A8A29E',
+              subtle: '#78716C',
+            },
+            border: {
+              DEFAULT: '#2E2E2E',
+              accent: '#D97706',
+            },
+            status: {
+              confirmed: { bg: '#064E3B', text: '#34D399', border: '#059669' },
+              pending: { bg: '#451A03', text: '#FBBF24', border: '#D97706' },
+              noshow: { bg: '#450A0A', text: '#F87171', border: '#DC2626' },
+              cancelled: { bg: '#27272A', text: '#A1A1AA', border: '#52525B' },
+            }
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            amber: '0 0 20px rgba(217, 119, 6, 0.25)',
+            modal: '0 25px 50px -12px rgba(0, 0, 0, 0.85)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0A0A0A;
+      color: #F5F5F0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .ticket-notch-left {
+      position: absolute;
+      left: -12px;
+      top: 64%;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background-color: #121212;
+      box-shadow: inset -2px 0 4px rgba(0,0,0,0.6);
+    }
+    .ticket-notch-right {
+      position: absolute;
+      right: -12px;
+      top: 64%;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background-color: #121212;
+      box-shadow: inset 2px 0 4px rgba(0,0,0,0.6);
+    }
+    .dashed-divider {
+      border-top: 2px dashed #333333;
+    }
+    /* Thumb zone visual guide overlay */
+    .thumb-zone-guide {
+      background: linear-gradient(to top, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.08) 35%, rgba(245, 158, 11, 0.05) 70%, rgba(239, 68, 68, 0.05) 100%);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2E2E2E;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D97706;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 lg:p-8 min-h-screen">
+
+  <!-- Top Controller Toolbar -->
+  <header class="max-w-7xl mx-auto mb-8 bg-[#161616] border border-[#2E2E2E] rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-2 flex-wrap">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#451A03] text-[#FBBF24] border border-[#D97706]/40">
+          DELIVERABLE M1-03: WIREFRAMES
+        </span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-[#064E3B] text-[#34D399] border border-emerald-500/30">
+          RESPONSIVE 360px - 1440px
+        </span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono bg-zinc-800 text-zinc-300 border border-zinc-700">
+          ZERO-ACCOUNT FLOW (&lt; 120s)
+        </span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-display font-bold text-[#F5F5F0]">
+        DAMEZ BARBERSHOP — WIREFRAME PROTOTYPE
+      </h1>
+      <p class="text-xs md:text-sm text-[#A8A29E] mt-1 max-w-2xl">
+        Cetak biru antarmuka mobile-first ramah jempol. Menampilkan landing page publik kredibel dan alur booking 7-alur modular (5 langkah form + pembayaran QRIS + konfirmasi tiket) ber-DP Flat Rp 20.000.
+      </p>
+    </div>
+
+    <!-- View Mode Switches -->
+    <div class="flex items-center gap-2 bg-[#121212] p-1.5 rounded-xl border border-[#2E2E2E] self-stretch sm:self-auto justify-center">
+      <button id="btn-view-mobile" onclick="switchView('mobile')" class="px-4 py-2.5 rounded-lg text-xs font-semibold transition-all bg-[#D97706] text-[#121212] shadow">
+        Mobile Frame (390px)
+      </button>
+      <button id="btn-view-desktop" onclick="switchView('desktop')" class="px-4 py-2.5 rounded-lg text-xs font-semibold transition-all bg-[#1A1A1A] border border-[#2E2E2E] text-[#D4D4D8] hover:text-[#F5F5F0]">
+        Full Desktop (1280px)
+      </button>
+      <button id="btn-toggle-thumb" onclick="toggleThumbZone()" class="px-3 py-2.5 rounded-lg text-xs font-mono transition-all text-emerald-400 hover:bg-emerald-950/40 border border-emerald-700/60 bg-emerald-950/20">
+        Zona Jempol: OFF
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- VIEW 1: MOBILE VIEWPORT INTERACTIVE FRAME (DEFAULT 390px)     -->
+  <!-- ============================================================== -->
+  <main id="container-mobile" class="max-w-md mx-auto transition-all duration-300">
+    <!-- Smartphone Bezel Shell -->
+    <div class="relative bg-[#000000] p-3 rounded-[3rem] border-[6px] border-[#2E2E2E] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)]">
+      
+      <!-- Top Dynamic Island Speaker notch -->
+      <div class="w-32 h-5 bg-[#121212] rounded-full mx-auto mb-2 flex items-center justify-center gap-2 border border-zinc-800">
+        <span class="w-2.5 h-2.5 rounded-full bg-zinc-900 border border-zinc-700"></span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse"></span>
+      </div>
+
+      <!-- Smartphone Screen Viewport (390px effective width) -->
+      <div id="mobile-screen" class="relative bg-[#121212] text-[#F5F5F0] rounded-[2.25rem] overflow-hidden border border-[#2E2E2E] h-[640px] md:h-[680px] flex flex-col justify-between">
+        
+        <!-- Optional Thumb Zone Visual Guide Overlay -->
+        <div id="thumb-overlay" class="hidden absolute inset-0 pointer-events-none z-40 thumb-zone-guide flex flex-col justify-between p-4 text-[10px] font-mono">
+          <div class="bg-red-950/70 text-red-300 border border-red-800 p-1.5 rounded text-center">
+            ZONA SUKAR (HARD ZONE) — HANYA NAV / LOGO
+          </div>
+          <div class="bg-amber-950/70 text-amber-300 border border-amber-800 p-1.5 rounded text-center my-auto">
+            ZONA JANGKAUAN NORMAL (NATURAL STRETCH)
+          </div>
+          <div class="bg-emerald-950/80 text-emerald-300 border border-emerald-600 p-2 rounded text-center font-bold">
+            ZONA JEMPOL NYAMAN (EASY THUMB ZONE) — TOMBOL & SUMMARY
+          </div>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- SCREEN CONTENT A: LANDING PAGE MOBILE VIEW               -->
+        <!-- -------------------------------------------------------- -->
+        <div id="mobile-landing" class="block flex-1 overflow-y-auto space-y-6 pb-20">
+          
+          <!-- Sticky Mobile Header -->
+          <nav class="sticky top-0 z-30 bg-[#121212]/95 backdrop-blur-md px-4 py-3 border-b border-[#2E2E2E] flex justify-between items-center shadow-lg">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-md bg-[#D97706] text-[#121212] font-display font-extrabold flex items-center justify-center text-xs">
+                D
+              </span>
+              <span class="font-display font-bold text-sm tracking-wide text-[#F5F5F0]">
+                DAMEZ BARBER
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-[#064E3B] text-[#A7F3D0] border border-emerald-500/60 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-[#34D399] animate-pulse"></span>
+              BUKA (10:00 - 21:00)
+            </div>
+          </nav>
+
+          <!-- Mobile Hero Section -->
+          <section class="px-4 pt-3 space-y-3.5">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-[#1A1A1A] border border-[#2E2E2E]">
+              <span class="text-[#F59E0B]">★★★★★</span>
+              <span class="text-[#F5F5F0] font-bold">4.9</span>
+              <span class="text-[#D4D4D8] font-medium">(320+ Ulasan)</span>
+            </div>
+
+            <h2 class="text-3xl font-display font-bold text-[#F5F5F0] leading-tight tracking-wider">
+              CRAFTED GROOMING FOR GENTLEMEN.
+            </h2>
+
+            <p class="text-xs text-[#D4D4D8] leading-relaxed">
+              Presisi pangkas klasik, ruang santai ber-AC, dan kepastian kursi bebas antre lewat reservasi digital DP Flat Rp 20.000.
+            </p>
+
+            <!-- Primary Above-The-Fold Action Button -->
+            <button onclick="openBookingStep(2)" class="w-full py-3.5 bg-[#D97706] hover:bg-[#F59E0B] active:scale-[0.98] text-[#121212] font-display font-bold text-xs rounded-xl shadow-amber flex items-center justify-center gap-2 transition-all">
+              <span>Booking Jadwal Sekarang (DP Rp 20rb) &rarr;</span>
+            </button>
+
+            <!-- Hero Image Mockup -->
+            <div class="relative h-44 rounded-xl overflow-hidden border border-[#2E2E2E] bg-gradient-to-tr from-[#1A1A1A] to-[#262626] flex items-center justify-center">
+              <div class="text-center p-4">
+                <span class="text-xs font-mono text-[#D97706] uppercase tracking-wider block mb-1">ATMOSFER KLASIK MODERN</span>
+                <span class="text-sm font-display font-bold text-[#F5F5F0]">3 Kursi Potong &amp; Ruang Tunggu Steril</span>
+              </div>
+              <div class="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[9px] font-mono bg-[#121212]/80 text-zinc-300 border border-zinc-700">
+                100% Sterilisasi Alat
+              </div>
+            </div>
+
+            <!-- Value Pillars Pills -->
+            <div class="grid grid-cols-3 gap-1.5 pt-1 text-center font-mono text-[10px]">
+              <div class="bg-[#1A1A1A] p-2 rounded-lg border border-[#2E2E2E]">
+                <div class="text-[#D97706] font-bold">TANPA AKUN</div>
+                <div class="text-[#A8A29E] text-[9px]">Cukup Nama &amp; WA</div>
+              </div>
+              <div class="bg-[#1A1A1A] p-2 rounded-lg border border-[#2E2E2E]">
+                <div class="text-[#D97706] font-bold">KURSI PASTI</div>
+                <div class="text-[#A8A29E] text-[9px]">Bebas Antre Sofa</div>
+              </div>
+              <div class="bg-[#1A1A1A] p-2 rounded-lg border border-[#2E2E2E]">
+                <div class="text-[#D97706] font-bold">QRIS INSTAN</div>
+                <div class="text-[#A8A29E] text-[9px]">DP Rp 20.000</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section Katalog Layanan Mobile -->
+          <section class="px-4 space-y-3 pt-2">
+            <div class="flex justify-between items-baseline">
+              <h3 class="text-sm font-display font-bold text-[#F5F5F0] tracking-wide uppercase">
+                Layanan &amp; Tarif Resmi
+              </h3>
+              <span class="text-[10px] font-mono text-[#D97706]">8 Paket Siap-Seed</span>
+            </div>
+
+            <!-- Card 1: Popular -->
+            <div class="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#D97706]/40 relative space-y-2">
+              <span class="absolute -top-2 right-3 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-[#451A03] text-[#FBBF24] border border-[#D97706]">
+                PALING POPULER
+              </span>
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-xs text-[#F5F5F0]">Gentlemen Classic Haircut</h4>
+                  <span class="text-[10px] font-mono text-[#A8A29E]">45 Menit</span>
+                </div>
+                <span class="font-display font-bold text-sm text-[#D97706]">Rp 50.000</span>
+              </div>
+              <p class="text-[11px] text-[#A8A29E] leading-snug">
+                Potong rambut presisi, cuci rambut, handuk hangat, pijat kepala ringan &amp; styling pomade.
+              </p>
+              <button onclick="openBookingStep(2, 'SRV-01')" class="w-full py-2 bg-[#262626] hover:bg-[#D97706] hover:text-[#121212] text-xs font-semibold text-[#F5F5F0] rounded-lg border border-[#2E2E2E] transition-all">
+                Pilih Layanan Ini &rarr;
+              </button>
+            </div>
+
+            <!-- Card 2: Fade Specialist -->
+            <div class="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#2E2E2E] space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-xs text-[#F5F5F0]">Premium Fade &amp; Taper Cut</h4>
+                  <span class="text-[10px] font-mono text-[#A8A29E]">50 Menit</span>
+                </div>
+                <span class="font-display font-bold text-sm text-[#D97706]">Rp 65.000</span>
+              </div>
+              <p class="text-[11px] text-[#A8A29E] leading-snug">
+                Gradasi skin/low fade teknik tinggi, detail outline pisau cukur, cuci rambut &amp; styling tonic.
+              </p>
+              <button onclick="openBookingStep(2, 'SRV-02')" class="w-full py-2 bg-[#262626] hover:bg-[#D97706] hover:text-[#121212] text-xs font-semibold text-[#F5F5F0] rounded-lg border border-[#2E2E2E] transition-all">
+                Pilih Layanan Ini &rarr;
+              </button>
+            </div>
+
+            <!-- Card 3: Executive Combo -->
+            <div class="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#2E2E2E] space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="px-1.5 py-0.5 rounded text-[8px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-700 mb-1 inline-block">NILAI TERBAIK</span>
+                  <h4 class="font-bold text-xs text-[#F5F5F0]">Damez Signature Executive</h4>
+                  <span class="text-[10px] font-mono text-[#A8A29E]">60 Menit</span>
+                </div>
+                <span class="font-display font-bold text-sm text-[#D97706]">Rp 95.000</span>
+              </div>
+              <p class="text-[11px] text-[#A8A29E] leading-snug">
+                Haircut lengkap + cukur jenggot hot towel + pijat relaksasi pundak kepala + tonik premium.
+              </p>
+              <button onclick="openBookingStep(2, 'SRV-08')" class="w-full py-2 bg-[#262626] hover:bg-[#D97706] hover:text-[#121212] text-xs font-semibold text-[#F5F5F0] rounded-lg border border-[#2E2E2E] transition-all">
+                Pilih Layanan Ini &rarr;
+              </button>
+            </div>
+          </section>
+
+          <!-- Section Tim Barber Mobile -->
+          <section class="px-4 space-y-3 pt-2">
+            <h3 class="text-sm font-display font-bold text-[#F5F5F0] tracking-wide uppercase">
+              Tim Master Barber (3 Kursi)
+            </h3>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <!-- Barber 1 -->
+              <div class="bg-[#1A1A1A] p-2.5 rounded-xl border border-[#2E2E2E] space-y-1">
+                <div class="w-12 h-12 rounded-full mx-auto bg-gradient-to-b from-[#2E2E2E] to-[#121212] border border-[#D97706] flex items-center justify-center font-display font-bold text-xs text-[#D97706]">
+                  RP
+                </div>
+                <div class="text-[11px] font-bold text-[#F5F5F0] leading-tight">Rian P.</div>
+                <div class="text-[9px] font-mono text-[#A8A29E]">"The Sculptor"</div>
+                <div class="text-[8px] font-mono text-emerald-400">● Kursi 1</div>
+              </div>
+              <!-- Barber 2 -->
+              <div class="bg-[#1A1A1A] p-2.5 rounded-xl border border-[#2E2E2E] space-y-1">
+                <div class="w-12 h-12 rounded-full mx-auto bg-gradient-to-b from-[#2E2E2E] to-[#121212] border border-[#D97706] flex items-center justify-center font-display font-bold text-xs text-[#D97706]">
+                  DA
+                </div>
+                <div class="text-[11px] font-bold text-[#F5F5F0] leading-tight">Dimas A.</div>
+                <div class="text-[9px] font-mono text-[#A8A29E]">"Fade Master"</div>
+                <div class="text-[8px] font-mono text-emerald-400">● Kursi 2</div>
+              </div>
+              <!-- Barber 3 -->
+              <div class="bg-[#1A1A1A] p-2.5 rounded-xl border border-[#2E2E2E] space-y-1">
+                <div class="w-12 h-12 rounded-full mx-auto bg-gradient-to-b from-[#2E2E2E] to-[#121212] border border-[#D97706] flex items-center justify-center font-display font-bold text-xs text-[#D97706]">
+                  KS
+                </div>
+                <div class="text-[11px] font-bold text-[#F5F5F0] leading-tight">Kevin S.</div>
+                <div class="text-[9px] font-mono text-[#A8A29E]">"Shave Master"</div>
+                <div class="text-[8px] font-mono text-emerald-400">● Kursi 3</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section Kebijakan DP & Jam Operasional -->
+          <section class="px-4 space-y-2 pt-2">
+            <div class="bg-[#161616] border border-amber-900/40 p-3 rounded-xl space-y-1.5 text-xs">
+              <div class="font-bold text-[#D97706] flex items-center gap-1.5 font-mono text-[11px]">
+                <span class="px-1 py-0.2 rounded bg-amber-900/60 text-amber-300 font-bold">KETENTUAN:</span> RESERVASI &amp; NO-SHOW
+              </div>
+              <ul class="text-[10px] text-[#A8A29E] space-y-1 pl-3 list-disc">
+                <li><strong class="text-[#F5F5F0]">DP Flat Rp 20.000:</strong> Mengunci slot 15 menit &amp; memotong total nota di kasir.</li>
+                <li><strong class="text-[#F5F5F0]">Reschedule H-3 Jam:</strong> Bebas pindah jam via link WhatsApp resmi.</li>
+                <li><strong class="text-[#F5F5F0]">Toleransi Telat 15 Menit:</strong> Melebihi 15 menit, slot dialihkan ke walk-in &amp; DP hangus.</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- SCREEN CONTENT B: 7-STEP MODULAR BOOKING FUNNEL WIZARD    -->
+        <!-- -------------------------------------------------------- -->
+        <div id="mobile-wizard" class="hidden flex-1 flex-col h-full bg-[#121212] z-30 overflow-hidden">
+          
+          <!-- Wizard Top Bar & Stepper -->
+          <div class="flex-shrink-0 bg-[#161616] border-b border-[#2E2E2E] px-4 py-3 z-30 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <button onclick="wizardPrevStep()" class="min-h-[44px] min-w-[44px] text-xs font-mono text-[#A8A29E] hover:text-[#F5F5F0] flex items-center gap-1">
+                &larr; <span id="wizard-back-text">Landing</span>
+              </button>
+              <span class="text-xs font-display font-bold text-[#D97706] tracking-wider">
+                RESERVASI DAMEZ
+              </span>
+              <button onclick="closeBookingWizard()" class="min-h-[44px] px-3 py-1 text-xs font-mono text-zinc-300 hover:text-white rounded-lg bg-zinc-800 border border-zinc-700 flex items-center">
+                ✕ Tutup
+              </button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-[#262626] h-1.5 rounded-full overflow-hidden">
+              <div id="wizard-progress-bar" class="bg-[#D97706] h-full transition-all duration-300 w-1/5"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] font-mono text-[#A8A29E]">
+              <span id="wizard-step-label">Langkah 1 dari 5: Pilih Layanan</span>
+              <span id="wizard-step-percent">20%</span>
+            </div>
+          </div>
+
+          <!-- Wizard Body: Scrollable Container for Dynamic Steps -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-4">
+            
+            <!-- STEP 2: SELECT SERVICES (1-2 Services) -->
+            <div id="step-pane-2" class="space-y-3">
+              <div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Pilih Layanan Grooming</h3>
+                <p class="text-xs text-[#A8A29E]">Pilih 1 atau maksimal 2 kombinasi layanan untuk sesi Anda:</p>
+              </div>
+
+              <!-- Service Checkbox Item 1 -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#D97706] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-start gap-3">
+                  <input type="checkbox" id="srv-01" checked onchange="calculateServices()" class="mt-1 accent-[#D97706] w-4 h-4 rounded">
+                  <div class="flex-1">
+                    <div class="flex justify-between items-baseline">
+                      <span class="font-bold text-xs text-[#F5F5F0]">Gentlemen Classic Haircut</span>
+                      <span class="font-display font-bold text-xs text-[#D97706]">Rp 50.000</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">45 Menit • Paling Populer</span>
+                    <p class="text-[11px] text-[#A8A29E] mt-1">Potong rambut presisi, cuci rambut, hot towel &amp; pomade styling.</p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Service Checkbox Item 2 -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#2E2E2E] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-start gap-3">
+                  <input type="checkbox" id="srv-04" onchange="calculateServices()" class="mt-1 accent-[#D97706] w-4 h-4 rounded">
+                  <div class="flex-1">
+                    <div class="flex justify-between items-baseline">
+                      <span class="font-bold text-xs text-[#F5F5F0]">Beard Sculpting &amp; Shave</span>
+                      <span class="font-display font-bold text-xs text-[#D97706]">Rp 45.000</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">35 Menit • Grooming Jenggot</span>
+                    <p class="text-[11px] text-[#A8A29E] mt-1">Cukur jenggot rapi, outline razor presisi, aplikasi handuk hangat.</p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Service Checkbox Item 3 -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#2E2E2E] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-start gap-3">
+                  <input type="checkbox" id="srv-05" onchange="calculateServices()" class="mt-1 accent-[#D97706] w-4 h-4 rounded">
+                  <div class="flex-1">
+                    <div class="flex justify-between items-baseline">
+                      <span class="font-bold text-xs text-[#F5F5F0]">Relaxing Hair Spa &amp; Wash</span>
+                      <span class="font-display font-bold text-xs text-[#D97706]">Rp 55.000</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">40 Menit • Relaksasi Kulit Kepala</span>
+                    <p class="text-[11px] text-[#A8A29E] mt-1">Pijat refleksi kepala, creambath aroma terapi &amp; tonik nutrisi.</p>
+                  </div>
+                </div>
+              </label>
+
+              <div id="service-limit-warning" class="hidden text-[10px] font-mono text-amber-400 bg-amber-950/40 p-2 rounded border border-amber-800">
+                [PERHATIAN] Maksimal 2 layanan per sesi reservasi untuk menjaga ketepatan waktu antrean.
+              </div>
+            </div>
+
+            <!-- STEP 3: SELECT BARBER -->
+            <div id="step-pane-3" class="hidden space-y-3">
+              <div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Pilih Master Barber</h3>
+                <p class="text-xs text-[#A8A29E]">Tentukan barber favorit atau pilih jadwal tercepat:</p>
+              </div>
+
+              <!-- Any Barber Option -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#34D399] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="barber" value="ANY" checked class="accent-[#D97706] w-4 h-4">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-xs text-[#F5F5F0]">SIAPA SAJA YANG TERSEDIA</span>
+                      <span class="text-[9px] font-mono bg-[#064E3B] text-[#34D399] px-2 py-0.5 rounded">TERCEPAT</span>
+                    </div>
+                    <p class="text-[11px] text-[#A8A29E] mt-0.5">Kami pilihkan master barber terbaik dengan slot terluang.</p>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Barber 1: Rian -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#2E2E2E] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="barber" value="BBR-01" class="accent-[#D97706] w-4 h-4">
+                  <div class="w-10 h-10 rounded-full bg-zinc-800 border border-[#D97706] flex items-center justify-center font-display font-bold text-xs text-[#D97706]">
+                    RP
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-bold text-xs text-[#F5F5F0]">Rian Pratama ("The Sculptor")</div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">Kursi 1 • Spesialis Classic Cuts &amp; Scissor</span>
+                    <div class="text-[9px] text-emerald-400 mt-0.5 font-mono">● Bertugas Hari Ini</div>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Barber 2: Dimas -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#2E2E2E] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="barber" value="BBR-02" class="accent-[#D97706] w-4 h-4">
+                  <div class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-display font-bold text-xs text-[#F5F5F0]">
+                    DA
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-bold text-xs text-[#F5F5F0]">Dimas Arisandi ("Fade Master")</div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">Kursi 2 • Spesialis Skin Fade &amp; Modern Crop</span>
+                    <div class="text-[9px] text-emerald-400 mt-0.5 font-mono">● Bertugas Hari Ini</div>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Barber 3: Kevin -->
+              <label class="block bg-[#1A1A1A] p-3 rounded-xl border border-[#2E2E2E] cursor-pointer hover:bg-[#202020] transition-all">
+                <div class="flex items-center gap-3">
+                  <input type="radio" name="barber" value="BBR-03" class="accent-[#D97706] w-4 h-4">
+                  <div class="w-10 h-10 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-display font-bold text-xs text-[#F5F5F0]">
+                    KS
+                  </div>
+                  <div class="flex-1">
+                    <div class="font-bold text-xs text-[#F5F5F0]">Kevin Sanjaya ("Grooming Specialist")</div>
+                    <span class="text-[10px] font-mono text-[#A8A29E]">Kursi 3 • Spesialis Hot Towel Shave &amp; Beard</span>
+                    <div class="text-[9px] text-emerald-400 mt-0.5 font-mono">● Bertugas Hari Ini</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <!-- STEP 4: DATE & TIME SELECTION -->
+            <div id="step-pane-4" class="hidden space-y-4">
+              <div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Pilih Tanggal &amp; Jam</h3>
+                <p class="text-xs text-[#A8A29E]">Durasi layanan: <span id="step4-duration-label" class="font-bold text-[#D97706]">45 Menit</span> (+ 10 mnt sanitasi alat)</p>
+              </div>
+
+              <!-- Horizontal Date Scroller -->
+              <div class="space-y-1.5">
+                <label class="text-[11px] font-mono text-[#A8A29E]">1. PILIH TANGGAL (7 HARI KEDEPAN):</label>
+                <div class="flex gap-2 overflow-x-auto pb-1 text-center font-mono">
+                  <button class="flex-shrink-0 w-14 py-2.5 rounded-xl bg-[#D97706] text-[#121212] font-bold border border-[#D97706]">
+                    <span class="text-[9px] block">HARI INI</span>
+                    <span class="text-sm block">24</span>
+                    <span class="text-[9px] block">OKT</span>
+                  </button>
+                  <button class="flex-shrink-0 w-14 py-2.5 rounded-xl bg-[#1A1A1A] text-[#F5F5F0] border border-[#2E2E2E]">
+                    <span class="text-[9px] block">MINGGU</span>
+                    <span class="text-sm block">25</span>
+                    <span class="text-[9px] block">OKT</span>
+                  </button>
+                  <button class="flex-shrink-0 w-14 py-2.5 rounded-xl bg-[#1A1A1A] text-[#F5F5F0] border border-[#2E2E2E]">
+                    <span class="text-[9px] block">SENIN</span>
+                    <span class="text-sm block">26</span>
+                    <span class="text-[9px] block">OKT</span>
+                  </button>
+                  <button class="flex-shrink-0 w-14 py-2.5 rounded-xl bg-[#1A1A1A] text-[#F5F5F0] border border-[#2E2E2E]">
+                    <span class="text-[9px] block">SELASA</span>
+                    <span class="text-sm block">27</span>
+                    <span class="text-[9px] block">OKT</span>
+                  </button>
+                  <button class="flex-shrink-0 w-14 py-2.5 rounded-xl bg-[#1A1A1A] text-[#F5F5F0] border border-[#2E2E2E]">
+                    <span class="text-[9px] block">RABU</span>
+                    <span class="text-sm block">28</span>
+                    <span class="text-[9px] block">OKT</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Time Chips Grid -->
+              <div class="space-y-3">
+                <label class="text-[11px] font-mono text-[#A8A29E]">2. PILIH JAM KEDATANGAN:</label>
+                
+                <div class="space-y-2">
+                  <span class="text-[10px] font-mono text-zinc-400 block">SESI SIANG (10:00 - 14:00 WIB)</span>
+                  <div class="grid grid-cols-3 gap-2 text-center font-mono">
+                    <button class="py-2.5 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] text-xs text-[#F5F5F0] hover:border-[#D97706]">
+                      10:00
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#181818] border border-zinc-800 text-xs text-zinc-600 line-through cursor-not-allowed">
+                      11:30 [TERISI]
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#181818] border border-zinc-800 text-xs text-zinc-500 italic cursor-not-allowed">
+                      13:00 [ISTIRAHAT]
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <span class="text-[10px] font-mono text-zinc-400 block">SESI SORE &amp; MALAM (14:00 - 20:00 WIB)</span>
+                  <div class="grid grid-cols-3 gap-2 text-center font-mono">
+                    <button class="py-2.5 rounded-lg bg-[#D97706] text-[#121212] font-bold text-xs border border-[#D97706] shadow">
+                      14:30 [PILIH]
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] text-xs text-[#F5F5F0] hover:border-[#D97706]">
+                      16:00
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#181818] border border-zinc-800 text-xs text-zinc-600 line-through cursor-not-allowed">
+                      17:30 [TERISI]
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] text-xs text-[#F5F5F0] hover:border-[#D97706]">
+                      19:00
+                    </button>
+                    <button class="py-2.5 rounded-lg bg-[#1A1A1A] border border-[#2E2E2E] text-xs text-[#F5F5F0] hover:border-[#D97706]">
+                      20:00
+                    </button>
+                  </div>
+                </div>
+
+                <div class="text-[10px] text-[#A8A29E] bg-[#161616] p-2 rounded border border-[#2E2E2E]">
+                  Slot Anda: <strong>14:30 – 15:15 WIB</strong> (Termasuk 10 menit buffer sterilisasi alat sebelum Anda tiba).
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 5: CONTACT & PDP CONSENT -->
+            <div id="step-pane-5" class="hidden space-y-4">
+              <div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Data Pemesan</h3>
+                <p class="text-xs text-[#A8A29E]">Tiket resmi dan bukti DP dikirimkan via WhatsApp:</p>
+              </div>
+
+              <div class="space-y-3">
+                <!-- Name Input -->
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-[#A8A29E] block">Nama Lengkap / Panggilan *</label>
+                  <input type="text" id="cust-name" value="Budi Santoso" class="w-full h-11 px-3 bg-[#1A1A1A] border border-[#2E2E2E] rounded-lg text-sm text-[#F5F5F0] focus:border-[#D97706] focus:outline-none">
+                </div>
+
+                <!-- WhatsApp Input -->
+                <div class="space-y-1">
+                  <label class="text-xs font-medium text-[#A8A29E] block">Nomor WhatsApp Aktif *</label>
+                  <div class="flex items-center bg-[#1A1A1A] border border-[#2E2E2E] rounded-lg overflow-hidden focus-within:border-[#D97706]">
+                    <span class="px-3 text-xs font-mono text-zinc-400 bg-zinc-800/60 border-r border-[#2E2E2E]">
+                      ID +62
+                    </span>
+                    <input type="tel" id="cust-phone" value="81234567890" class="flex-1 h-11 px-3 bg-transparent text-sm text-[#F5F5F0] font-mono focus:outline-none">
+                    <span class="px-3 text-emerald-400 text-xs font-bold">✓</span>
+                  </div>
+                  <span class="text-[10px] text-zinc-400">Standar internasional E.164 (+6281234567890)</span>
+                </div>
+
+                <!-- PDP Consent Checkbox -->
+                <label class="block bg-[#161616] p-3 rounded-lg border border-[#2E2E2E] cursor-pointer space-y-1">
+                  <div class="flex items-start gap-2.5">
+                    <input type="checkbox" id="pdp-consent" checked class="mt-0.5 accent-[#D97706] w-4 h-4 rounded">
+                    <span class="text-[11px] text-[#A8A29E] leading-snug">
+                      Saya menyetujui nomor WhatsApp saya digunakan oleh Damez Barbershop semata-mata untuk pengiriman bukti tiket reservasi, pengingat jadwal, dan informasi darurat antrean (<strong class="text-zinc-300">UU PDP No. 27/2022</strong>).
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- STEP 6: ORDER REVIEW & DP BREAKDOWN -->
+            <div id="step-pane-6" class="hidden space-y-4">
+              <div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Konfirmasi Pemesanan</h3>
+                <p class="text-xs text-[#A8A29E]">Periksa rincian sebelum mengunci slot kursi:</p>
+              </div>
+
+              <!-- Ticket Preview Card -->
+              <div class="bg-[#1A1A1A] p-4 rounded-xl border border-[#2E2E2E] space-y-3 font-mono text-xs">
+                <div class="border-b border-[#2E2E2E] pb-2 flex justify-between">
+                  <span class="text-[#A8A29E]">JADWAL LAYANAN</span>
+                  <span class="text-[#F5F5F0] font-bold">Sabtu, 24 Okt 2026</span>
+                </div>
+                <div class="border-b border-[#2E2E2E] pb-2 flex justify-between">
+                  <span class="text-[#A8A29E]">WAKTU SESI</span>
+                  <span class="text-[#D97706] font-bold">14:30 – 15:15 WIB</span>
+                </div>
+                <div class="border-b border-[#2E2E2E] pb-2 flex justify-between">
+                  <span class="text-[#A8A29E]">MASTER BARBER</span>
+                  <span class="text-[#F5F5F0]">Rian P. (Kursi 1)</span>
+                </div>
+                <div class="border-b border-[#2E2E2E] pb-2 flex justify-between">
+                  <span class="text-[#A8A29E]">LAYANAN</span>
+                  <span class="text-[#F5F5F0]">Gentlemen Classic Cut</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#A8A29E]">PEMESAN</span>
+                  <span class="text-[#F5F5F0]">Budi S. (+62812***7890)</span>
+                </div>
+              </div>
+
+              <!-- Financial Breakdown -->
+              <div class="bg-[#161616] p-4 rounded-xl border border-amber-900/50 space-y-2 text-xs">
+                <div class="flex justify-between text-[#A8A29E]">
+                  <span>Total Biaya Layanan</span>
+                  <span>Rp 50.000</span>
+                </div>
+                <div class="flex justify-between font-bold text-[#D97706] border-t border-[#2E2E2E] pt-2">
+                  <span>DOWN PAYMENT (DP) SEKARANG</span>
+                  <span>Rp 20.000</span>
+                </div>
+                <div class="flex justify-between text-emerald-400 font-mono text-[11px]">
+                  <span>Sisa Pelunasan di Kasir Toko</span>
+                  <span>Rp 30.000</span>
+                </div>
+                <p class="text-[9px] text-[#A8A29E] pt-1">
+                  * DP Rp 20.000 memotong langsung total nota saat Anda membayar di meja kasir Damez Barbershop.
+                </p>
+              </div>
+
+              <!-- Cancellation Warning Box -->
+              <div class="bg-[#241A1A] p-2.5 rounded-lg border border-red-900/40 text-[10px] text-red-300 space-y-1">
+                <div class="font-bold">[PERINGATAN] KETENTUAN PENGUNCIAN SLOT:</div>
+                <p>Slot ditahan 15 menit untuk pembayaran QRIS. Reschedule maksimal H-3 jam. Keterlambatan toleransi 15 menit.</p>
+              </div>
+            </div>
+
+            <!-- STEP 7A: MIDTRANS SNAP QRIS SIMULATION -->
+            <div id="step-pane-7a" class="hidden space-y-4">
+              <div class="text-center space-y-1">
+                <span class="text-xs font-mono text-[#D97706] tracking-wider uppercase">MIDTRANS SNAP QRIS GATEWAY</span>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Selesaikan Pembayaran DP</h3>
+              </div>
+
+              <!-- Countdown Timer -->
+              <div class="bg-[#161616] p-3 rounded-xl border border-amber-800/40 text-center space-y-0.5">
+                <span class="text-[10px] font-mono text-[#A8A29E] uppercase">Sisa Waktu Pembayaran (TTL 15 Mnt)</span>
+                <div class="text-2xl font-mono font-bold text-[#FBBF24]">14 : 52</div>
+              </div>
+
+              <!-- QRIS Code Mockup -->
+              <div class="bg-white p-4 rounded-xl text-center space-y-2 max-w-[220px] mx-auto text-black">
+                <div class="text-[10px] font-mono font-bold tracking-wider">QRIS STANDAR PEMBAYARAN NASIONAL</div>
+                <div class="w-36 h-36 bg-zinc-900 mx-auto rounded-lg flex items-center justify-center text-white text-[10px] font-mono p-2">
+                  [ QR CODE UNIVERSAL RP 20.000 ]
+                </div>
+                <div class="text-[9px] font-mono text-zinc-600">BCA • Mandiri • GoPay • OVO • Dana</div>
+              </div>
+
+              <div class="space-y-2 text-center">
+                <button onclick="simulatePaymentSuccess()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-[#121212] font-bold text-xs rounded-xl shadow transition-all">
+                  ✓ Simulasikan Sukses Bayar QRIS (Webhook 200 OK)
+                </button>
+                <span class="text-[10px] font-mono text-[#A8A29E] block">Menunggu sinyal settlement Midtrans...</span>
+              </div>
+            </div>
+
+            <!-- STEP 7B: DIGITAL TICKET BOARDING PASS CONFIRMATION -->
+            <div id="step-pane-7b" class="hidden space-y-4">
+              <div class="text-center space-y-1">
+                <div class="w-10 h-10 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500 mx-auto flex items-center justify-center text-lg font-bold">
+                  ✓
+                </div>
+                <h3 class="text-base font-display font-bold text-[#F5F5F0]">Pembayaran DP Terverifikasi!</h3>
+                <p class="text-xs text-[#A8A29E]">Kursi Anda telah terkunci secara resmi di sistem.</p>
+              </div>
+
+              <!-- Physical Notched Ticket Boarding Pass -->
+              <div class="relative bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl p-4 shadow-2xl font-mono text-xs space-y-3">
+                <div class="ticket-notch-left"></div>
+                <div class="ticket-notch-right"></div>
+
+                <div class="flex justify-between items-start border-b border-[#2E2E2E] pb-2">
+                  <div>
+                    <span class="text-[10px] text-[#A8A29E] block">KODE RESERVASI</span>
+                    <span class="text-base font-bold text-[#D97706] tracking-wider">DMZ-20261024-042</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded text-[10px] bg-[#064E3B] text-[#34D399] font-bold">
+                    CONFIRMED
+                  </span>
+                </div>
+
+                <div class="space-y-1.5 text-[11px]">
+                  <div class="flex justify-between">
+                    <span class="text-[#A8A29E]">Nama Tamu</span>
+                    <span class="text-[#F5F5F0] font-bold">Budi Santoso</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-[#A8A29E]">Jadwal</span>
+                    <span class="text-[#F5F5F0]">Sabtu, 24 Okt 2026</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-[#A8A29E]">Jam Sesi</span>
+                    <span class="text-[#D97706] font-bold">14:30 – 15:15 WIB</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-[#A8A29E]">Barber</span>
+                    <span class="text-[#F5F5F0]">Rian Pratama (Kursi 1)</span>
+                  </div>
+                </div>
+
+                <div class="dashed-divider my-2"></div>
+
+                <div class="space-y-1 text-[11px]">
+                  <div class="flex justify-between text-[#34D399]">
+                    <span>DP Terbayar (QRIS)</span>
+                    <span class="font-bold">Rp 20.000</span>
+                  </div>
+                  <div class="flex justify-between text-zinc-300">
+                    <span>Sisa di Kasir Toko</span>
+                    <span>Rp 30.000</span>
+                  </div>
+                </div>
+
+                <!-- Barcode Graphics Representation -->
+                <div class="pt-2 text-center">
+                  <div class="h-8 bg-zinc-900 rounded flex items-center justify-center tracking-widest text-[10px] text-zinc-500 border border-zinc-800">
+                    ||| | ||||| || |||| ||| |||||| | ||
+                  </div>
+                  <span class="text-[9px] text-[#A8A29E] block mt-1">Tunjukkan tiket ini saat tiba di meja kasir</span>
+                </div>
+              </div>
+
+              <!-- Post-booking Actions -->
+              <div class="space-y-2">
+                <button class="w-full py-2.5 bg-[#1A1A1A] hover:bg-[#262626] border border-[#2E2E2E] text-xs font-semibold text-[#F5F5F0] rounded-xl flex items-center justify-center gap-2">
+                  Buka Navigasi Google Maps Toko &rarr;
+                </button>
+                <button class="w-full py-2.5 bg-[#1A1A1A] hover:bg-[#262626] border border-[#2E2E2E] text-xs font-semibold text-[#F5F5F0] rounded-xl flex items-center justify-center gap-2">
+                  Simpan ke Kalender HP
+                </button>
+                <div class="p-2.5 bg-emerald-950/40 border border-emerald-900/40 rounded-xl text-center text-[10px] text-emerald-300">
+                  Salinan tiket resmi telah dikirim ke WhatsApp Anda (+6281234567890).
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Wizard Sticky Bottom Action Bar (Thumb Zone) -->
+          <div class="flex-shrink-0 bg-[#161616] border-t border-[#2E2E2E] p-3 px-4 space-y-2 z-40 shadow-2xl">
+            <!-- Dynamic Cart Mini Summary -->
+            <div id="wizard-mini-summary" class="flex justify-between items-center text-xs font-mono">
+              <span class="text-[#D4D4D8]" id="mini-service-count">1 Layanan (45 Menit)</span>
+              <span class="text-[#D97706] font-bold" id="mini-price">DP Rp 20.000</span>
+            </div>
+
+            <!-- Primary Action Button (Tinggi 52px) -->
+            <button id="wizard-primary-btn" onclick="wizardNextStep()" class="w-full h-12 bg-[#D97706] hover:bg-[#F59E0B] active:scale-[0.98] text-[#121212] font-display font-bold text-sm rounded-xl shadow-amber flex items-center justify-center gap-2 transition-all">
+              <span id="wizard-btn-text">Lanjut Pilih Barber (1/5) &rarr;</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- FLOATING STICKY BOTTOM BAR (MOBILE LANDING ONLY)         -->
+        <!-- -------------------------------------------------------- -->
+        <div id="mobile-floating-cta" class="sticky bottom-0 bg-[#121212]/95 backdrop-blur-md border-t border-[#2E2E2E] p-3 px-4 flex items-center justify-between z-20">
+          <div>
+            <div class="text-[10px] font-mono text-[#D97706]">MULAI DP RP 20.000</div>
+            <div class="text-xs font-bold text-[#F5F5F0]">Jaminan Kursi Pasti</div>
+          </div>
+          <button onclick="openBookingStep(2)" class="h-11 px-5 bg-[#D97706] hover:bg-[#F59E0B] active:scale-[0.98] text-[#121212] font-bold text-xs rounded-xl shadow-amber transition-all">
+            Booking Sekarang &rarr;
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- VIEW 2: FULL RESPONSIVE DESKTOP PREVIEW (1280px CONTAINER)    -->
+  <!-- ============================================================== -->
+  <section id="container-desktop" class="hidden max-w-6xl mx-auto space-y-12 bg-[#121212] border border-[#2E2E2E] rounded-3xl p-6 md:p-10 shadow-2xl">
+    
+    <!-- Desktop Header -->
+    <header class="border-b border-[#2E2E2E] pb-6 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="w-9 h-9 rounded-lg bg-[#D97706] text-[#121212] font-display font-extrabold flex items-center justify-center text-base">
+          D
+        </span>
+        <div>
+          <h2 class="font-display font-bold text-xl text-[#F5F5F0] tracking-wider">DAMEZ BARBERSHOP</h2>
+          <span class="text-[11px] font-mono text-[#A8A29E]">EST. 2024 • SENOPATI, JAKARTA SELATAN</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-6 text-xs font-semibold text-[#A8A29E]">
+        <a href="#layanan" class="hover:text-[#D97706] transition-colors">LAYANAN &amp; TARIF</a>
+        <a href="#barber" class="hover:text-[#D97706] transition-colors">TIM BARBER</a>
+        <a href="#galeri" class="hover:text-[#D97706] transition-colors">GALERI</a>
+        <a href="#lokasi" class="hover:text-[#D97706] transition-colors">LOKASI &amp; FAQ</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono bg-[#064E3B] text-[#34D399] border border-emerald-500/30">
+          <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+          BUKA HARI INI (10:00 - 21:00 WIB)
+        </div>
+        <button onclick="switchView('mobile'); openBookingStep(2);" class="px-5 py-2.5 bg-[#D97706] hover:bg-[#F59E0B] text-[#121212] font-bold text-xs rounded-xl shadow transition-all">
+          Booking Jadwal
+        </button>
+      </div>
+    </header>
+
+    <!-- Desktop Hero Section: 55/45 Split Screen -->
+    <div class="grid grid-cols-12 gap-8 items-center pt-4">
+      <div class="col-span-7 space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-[#1A1A1A] border border-[#2E2E2E]">
+          <span class="text-[#F59E0B]">★★★★★</span>
+          <span class="text-[#F5F5F0] font-bold">4.9 Bintang</span>
+          <span class="text-[#A8A29E]">(320+ Ulasan Google Maps)</span>
+        </div>
+
+        <h1 class="text-5xl font-display font-bold text-[#F5F5F0] leading-none tracking-tight">
+          CRAFTED GROOMING<br>
+          <span class="text-[#D97706]">FOR GENTLEMEN.</span>
+        </h1>
+
+        <p class="text-base text-[#A8A29E] leading-relaxed max-w-xl">
+          Presisi seni pangkas klasik pria, kenyamanan lounge ber-AC dingin, dan jaminan kursi pasti bebas antrean berjam-jam melalui sistem online booking ber-DP Flat Rp 20.000.
+        </p>
+
+        <div class="flex items-center gap-4 pt-2">
+          <button onclick="switchView('mobile'); openBookingStep(2);" class="px-7 py-3.5 bg-[#D97706] hover:bg-[#F59E0B] text-[#121212] font-display font-bold text-sm rounded-xl shadow-amber transition-all">
+            Booking Jadwal Sekarang (DP Rp 20rb) &rarr;
+          </button>
+          <a href="#layanan" class="px-6 py-3.5 bg-[#1A1A1A] hover:bg-[#242424] text-[#F5F5F0] font-semibold text-sm rounded-xl border border-[#2E2E2E] transition-all">
+            Lihat Daftar Tarif Resmi
+          </a>
+        </div>
+
+        <div class="flex items-center gap-6 pt-4 text-xs font-mono text-zinc-400">
+          <span class="flex items-center gap-1.5"><strong class="text-white">✓</strong> Tanpa Perlu Akun</span>
+          <span class="flex items-center gap-1.5"><strong class="text-white">✓</strong> Kursi Terkunci 15 Mnt</span>
+          <span class="flex items-center gap-1.5"><strong class="text-white">✓</strong> Tiket WhatsApp Instan</span>
+        </div>
+      </div>
+
+      <!-- Desktop Hero Image Showcase -->
+      <div class="col-span-5 relative">
+        <div class="h-96 rounded-2xl bg-gradient-to-tr from-[#1A1A1A] to-[#262626] border border-[#2E2E2E] p-6 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <span class="px-2.5 py-1 rounded bg-[#121212]/80 text-[#D97706] font-mono text-xs border border-[#2E2E2E]">
+              EST. 2024
+            </span>
+            <span class="px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-300 font-mono text-xs border border-emerald-800">
+              3 Kursi Aktif Siap Layani
+            </span>
+          </div>
+
+          <div class="space-y-2 bg-[#121212]/90 backdrop-blur-md p-4 rounded-xl border border-[#2E2E2E]">
+            <span class="text-xs font-mono text-[#D97706] block">STANDAR HIGIENIS &amp; STERIL</span>
+            <h4 class="text-base font-display font-bold text-[#F5F5F0]">10 Menit Buffer Sanitasi Antar Sesi</h4>
+            <p class="text-xs text-[#A8A29E]">Setiap gunting dan mata pisau razor disterilisasi sebelum pelanggan duduk.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop 8 Services Grid -->
+    <div id="layanan" class="space-y-6 pt-8 border-t border-[#2E2E2E]">
+      <div class="flex justify-between items-end">
+        <div>
+          <span class="text-xs font-mono text-[#D97706] tracking-wider uppercase">KATALOG LAYANAN RESMI</span>
+          <h2 class="text-2xl font-display font-bold text-[#F5F5F0]">Tarif Transparan Tanpa Biaya Tersembunyi</h2>
+        </div>
+        <span class="text-xs font-mono text-[#A8A29E]">DP Flat Rp 20.000 Memotong Total Nota</span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <!-- 1 -->
+        <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#D97706] space-y-3 relative">
+          <span class="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#451A03] text-[#FBBF24] border border-[#D97706]">
+            PALING POPULER
+          </span>
+          <div class="flex justify-between items-baseline">
+            <h3 class="font-bold text-sm text-[#F5F5F0]">Gentlemen Classic Haircut</h3>
+            <span class="font-display font-bold text-base text-[#D97706]">Rp 50.000</span>
+          </div>
+          <span class="text-xs font-mono text-[#A8A29E]">45 Menit • Kursi 1, 2, atau 3</span>
+          <p class="text-xs text-[#A8A29E] leading-relaxed">Konsultasi gaya, pangkas presisi, cuci rambut, handuk dingin/hangat, pijat kepala rileks &amp; styling pomade.</p>
+          <button onclick="switchView('mobile'); openBookingStep(2, 'SRV-01');" class="w-full py-2.5 bg-[#D97706] text-[#121212] font-bold text-xs rounded-lg transition-all hover:bg-[#F59E0B]">
+            Pilih Layanan Ini &rarr;
+          </button>
+        </div>
+
+        <!-- 2 -->
+        <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#2E2E2E] space-y-3 hover:border-zinc-500 transition-all">
+          <div class="flex justify-between items-baseline">
+            <h3 class="font-bold text-sm text-[#F5F5F0]">Premium Fade &amp; Taper Cut</h3>
+            <span class="font-display font-bold text-base text-[#D97706]">Rp 65.000</span>
+          </div>
+          <span class="text-xs font-mono text-[#A8A29E]">50 Menit • Fade Specialist</span>
+          <p class="text-xs text-[#A8A29E] leading-relaxed">Gradasi skin fade presisi tinggi, clipper detail, outline pisau cukur, cuci rambut &amp; styling produk premium.</p>
+          <button onclick="switchView('mobile'); openBookingStep(2, 'SRV-02');" class="w-full py-2.5 bg-[#262626] text-[#F5F5F0] font-semibold text-xs rounded-lg border border-[#2E2E2E] hover:bg-[#D97706] hover:text-[#121212] transition-all">
+            Pilih Layanan Ini &rarr;
+          </button>
+        </div>
+
+        <!-- 3 -->
+        <div class="bg-[#1A1A1A] p-5 rounded-2xl border border-[#2E2E2E] space-y-3 hover:border-zinc-500 transition-all">
+          <div class="flex justify-between items-baseline">
+            <h3 class="font-bold text-sm text-[#F5F5F0]">Damez Signature Executive</h3>
+            <span class="font-display font-bold text-base text-[#D97706]">Rp 95.000</span>
+          </div>
+          <span class="text-xs font-mono text-[#A8A29E]">60 Menit • Nilai Terbaik</span>
+          <p class="text-xs text-[#A8A29E] leading-relaxed">Paket komplit: Haircut + Beard Grooming + Hot Towel Shave + Pijat Bahu Kepala Relaksasi &amp; Hair Tonic.</p>
+          <button onclick="switchView('mobile'); openBookingStep(2, 'SRV-08');" class="w-full py-2.5 bg-[#262626] text-[#F5F5F0] font-semibold text-xs rounded-lg border border-[#2E2E2E] hover:bg-[#D97706] hover:text-[#121212] transition-all">
+            Pilih Layanan Ini &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Master Barbers Section -->
+    <div id="barber" class="space-y-6 pt-8 border-t border-[#2E2E2E]">
+      <div>
+        <span class="text-xs font-mono text-[#D97706] tracking-wider uppercase">CRAFTSMANSHIP &amp; EXPERTISE</span>
+        <h2 class="text-2xl font-display font-bold text-[#F5F5F0]">3 Master Barber Damez Barbershop</h2>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#2E2E2E] space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-zinc-800 border-2 border-[#D97706] flex items-center justify-center font-display font-bold text-lg text-[#D97706]">
+              RP
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-[#F5F5F0]">Rian Pratama</h3>
+              <span class="text-xs font-mono text-[#D97706]">"The Sculptor" • Kursi 1</span>
+            </div>
+          </div>
+          <p class="text-xs text-[#A8A29E]">Senior Master Barber (6 tahun). Ahli dalam classic pompadour, sidepart, scissor layering, dan analisis bentuk wajah.</p>
+          <div class="text-xs font-mono text-emerald-400">● Bertugas Hari Ini (Slot Terbuka)</div>
+        </div>
+
+        <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#2E2E2E] space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-zinc-800 border-2 border-[#2E2E2E] flex items-center justify-center font-display font-bold text-lg text-[#F5F5F0]">
+              DA
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-[#F5F5F0]">Dimas Arisandi</h3>
+              <span class="text-xs font-mono text-[#D97706]">"Fade Master" • Kursi 2</span>
+            </div>
+          </div>
+          <p class="text-xs text-[#A8A29E]">Clipper Specialist (4 tahun). Menguasai mid/low skin fade, burst fade, buzz cut, dan penataan modern crop bertekstur.</p>
+          <div class="text-xs font-mono text-emerald-400">● Bertugas Hari Ini (Slot Terbuka)</div>
+        </div>
+
+        <div class="bg-[#1A1A1A] p-6 rounded-2xl border border-[#2E2E2E] space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-zinc-800 border-2 border-[#2E2E2E] flex items-center justify-center font-display font-bold text-lg text-[#F5F5F0]">
+              KS
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-[#F5F5F0]">Kevin Sanjaya</h3>
+              <span class="text-xs font-mono text-[#D97706]">"Grooming Specialist" • Kursi 3</span>
+            </div>
+          </div>
+          <p class="text-xs text-[#A8A29E]">Shave Master (5 tahun). Spesialis cukur jenggot handuk hangat tradisional, kontur garis razor, dan pijat titik relaksasi.</p>
+          <div class="text-xs font-mono text-emerald-400">● Bertugas Hari Ini (Slot Terbuka)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Location & Rules Section -->
+    <div id="lokasi" class="grid grid-cols-12 gap-8 pt-8 border-t border-[#2E2E2E]">
+      <div class="col-span-6 space-y-4">
+        <span class="text-xs font-mono text-[#D97706] tracking-wider uppercase">LOKASI &amp; KONTAK</span>
+        <h3 class="text-xl font-display font-bold text-[#F5F5F0]">Kunjungi Studio Kami di Senopati</h3>
+        <p class="text-xs text-[#A8A29E] leading-relaxed">
+          Jl. Senopati Raya No. 42, Kebayoran Baru, Jakarta Selatan 12190. Tersedia area parkir mobil dan motor yang aman di depan toko.
+        </p>
+        <div class="space-y-2 font-mono text-xs text-[#F5F5F0]">
+          <div><strong>Jam Buka:</strong> 10:00 – 21:00 WIB (Senin – Minggu)</div>
+          <div><strong>WhatsApp Toko:</strong> +62 812-3456-7890</div>
+        </div>
+      </div>
+
+      <div class="col-span-6 space-y-4">
+        <span class="text-xs font-mono text-[#D97706] tracking-wider uppercase">KEBIJAKAN RESERVASI</span>
+        <h3 class="text-xl font-display font-bold text-[#F5F5F0]">Aturan Keterlambatan &amp; DP</h3>
+        <div class="bg-[#1A1A1A] p-4 rounded-xl border border-[#2E2E2E] space-y-2 text-xs text-[#A8A29E]">
+          <div><strong class="text-[#F5F5F0]">1. Down Payment Flat Rp 20.000:</strong> Mengunci jadwal Anda dan memotong langsung total tagihan di kasir fisik.</div>
+          <div><strong class="text-[#F5F5F0]">2. Reschedule H-3 Jam:</strong> Ubah jadwal bebas biaya hingga maksimal 3 jam sebelum waktu mulai sesi.</div>
+          <div><strong class="text-[#F5F5F0]">3. Toleransi 15 Menit:</strong> Hadir maksimal 15 menit dari jam booking. Lewat 15 menit, slot dialihkan ke walk-in dan DP hangus demi kompensasi waktu barber.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Interactive JavaScript State Controller -->
+  <script>
+    let currentStep = 1;
+    let selectedServices = [
+      { id: 'SRV-01', name: 'Gentlemen Classic Haircut', price: 50000, duration: 45 }
+    ];
+
+    function switchView(mode) {
+      const mobContainer = document.getElementById('container-mobile');
+      const deskContainer = document.getElementById('container-desktop');
+      const btnMob = document.getElementById('btn-view-mobile');
+      const btnDesk = document.getElementById('btn-view-desktop');
+
+      if (mode === 'mobile') {
+        mobContainer.classList.remove('hidden');
+        deskContainer.classList.add('hidden');
+        btnMob.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-[#D97706] text-[#121212] shadow';
+        btnDesk.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-[#A8A29E] hover:text-[#F5F5F0]';
+      } else {
+        mobContainer.classList.add('hidden');
+        deskContainer.classList.remove('hidden');
+        btnDesk.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-[#D97706] text-[#121212] shadow';
+        btnMob.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-[#A8A29E] hover:text-[#F5F5F0]';
+      }
+    }
+
+    function toggleThumbZone() {
+      const overlay = document.getElementById('thumb-overlay');
+      const btn = document.getElementById('btn-toggle-thumb');
+      if (overlay.classList.contains('hidden')) {
+        overlay.classList.remove('hidden');
+        btn.innerText = 'Zona Jempol: ON';
+        btn.className = 'px-3 py-2 rounded-lg text-xs font-mono transition-all bg-emerald-900/60 text-emerald-300 border border-emerald-500';
+      } else {
+        overlay.classList.add('hidden');
+        btn.innerText = 'Zona Jempol: OFF';
+        btn.className = 'px-3 py-2 rounded-lg text-xs font-mono transition-all text-emerald-400 hover:bg-emerald-950/40 border border-emerald-800/40';
+      }
+    }
+
+    function openBookingStep(stepNum, preselectedSrv) {
+      document.getElementById('mobile-landing').classList.add('hidden');
+      document.getElementById('mobile-floating-cta').classList.add('hidden');
+      const wizard = document.getElementById('mobile-wizard');
+      wizard.classList.remove('hidden');
+      wizard.classList.add('flex');
+      
+      if (preselectedSrv === 'SRV-02') {
+        document.getElementById('srv-01').checked = false;
+        document.getElementById('srv-04').checked = false;
+        document.getElementById('srv-05').checked = false;
+        selectedServices = [{ id: 'SRV-02', name: 'Premium Fade & Taper Cut', price: 65000, duration: 50 }];
+      } else if (preselectedSrv === 'SRV-08') {
+        document.getElementById('srv-01').checked = false;
+        document.getElementById('srv-04').checked = false;
+        document.getElementById('srv-05').checked = false;
+        selectedServices = [{ id: 'SRV-08', name: 'Damez Signature Executive', price: 95000, duration: 60 }];
+      }
+
+      setWizardStep(stepNum);
+      calculateServices();
+    }
+
+    function closeBookingWizard() {
+      document.getElementById('mobile-wizard').classList.add('hidden');
+      document.getElementById('mobile-wizard').classList.remove('flex');
+      document.getElementById('mobile-landing').classList.remove('hidden');
+      document.getElementById('mobile-floating-cta').classList.remove('hidden');
+    }
+
+    function setWizardStep(step) {
+      currentStep = step;
+      
+      // Hide all panes
+      for (let s of ['2', '3', '4', '5', '6', '7a', '7b']) {
+        const pane = document.getElementById('step-pane-' + s);
+        if (pane) pane.classList.add('hidden');
+      }
+
+      const pBar = document.getElementById('wizard-progress-bar');
+      const stepLabel = document.getElementById('wizard-step-label');
+      const stepPct = document.getElementById('wizard-step-percent');
+      const btnText = document.getElementById('wizard-btn-text');
+      const primaryBtn = document.getElementById('wizard-primary-btn');
+      const backText = document.getElementById('wizard-back-text');
+
+      if (step === 2) {
+        document.getElementById('step-pane-2').classList.remove('hidden');
+        pBar.style.width = '20%';
+        stepLabel.innerText = 'Langkah 1 dari 5: Pilih Layanan';
+        stepPct.innerText = '20%';
+        btnText.innerText = 'Lanjut Pilih Barber (1/5) →';
+        backText.innerText = 'Landing';
+      } else if (step === 3) {
+        document.getElementById('step-pane-3').classList.remove('hidden');
+        pBar.style.width = '40%';
+        stepLabel.innerText = 'Langkah 2 dari 5: Pilih Barber';
+        stepPct.innerText = '40%';
+        btnText.innerText = 'Lanjut Pilih Waktu (2/5) →';
+        backText.innerText = 'Layanan';
+      } else if (step === 4) {
+        document.getElementById('step-pane-4').classList.remove('hidden');
+        pBar.style.width = '60%';
+        stepLabel.innerText = 'Langkah 3 dari 5: Pilih Waktu';
+        stepPct.innerText = '60%';
+        btnText.innerText = 'Lanjut Isi Data Diri (3/5) →';
+        backText.innerText = 'Barber';
+      } else if (step === 5) {
+        document.getElementById('step-pane-5').classList.remove('hidden');
+        pBar.style.width = '80%';
+        stepLabel.innerText = 'Langkah 4 dari 5: Data Pemesan';
+        stepPct.innerText = '80%';
+        btnText.innerText = 'Review Pembayaran DP (4/5) →';
+        backText.innerText = 'Waktu';
+      } else if (step === 6) {
+        document.getElementById('step-pane-6').classList.remove('hidden');
+        pBar.style.width = '100%';
+        stepLabel.innerText = 'Langkah 5 dari 5: Review & DP';
+        stepPct.innerText = '100%';
+        btnText.innerText = 'Kunci Slot & Bayar DP Rp 20.000';
+        backText.innerText = 'Kontak';
+      } else if (step === 7) {
+        document.getElementById('step-pane-7a').classList.remove('hidden');
+        pBar.style.width = '100%';
+        stepLabel.innerText = 'Pembayaran Midtrans Snap QRIS';
+        stepPct.innerText = 'TTL 15m';
+        primaryBtn.classList.add('hidden');
+        backText.innerText = 'Batal';
+      } else if (step === 8) {
+        document.getElementById('step-pane-7b').classList.remove('hidden');
+        pBar.style.width = '100%';
+        stepLabel.innerText = 'Konfirmasi Tiket Sukses';
+        stepPct.innerText = 'Selesai';
+        primaryBtn.classList.remove('hidden');
+        btnText.innerText = '← Kembali ke Halaman Depan';
+        primaryBtn.onclick = function() { closeBookingWizard(); };
+        backText.innerText = 'Home';
+      }
+    }
+
+    function wizardNextStep() {
+      if (currentStep === 2) setWizardStep(3);
+      else if (currentStep === 3) setWizardStep(4);
+      else if (currentStep === 4) setWizardStep(5);
+      else if (currentStep === 5) setWizardStep(6);
+      else if (currentStep === 6) setWizardStep(7);
+    }
+
+    function wizardPrevStep() {
+      if (currentStep === 2) closeBookingWizard();
+      else if (currentStep === 3) setWizardStep(2);
+      else if (currentStep === 4) setWizardStep(3);
+      else if (currentStep === 5) setWizardStep(4);
+      else if (currentStep === 6) setWizardStep(5);
+      else if (currentStep === 7) setWizardStep(6);
+      else if (currentStep === 8) closeBookingWizard();
+    }
+
+    function calculateServices() {
+      const s1 = document.getElementById('srv-01').checked;
+      const s4 = document.getElementById('srv-04').checked;
+      const s5 = document.getElementById('srv-05').checked;
+
+      let count = 0;
+      let dur = 0;
+      let price = 0;
+
+      if (s1) { count++; dur += 45; price += 50000; }
+      if (s4) { count++; dur += 35; price += 45000; }
+      if (s5) { count++; dur += 40; price += 55000; }
+
+      const warn = document.getElementById('service-limit-warning');
+      if (count > 2) {
+        warn.classList.remove('hidden');
+      } else {
+        warn.classList.add('hidden');
+      }
+
+      document.getElementById('mini-service-count').innerText = `${count} Layanan (${dur} Menit)`;
+      document.getElementById('step4-duration-label').innerText = `${dur} Menit`;
+    }
+
+    function simulatePaymentSuccess() {
+      setWizardStep(8);
+    }
+  </script>
+</body>
+</html>

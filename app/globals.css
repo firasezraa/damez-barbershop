@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #D97706;
+  --color-primary-hover: #F59E0B;
+  --color-primary-foreground: #121212;
+  --color-secondary: #784C25;
+  --color-secondary-hover: #8C582B;
+  --color-secondary-foreground: #FFFFFF;
+  --color-background: #121212;
+  --color-foreground: #F5F5F0;
+  --color-surface: #1A1A1A;
+  --color-surface-elevated: #242424;
+  --color-surface-hover: #2C2C2C;
+  --color-card: #1A1A1A;
+  --color-card-foreground: #F5F5F0;
+  --color-popover: #1E1E1E;
+  --color-popover-foreground: #F5F5F0;
+  --color-text-primary: #F5F5F0;
+  --color-text-muted: #A8A29E;
+  --color-muted: #242424;
+  --color-muted-foreground: #A8A29E;
+  --color-border: #2E2E2E;
+  --color-border-accent: #D97706;
+  --color-accent: #F59E0B;
+  --color-accent-foreground: #121212;
+  --color-ring: #D97706;
+  --color-input: #2E2E2E;
+  --color-destructive: #B91C1C;
+  --color-destructive-foreground: #FFFFFF;
+  --color-success: #047857;
+  --color-success-foreground: #FFFFFF;
+
+  --color-status-confirmed: #064E3B;
+  --color-status-confirmed-text: #34D399;
+  --color-status-pending: #451A03;
+  --color-status-pending-text: #FBBF24;
+  --color-status-noshow: #450A0A;
+  --color-status-noshow-text: #F87171;
+  --color-status-cancelled: #27272A;
+  --color-status-cancelled-text: #A1A1AA;
+
+  --font-sans: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-cinzel), Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+@layer base {
+  * {
+    border-color: #2E2E2E;
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #121212;
+    color: #F5F5F0;
+    font-family: var(--font-plus-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+}

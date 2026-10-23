@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damez Barbershop — Master Interaction UX Prototype</title>
+  
+  <!-- Typography Stacks: Cinzel (Classical Display), Geist (Ultra-legible Sans), JetBrains Mono (Precision Code & Timer) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- GSAP 3 & ScrollTrigger CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <!-- Canvas Confetti CDN for Settlement Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#121212',
+            surface: {
+              DEFAULT: '#1A1A1A',
+              elevated: '#242424',
+              hover: '#2C2C2C',
+            },
+            primary: {
+              DEFAULT: '#D97706',
+              hover: '#F59E0B',
+              foreground: '#121212',
+            },
+            secondary: {
+              DEFAULT: '#784C25',
+              hover: '#8C582B',
+              foreground: '#FFFFFF',
+            },
+            muted: {
+              DEFAULT: '#262626',
+              foreground: '#A8A29E',
+              subtle: '#78716C',
+            },
+            border: {
+              DEFAULT: '#2E2E2E',
+              accent: '#D97706',
+            },
+            status: {
+              confirmed: { bg: '#064E3B', text: '#34D399', border: '#059669' },
+              pending: { bg: '#451A03', text: '#FBBF24', border: '#D97706' },
+              noshow: { bg: '#450A0A', text: '#F87171', border: '#DC2626' },
+              cancelled: { bg: '#27272A', text: '#A1A1AA', border: '#52525B' },
+            }
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            sans: ['Geist', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            amber: '0 0 25px rgba(217, 119, 6, 0.25)',
+            glow: '0 0 35px rgba(217, 119, 6, 0.35)',
+            ticket: '0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(217, 119, 6, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2E2E2E;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D97706;
+    }
+    
+    /* Ticket Notch Masking */
+    .ticket-notch-left {
+      position: absolute;
+      left: -14px;
+      width: 28px;
+      height: 28px;
+      background: #121212;
+      border-radius: 9999px;
+      box-shadow: inset -2px 0 3px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+    .ticket-notch-right {
+      position: absolute;
+      right: -14px;
+      width: 28px;
+      height: 28px;
+      background: #121212;
+      border-radius: 9999px;
+      box-shadow: inset 2px 0 3px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    /* Laser Scanner Beam */
+    @keyframes scanBeam {
+      0% { top: 6%; opacity: 0.7; }
+      50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.9)); }
+      100% { top: 92%; opacity: 0.7; }
+    }
+    .scanner-beam {
+      animation: scanBeam 2.4s ease-in-out infinite alternate;
+    }
+
+    /* Radial Ambient Background Glows */
+    .ambient-glow {
+      background: radial-gradient(circle at 50% 25%, rgba(217, 119, 6, 0.08) 0%, rgba(18, 18, 18, 0) 65%);
+    }
+    .radial-vignette {
+      background: radial-gradient(circle at 50% 50%, rgba(26, 26, 26, 0.4) 0%, rgba(18, 18, 18, 0.95) 100%);
+    }
+
+    /* GSAP Card Stack Layering */
+    .stack-card {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-background text-[#F5F5F0] font-sans antialiased selection:bg-primary selection:text-background min-h-screen">
+
+  <!-- TOP PERSISTENT STATUS & QUICK TEST BENCH -->
+  <header class="sticky top-0 z-50 w-full bg-[#121212]/90 backdrop-blur-md border-b border-border/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Heritage Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-primary shadow-sm">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="3"></circle>
+            <circle cx="6" cy="18" r="3"></circle>
+            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+            <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <div>
+          <span class="font-display font-bold text-lg tracking-wider text-[#F5F5F0]">DAMEZ</span>
+          <span class="text-xs tracking-widest text-primary block -mt-1 font-mono uppercase">Barbershop</span>
+        </div>
+      </div>
+
+      <!-- Quick Interactive Bench Navigation -->
+      <nav class="hidden md:flex items-center space-x-1 bg-surface px-2 py-1.5 rounded-full border border-border/70 text-xs font-medium">
+        <a href="#simulator" class="px-3 py-1.5 rounded-full bg-primary text-background font-bold transition-all shadow-sm">Simulasi Interaktif</a>
+        <a href="#bento-matrix" class="px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-all">Komponen Bento</a>
+        <a href="#gsap-stack" class="px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-all">GSAP Motion</a>
+        <a href="#boarding-pass" class="px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-elevated transition-all">Tiket Digital</a>
+      </nav>
+
+      <!-- Live Store Operational Badge -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-status-confirmed-bg/80 border border-status-confirmed-border/60 text-status-confirmed-text text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-status-confirmed-text animate-pulse"></span>
+          <span class="font-semibold tracking-tight">BUKA (10:00 - 21:00 WIB)</span>
+        </div>
+        <button onclick="scrollToSimulator()" class="hidden sm:inline-flex items-center px-4 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-background font-bold text-xs transition-colors shadow-sm">
+          <span>Coba Interaksi</span>
+          <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- OVERFLOW-X-HIDDEN MAIN WRAPPER (gpt-taste requirement) -->
+  <main class="overflow-x-hidden w-full max-w-full ambient-glow">
+
+    <!-- ATTENTION (HERO SECTION): CINEMATIC CENTER ARCHITECTURE -->
+    <!-- Guaranteed 2-line H1 with ultra-wide container max-w-5xl & clamp sizing -->
+    <section class="relative pt-24 pb-32 md:pt-36 md:pb-48 px-4 sm:px-6 lg:px-8 text-center">
+      
+      <!-- Subtle Floating Decorative Ambient Background -->
+      <div class="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center">
+        <div class="w-[680px] h-[380px] bg-primary/10 rounded-full blur-[120px] transform -translate-y-12"></div>
+      </div>
+
+      <div class="max-w-5xl mx-auto">
+        
+        <!-- Social Proof Micro Banner -->
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-surface border border-border text-xs text-muted-foreground mb-8 shadow-sm">
+          <span class="text-primary font-bold">RATING 4.9 / 5.0</span>
+          <span class="text-border">|</span>
+          <span>Interaksi Transaksi Digital Presisi Tanpa Keraguan</span>
+        </div>
+
+        <!-- 2-Line Iron Rule H1 Heading with Wide Width Guarantee -->
+        <h1 class="font-display font-extrabold text-[#F5F5F0] leading-[1.15] tracking-tight mb-8 max-w-5xl mx-auto" style="font-size: clamp(2.25rem, 4.4vw, 4.25rem);">
+          Arsitektur Interaksi Slot&nbsp;Hold <br class="hidden md:inline" />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-amber-400 to-[#F5F5F0]">&amp; Pelunasan QRIS Instan</span>
+        </h1>
+
+        <!-- Sub-headline wide container -->
+        <p class="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-muted-foreground font-light leading-relaxed mb-12">
+          Eksplorasi visual dan perilaku teknis pemilihan slot dinamis, hitungan mundur 15 menit pencegah no-show, verifikasi pemindaian Midtrans QRIS universal, serta penerbitan boarding pass digital vintage.
+        </p>
+
+        <!-- Exactly Two High-Contrast CTAs (gpt-taste requirement) -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+          <button onclick="scrollToSimulator()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-primary hover:bg-primary-hover text-background font-bold text-base transition-all transform hover:-translate-y-0.5 shadow-amber active:scale-95">
+            Luncurkan Simulasi Interaktif
+          </button>
+          <a href="https://github.com" target="_blank" onclick="window.open('interaction-specs.md', '_blank'); return false;" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-surface hover:bg-surface-elevated text-[#F5F5F0] border border-border font-semibold text-base transition-all hover:border-primary/50">
+            Baca Spesifikasi Teknis (MD)
+          </a>
+        </div>
+
+        <!-- Trust Badges with Crisp Typographic Symbols (Zero Emoji) -->
+        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono text-muted-foreground max-w-3xl mx-auto border-t border-border/60 pt-8">
+          <div class="flex items-center justify-center space-x-1.5">
+            <span class="text-primary font-bold">[v]</span>
+            <span>Atomic PostgreSQL Lock</span>
+          </div>
+          <div class="flex items-center justify-center space-x-1.5">
+            <span class="text-primary font-bold">[v]</span>
+            <span>Zero Drift Web Worker</span>
+          </div>
+          <div class="flex items-center justify-center space-x-1.5">
+            <span class="text-primary font-bold">[v]</span>
+            <span>Webhook Polling &lt; 3s</span>
+          </div>
+          <div class="flex items-center justify-center space-x-1.5">
+            <span class="text-primary font-bold">[v]</span>
+            <span>WCAG 2.1 AA Compliant</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- MASSIVE SECTION SPACING (py-32 md:py-48) -->
+    <!-- INTERACTIVE SIMULATOR WORKBENCH (INTEREST & EXPERIENCE) -->
+    <section id="simulator" class="py-24 md:py-36 px-4 sm:px-6 lg:px-8 border-t border-border/80 bg-surface/30">
+      <div class="max-w-7xl mx-auto">
+
+        <!-- Section Header with wide container -->
+        <div class="max-w-3xl mb-14 text-left">
+          <span class="text-primary text-xs font-mono tracking-widest uppercase font-semibold">Live Interactive Engine</span>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-[#F5F5F0] mt-2 mb-4">
+            Laboratorium Interaksi Alur Pemesanan
+          </h2>
+          <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">
+            Uji coba langsung perilaku empat modul interaksi utama: pemilihan waktu dinamis, pengatur waktu penahanan 15 menit, pemindai QRIS dengan multi-state, dan tiket boarding pass digital.
+          </p>
+        </div>
+
+        <!-- QUICK STATE CONTROLLER TOOLBAR -->
+        <div class="bg-surface border border-border p-3.5 rounded-2xl mb-8 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono text-primary font-semibold uppercase px-2 py-1 bg-primary/10 rounded">State Controller:</span>
+            <span id="active-state-indicator" class="text-xs font-mono text-muted-foreground">Status Aktif: [ Pemilihan Slot Jam ]</span>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs font-medium">
+            <button onclick="setSimulationState('slot-pick')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border transition-all active:scale-95" data-state="slot-pick">
+              1. Pilih Slot Jam
+            </button>
+            <button onclick="setSimulationState('hold-active')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border transition-all active:scale-95" data-state="hold-active">
+              2. Hold & Timer Aktif
+            </button>
+            <button onclick="setSimulationState('qris-scan')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border transition-all active:scale-95" data-state="qris-scan">
+              3. Scan QRIS
+            </button>
+            <button onclick="setSimulationState('processing')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border transition-all active:scale-95" data-state="processing">
+              4. Processing
+            </button>
+            <button onclick="setSimulationState('success-pass')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-status-confirmed-bg text-status-confirmed-text border border-status-confirmed-border transition-all active:scale-95 font-semibold" data-state="success-pass">
+              5. Sukses Tiket
+            </button>
+            <button onclick="setSimulationState('expired')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-status-cancelled-bg text-status-cancelled-text border border-status-cancelled-border transition-all active:scale-95" data-state="expired">
+              6. Waktu Habis (Expired)
+            </button>
+            <button onclick="setSimulationState('error-conflict')" class="ctrl-btn px-3 py-1.5 rounded-lg bg-status-noshow-bg text-status-noshow-text border border-status-noshow-border transition-all active:scale-95" data-state="error-conflict">
+              7. Konflik Slot (409)
+            </button>
+          </div>
+        </div>
+
+        <!-- SIMULATOR TWO-COLUMN WORKBENCH -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- LEFT COLUMN: INTERACTIVE INPUT & TIMELINE CONTROLS (7 Cols) -->
+          <div class="lg:col-span-7 space-y-6">
+
+            <!-- MODULE 1: DYNAMIC SLOT SELECTION MATRIX -->
+            <div id="module-slot-picker" class="bg-surface rounded-2xl border border-border p-6 shadow-md transition-all">
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-border/80">
+                <div>
+                  <h3 class="font-display font-semibold text-lg text-[#F5F5F0]">1. Pemilihan Tanggal & Slot Jam Dinamis</h3>
+                  <p class="text-xs text-muted-foreground mt-0.5">Kombinasi layanan terpilih menentukan rentang blokir kursi secara otomatis.</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-md bg-primary/10 text-primary border border-primary/20 text-xs font-mono font-bold">Step 4/7</span>
+              </div>
+
+              <!-- Selected Services Duration Calc -->
+              <div class="p-3.5 rounded-xl bg-surface-elevated border border-border/80 flex items-center justify-between mb-5">
+                <div class="text-xs">
+                  <div class="font-semibold text-[#F5F5F0]">Gentlemen Classic Haircut + Beard Sculpting</div>
+                  <div class="text-muted-foreground mt-0.5 font-mono">Durasi Layanan: 80 Mnt + 10 Mnt Sanitasi Alat Mandatori</div>
+                </div>
+                <div class="text-right">
+                  <span class="inline-block px-2 py-0.5 rounded bg-primary text-background font-bold text-xs font-mono">Total: 90 Mnt</span>
+                </div>
+              </div>
+
+              <!-- Date Selector Scroller (7 Days) -->
+              <div class="mb-5">
+                <label class="block text-xs font-mono uppercase text-muted-foreground tracking-wider mb-2 font-semibold">Pilih Tanggal Kedatangan (7 Hari Ke Depan):</label>
+                <div class="flex space-x-2.5 overflow-x-auto pb-2 scrollbar-none" id="date-chips-container">
+                  <!-- Generated via JavaScript for realistic calendar dates -->
+                </div>
+              </div>
+
+              <!-- Time Chips Grid -->
+              <div class="space-y-4">
+                
+                <!-- Morning Session -->
+                <div>
+                  <div class="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                    <span class="font-semibold uppercase tracking-wider font-mono">Sesi Pagi & Siang (10:00 - 14:00 WIB)</span>
+                    <span class="text-[11px]">3 Slot Tersedia</span>
+                  </div>
+                  <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5" id="morning-slots">
+                    <!-- Morning slot chips -->
+                  </div>
+                </div>
+
+                <!-- Evening Session -->
+                <div>
+                  <div class="flex items-center justify-between text-xs text-muted-foreground mb-2 pt-2 border-t border-border/60">
+                    <span class="font-semibold uppercase tracking-wider font-mono">Sesi Sore & Malam (14:00 - 21:00 WIB)</span>
+                    <span class="text-[11px] text-primary font-mono">Peak Hours</span>
+                  </div>
+                  <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5" id="evening-slots">
+                    <!-- Evening slot chips -->
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Slot Selected Summary Box -->
+              <div class="mt-6 p-4 rounded-xl bg-surface-elevated border border-primary/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div class="text-xs text-muted-foreground font-mono">JADWAL TERPILIH:</div>
+                  <div class="text-sm font-bold text-[#F5F5F0] mt-0.5" id="selected-slot-text">Sabtu, 24 Okt 2026 • 14:30 - 16:00 WIB</div>
+                  <div class="text-xs text-muted-foreground">Master Barber: Rian Pratama (Kursi 1)</div>
+                </div>
+                <button id="btn-trigger-hold" onclick="triggerSlotHold()" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-primary hover:bg-primary-hover text-background font-bold text-xs uppercase tracking-wider transition-all transform active:scale-95 shadow-md flex items-center justify-center space-x-2">
+                  <span id="btn-hold-label">Kunci Slot & Bayar DP Rp 20.000</span>
+                  <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+
+
+            <!-- MODULE 2: ATOMIC 15-MINUTE HOLD ENGINE & TIMELINE SPECS -->
+            <div id="module-timer-specs" class="bg-surface rounded-2xl border border-border p-6 shadow-md">
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-border/80">
+                <h3 class="font-display font-semibold text-lg text-[#F5F5F0]">2. Mekanisme Pengatur Waktu Presisi & Urgensi</h3>
+                <span class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-mono font-bold">Atomic Hold</span>
+              </div>
+
+              <!-- Urgency Phases Visual Tracker -->
+              <div class="grid grid-cols-3 gap-3 text-xs font-mono mb-5">
+                <div id="phase-safe-card" class="p-3 rounded-xl border border-primary/50 bg-primary/10 transition-all">
+                  <div class="text-primary font-bold">15:00 - 05:00</div>
+                  <div class="text-muted-foreground text-[11px] mt-1">Fase Normal (Amber)</div>
+                  <div class="text-[10px] text-muted-foreground/80 mt-0.5">Denyut tenang</div>
+                </div>
+                <div id="phase-warn-card" class="p-3 rounded-xl border border-border bg-surface-elevated transition-all">
+                  <div class="text-amber-400 font-bold">05:00 - 02:00</div>
+                  <div class="text-muted-foreground text-[11px] mt-1">Fase Waspada</div>
+                  <div class="text-[10px] text-muted-foreground/80 mt-0.5">Denyut 1.5s</div>
+                </div>
+                <div id="phase-crit-card" class="p-3 rounded-xl border border-border bg-surface-elevated transition-all">
+                  <div class="text-red-400 font-bold">02:00 - 00:00</div>
+                  <div class="text-muted-foreground text-[11px] mt-1">Fase Kritis</div>
+                  <div class="text-[10px] text-muted-foreground/80 mt-0.5">Denyut 0.8s + Ping</div>
+                </div>
+              </div>
+
+              <!-- Speed-up Simulator Controls -->
+              <div class="p-3 rounded-xl bg-surface-elevated border border-border flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="font-mono text-muted-foreground">Uji Kecepatan Timer Simulasi:</span>
+                <div class="flex items-center space-x-1.5 font-mono">
+                  <button onclick="setTimerSpeed(1)" id="spd-1" class="px-2.5 py-1 rounded bg-primary text-background font-bold text-xs">1x (Real)</button>
+                  <button onclick="setTimerSpeed(10)" id="spd-10" class="px-2.5 py-1 rounded bg-surface hover:bg-border text-[#F5F5F0] border border-border text-xs">10x</button>
+                  <button onclick="setTimerSpeed(60)" id="spd-60" class="px-2.5 py-1 rounded bg-surface hover:bg-border text-[#F5F5F0] border border-border text-xs">60x Cepat</button>
+                  <button onclick="resetTimer()" class="px-2.5 py-1 rounded bg-secondary hover:bg-secondary-hover text-white text-xs">Reset 15:00</button>
+                </div>
+              </div>
+
+              <!-- Zero-Drift Page Visibility Explanation -->
+              <p class="text-xs text-muted-foreground leading-relaxed mt-4">
+                <strong class="text-[#F5F5F0]">Catatan Desain Teknis:</strong> Ketika pengguna berpindah aplikasi untuk membuka m-banking (BCA Mobile/GoPay), sistem memanfaatkan <code>visibilitychange</code> API dan selisih timestamp absolut server untuk mencegah pengatur waktu terhenti (*zero-drift guarantee*).
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- RIGHT COLUMN: DYNAMIC PREVIEW CANVAS (5 Cols) -->
+          <!-- Shows the active interactive state (QRIS / Hold Timer / Boarding Pass / Expired Modal) -->
+          <div class="lg:col-span-5 sticky top-24">
+
+            <!-- MOBILE CONTAINER DEVICE FRAME -->
+            <div class="w-full max-w-md mx-auto bg-[#161616] rounded-[32px] p-4 border-2 border-border shadow-2xl relative overflow-hidden">
+              
+              <!-- Phone Speaker & Camera Notch -->
+              <div class="w-32 h-4 bg-background rounded-full mx-auto mb-4 flex items-center justify-center space-x-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-border"></div>
+                <div class="w-12 h-1.5 rounded-full bg-border"></div>
+              </div>
+
+              <!-- STAGE CONTAINER (Swapped dynamically based on state) -->
+              <div id="phone-screen-content" class="min-h-[580px] flex flex-col justify-between">
+                
+                <!-- STATE 1 & 2 & 3 & 4: PAYMENT SCREEN VIEW -->
+                <div id="view-payment" class="space-y-4">
+                  
+                  <!-- Top Bar on Mobile View -->
+                  <div class="flex items-center justify-between pb-3 border-b border-border/80">
+                    <span class="text-xs font-display font-bold text-primary tracking-wider">DAMEZ BARBERSHOP</span>
+                    <div class="flex items-center space-x-1.5 text-[11px] font-mono text-muted-foreground">
+                      <span>Order:</span>
+                      <span class="text-[#F5F5F0] font-semibold">DMZ-042</span>
+                    </div>
+                  </div>
+
+                  <!-- 15-MINUTE CIRCULAR COUNTDOWN CARD -->
+                  <div id="timer-box" class="p-4 rounded-2xl bg-surface border border-primary/50 text-center relative overflow-hidden transition-colors duration-500">
+                    <div class="flex items-center justify-center space-x-3">
+                      <!-- Circular Progress SVG -->
+                      <div class="relative w-16 h-16 flex items-center justify-center">
+                        <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                          <path class="text-surface-elevated" stroke-width="3" stroke="currentColor" fill="none"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                          <path id="timer-progress-ring" class="text-primary transition-all duration-300" stroke-width="3" stroke-dasharray="100, 100" stroke="currentColor" fill="none" stroke-linecap="round"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <span id="timer-display-mini" class="absolute font-mono text-xs font-bold text-[#F5F5F0]">14:58</span>
+                      </div>
+
+                      <div class="text-left">
+                        <span class="text-[11px] uppercase tracking-wider text-muted-foreground font-mono block">Selesaikan Pembayaran Dalam:</span>
+                        <div id="timer-display-large" class="font-mono text-2xl font-extrabold text-primary tracking-tight">14 : 58</div>
+                        <span id="timer-urgency-badge" class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-primary/20 text-primary font-semibold">Slot Terkunci Aman</span>
+                      </div>
+                    </div>
+
+                    <!-- Linear Progress Indicator -->
+                    <div class="w-full bg-surface-elevated h-1 rounded-full mt-3 overflow-hidden">
+                      <div id="timer-progress-bar" class="bg-primary h-full rounded-full transition-all duration-300" style="width: 100%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- QRIS DISPLAY CANVAS & SCANNER ANIMATION -->
+                  <div class="p-4 rounded-2xl bg-surface border border-border text-center relative overflow-hidden">
+                    
+                    <div class="flex items-center justify-between mb-2 text-xs">
+                      <span class="font-bold text-[#F5F5F0]">QRIS Universal ASPI</span>
+                      <span class="font-mono font-bold text-primary">Rp 20.000</span>
+                    </div>
+                    <div class="text-[11px] text-muted-foreground mb-3">Down Payment Flat — Memotong total nota akhir</div>
+
+                    <!-- QR Box Frame with Laser Beam and Overlay States -->
+                    <div class="relative w-52 h-52 mx-auto bg-white p-2.5 rounded-xl border border-border shadow-inner flex items-center justify-center overflow-hidden" id="qris-card-frame">
+                      
+                      <!-- Realistic SVG QRIS Code Vector -->
+                      <svg id="qris-svg" class="w-full h-full text-black transition-all duration-300" viewBox="0 0 100 100" fill="currentColor">
+                        <!-- Top-Left Target Box -->
+                        <rect x="5" y="5" width="26" height="26" fill="black" rx="3"></rect>
+                        <rect x="9" y="9" width="18" height="18" fill="white" rx="1"></rect>
+                        <rect x="13" y="13" width="10" height="10" fill="black" rx="1"></rect>
+                        <!-- Top-Right Target Box -->
+                        <rect x="69" y="5" width="26" height="26" fill="black" rx="3"></rect>
+                        <rect x="73" y="9" width="18" height="18" fill="white" rx="1"></rect>
+                        <rect x="77" y="13" width="10" height="10" fill="black" rx="1"></rect>
+                        <!-- Bottom-Left Target Box -->
+                        <rect x="5" y="69" width="26" height="26" fill="black" rx="3"></rect>
+                        <rect x="9" y="73" width="18" height="18" fill="white" rx="1"></rect>
+                        <rect x="13" y="77" width="10" height="10" fill="black" rx="1"></rect>
+                        <!-- Data Pattern Pixels -->
+                        <rect x="37" y="7" width="6" height="6"></rect>
+                        <rect x="47" y="7" width="14" height="6"></rect>
+                        <rect x="37" y="17" width="10" height="6"></rect>
+                        <rect x="53" y="17" width="6" height="10"></rect>
+                        <rect x="7" y="37" width="12" height="6"></rect>
+                        <rect x="23" y="37" width="6" height="14"></rect>
+                        <rect x="35" y="35" width="30" height="30" fill="#D97706" rx="4"></rect>
+                        <text x="50" y="54" font-family="Cinzel" font-size="14" font-weight="bold" fill="#121212" text-anchor="middle">D</text>
+                        <rect x="71" y="37" width="22" height="6"></rect>
+                        <rect x="77" y="47" width="16" height="8"></rect>
+                        <rect x="37" y="71" width="16" height="6"></rect>
+                        <rect x="57" y="71" width="8" height="16"></rect>
+                        <rect x="71" y="71" width="6" height="22"></rect>
+                        <rect x="81" y="79" width="12" height="6"></rect>
+                      </svg>
+
+                      <!-- Laser Beam Effect (Active in Awaiting State) -->
+                      <div id="qris-scanner-beam" class="scanner-beam absolute left-1 right-1 h-1.5 bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_14px_#D97706] pointer-events-none z-10"></div>
+
+                      <!-- PROCESSING OVERLAY (Hidden by default) -->
+                      <div id="qris-processing-overlay" class="hidden absolute inset-0 bg-background/85 backdrop-blur-sm flex flex-col items-center justify-center text-center p-3">
+                        <div class="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+                        <span class="text-xs font-bold text-[#F5F5F0]">QRIS Terdeteksi</span>
+                        <span class="text-[10px] text-muted-foreground mt-0.5">Memverifikasi settlement webhook bank...</span>
+                      </div>
+
+                      <!-- EXPIRED WATERMARK STAMP (Hidden by default) -->
+                      <div id="qris-expired-overlay" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-3">
+                        <div class="border-2 border-red-500 text-red-500 font-mono font-extrabold text-sm px-3 py-1.5 rounded transform -rotate-12 uppercase tracking-widest mb-1 shadow-lg">
+                          KEDALUWARSA
+                        </div>
+                        <span class="text-[10px] text-muted-foreground text-center">Batas waktu 15m telah habis</span>
+                      </div>
+
+                      <!-- ERROR OVERLAY (Hidden by default) -->
+                      <div id="qris-error-overlay" class="hidden absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-3 text-center">
+                        <div class="w-8 h-8 rounded-full bg-red-950/80 border border-red-500 text-red-400 flex items-center justify-center font-bold text-sm mb-1.5">!</div>
+                        <span class="text-xs font-bold text-red-400">Pembayaran Gagal</span>
+                        <span class="text-[10px] text-muted-foreground">Saldo tidak mencukupi atau dibatalkan</span>
+                      </div>
+
+                    </div>
+
+                    <!-- Status Poller Line -->
+                    <div class="mt-3 flex items-center justify-center space-x-2 text-xs font-mono" id="qris-poller-status">
+                      <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                      <span class="text-muted-foreground text-[11px]">Menunggu pembayaran... (Polling 3s)</span>
+                    </div>
+
+                    <!-- Action Micro Buttons -->
+                    <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                      <button onclick="simulateCopyAmount()" class="px-2.5 py-2 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border font-medium flex items-center justify-center space-x-1.5 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span id="copy-btn-label">Salin Rp 20.000</span>
+                      </button>
+                      <button onclick="simulateScanDetected()" class="px-2.5 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary border border-primary/40 font-semibold flex items-center justify-center space-x-1 transition-colors">
+                        <span>Simulasi Bayar</span>
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </button>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- STATE 5: DIGITAL BOARDING PASS TICKET (SUCCESS VIEW) -->
+                <!-- Perforated physical ticket styling with tear notches and barcode -->
+                <div id="view-ticket" class="hidden space-y-4">
+                  
+                  <div class="p-3 bg-status-confirmed-bg/90 border border-status-confirmed-border/80 rounded-xl text-center">
+                    <span class="text-xs font-bold text-status-confirmed-text block font-mono uppercase tracking-wide">
+                      [v] Pembayaran DP Terverifikasi!
+                    </span>
+                    <span class="text-[11px] text-muted-foreground">Kursi Anda telah terkunci secara resmi di sistem.</span>
+                  </div>
+
+                  <!-- AUTHENTIC PERFORATED TICKET CARD -->
+                  <div class="bg-[#1F1F1F] rounded-2xl border border-primary/40 shadow-ticket relative overflow-hidden text-left" id="boarding-pass-card">
+                    
+                    <!-- Left and Right Cutout Notches for Perforated Ticket Metaphor -->
+                    <div class="ticket-notch-left top-[204px]"></div>
+                    <div class="ticket-notch-right top-[204px]"></div>
+
+                    <!-- Pass Top Section -->
+                    <div class="p-5 pb-4">
+                      
+                      <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                          <span class="font-display font-bold text-base text-[#F5F5F0]">DAMEZ</span>
+                          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-primary text-background font-extrabold uppercase">VIP PASS</span>
+                        </div>
+                        <div class="text-right">
+                          <span class="text-[10px] text-muted-foreground font-mono block">KODE RESERVASI:</span>
+                          <span class="font-mono font-bold text-xs text-primary" id="pass-order-code">DMZ-20261024-042</span>
+                        </div>
+                      </div>
+
+                      <div class="space-y-2.5 text-xs">
+                        <div class="flex justify-between border-b border-border/60 pb-1.5">
+                          <span class="text-muted-foreground font-mono text-[11px]">PELANGGAN</span>
+                          <span class="font-semibold text-[#F5F5F0]">Budi Santoso (+62 812-3456-7890)</span>
+                        </div>
+                        <div class="flex justify-between border-b border-border/60 pb-1.5">
+                          <span class="text-muted-foreground font-mono text-[11px]">JADWAL</span>
+                          <span class="font-bold text-primary font-mono">Sabtu, 24 Okt 2026 • 14:30 WIB</span>
+                        </div>
+                        <div class="flex justify-between border-b border-border/60 pb-1.5">
+                          <span class="text-muted-foreground font-mono text-[11px]">MASTER BARBER</span>
+                          <span class="font-semibold text-[#F5F5F0]">Rian Pratama (Kursi 1)</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-muted-foreground font-mono text-[11px]">PAKET LAYANAN</span>
+                          <span class="font-semibold text-[#F5F5F0]">Classic Cut + Beard Sculpting</span>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <!-- Dashed Perforation Line -->
+                    <div class="relative py-1">
+                      <div class="border-t-2 border-dashed border-[#3A3A3A] w-full"></div>
+                    </div>
+
+                    <!-- Pass Bottom Section (Financials & Barcode) -->
+                    <div class="p-5 pt-3 bg-surface/50">
+                      
+                      <div class="grid grid-cols-2 gap-2 text-xs mb-3 font-mono">
+                        <div class="p-2 rounded bg-surface border border-border">
+                          <span class="text-[10px] text-muted-foreground block">STATUS DP:</span>
+                          <span class="font-bold text-status-confirmed-text text-[11px]">LUNAS Rp 20.000</span>
+                        </div>
+                        <div class="p-2 rounded bg-surface border border-border">
+                          <span class="text-[10px] text-muted-foreground block">SISA NOTA KASIR:</span>
+                          <span class="font-bold text-[#F5F5F0] text-[11px]">Rp 75.000</span>
+                        </div>
+                      </div>
+
+                      <!-- Realistic Barcode Vector -->
+                      <div class="text-center pt-1">
+                        <div class="h-10 w-full flex items-center justify-center space-x-1 overflow-hidden opacity-85">
+                          <span class="w-1 h-full bg-stone-300"></span>
+                          <span class="w-2 h-full bg-stone-300"></span>
+                          <span class="w-0.5 h-full bg-stone-300"></span>
+                          <span class="w-3 h-full bg-stone-300"></span>
+                          <span class="w-1 h-full bg-stone-300"></span>
+                          <span class="w-0.5 h-full bg-stone-300"></span>
+                          <span class="w-2 h-full bg-stone-300"></span>
+                          <span class="w-4 h-full bg-stone-300"></span>
+                          <span class="w-1 h-full bg-stone-300"></span>
+                          <span class="w-2 h-full bg-stone-300"></span>
+                          <span class="w-0.5 h-full bg-stone-300"></span>
+                          <span class="w-3 h-full bg-stone-300"></span>
+                          <span class="w-1 h-full bg-stone-300"></span>
+                          <span class="w-2 h-full bg-stone-300"></span>
+                          <span class="w-4 h-full bg-stone-300"></span>
+                          <span class="w-1 h-full bg-stone-300"></span>
+                        </div>
+                        <span class="font-mono text-[9px] text-muted-foreground tracking-widest mt-1 block uppercase">VALIDASI CHECK-IN KASIR TOKO</span>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Boarding Pass Action Group -->
+                  <div class="space-y-2 pt-1 text-xs">
+                    <button onclick="downloadICSCalendar()" class="w-full py-2.5 rounded-xl bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border font-medium flex items-center justify-center space-x-2 transition-colors">
+                      <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                      <span>Simpan ke Google / Apple Calendar (.ics)</span>
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button onclick="alert('Membuka tautan koordinat navigasi Google Maps toko Damez Barbershop.')" class="py-2.5 rounded-xl bg-surface hover:bg-surface-elevated text-[#F5F5F0] border border-border font-medium flex items-center justify-center space-x-1.5 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                          <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Petunjuk Arah</span>
+                      </button>
+                      <button onclick="alert('Tiket konfirmasi telah dikirimkan ulang ke nomor WhatsApp +62 812-3456-7890')" class="py-2.5 rounded-xl bg-surface hover:bg-surface-elevated text-[#F5F5F0] border border-border font-medium flex items-center justify-center space-x-1.5 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-status-confirmed-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                        </svg>
+                        <span>Kirim Ulang WA</span>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- STATE 6: EXPIRED TIMEOUT VIEW (ZERO-GUILT RESOLUTION) -->
+                <div id="view-expired" class="hidden space-y-4 text-center my-auto py-6">
+                  <div class="w-16 h-16 rounded-full bg-status-cancelled-bg border border-border mx-auto flex items-center justify-center text-muted-foreground">
+                    <svg class="w-8 h-8 text-primary/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-display font-bold text-lg text-[#F5F5F0]">Waktu Penahanan Kursi Telah Berakhir</h4>
+                    <p class="text-xs text-muted-foreground max-w-xs mx-auto mt-2 leading-relaxed">
+                      Demi menjaga keadilan antrean pelanggan lain, kursi telah dilepas kembali ke jadwal publik. Saldo Anda belum terdebit.
+                    </p>
+                  </div>
+                  <div class="p-3 rounded-xl bg-surface border border-border text-xs text-left max-w-xs mx-auto">
+                    <span class="text-primary font-mono text-[10px] uppercase font-bold block mb-1">Pilihan Layanan Tetap Tersimpan:</span>
+                    <div class="text-[#F5F5F0] font-semibold">Gentlemen Classic Haircut (45m)</div>
+                    <div class="text-muted-foreground text-[11px]">Barber: Rian Pratama</div>
+                  </div>
+                  <div class="space-y-2 pt-2 max-w-xs mx-auto">
+                    <button onclick="setSimulationState('slot-pick')" class="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-background font-bold text-xs uppercase tracking-wider transition-all">
+                      Pilih Slot Jam Baru
+                    </button>
+                    <button onclick="alert('Menghubungi Admin Damez via WhatsApp untuk reservasi manual.')" class="w-full py-2.5 rounded-xl bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground text-xs font-medium border border-border">
+                      Hubungi Bantuan Admin WA
+                    </button>
+                  </div>
+                </div>
+
+                <!-- STATE 7: CONFLICT ERROR VIEW (409 RACE CONDITION) -->
+                <div id="view-conflict" class="hidden space-y-4 text-center my-auto py-6">
+                  <div class="w-16 h-16 rounded-full bg-red-950/60 border border-red-500/50 mx-auto flex items-center justify-center text-red-400">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-display font-bold text-lg text-[#F5F5F0]">Slot Baru Saja Terisi</h4>
+                    <p class="text-xs text-muted-foreground max-w-xs mx-auto mt-2 leading-relaxed">
+                      Pelanggan lain baru saja mengonfirmasi slot pukul 14:30 beberapa detik lebih cepat. Kursi telah terisi.
+                    </p>
+                  </div>
+                  <div class="p-3 rounded-xl bg-surface border border-primary/40 text-xs text-left max-w-xs mx-auto">
+                    <span class="text-primary font-mono text-[10px] uppercase font-bold block mb-1">Rekomendasi Slot Terdekat:</span>
+                    <div class="flex gap-2 mt-2">
+                      <button onclick="selectQuickAltSlot('15:15')" class="flex-1 py-1.5 rounded bg-surface-elevated hover:bg-border border border-border text-xs font-mono font-bold text-[#F5F5F0]">
+                        15:15 WIB
+                      </button>
+                      <button onclick="selectQuickAltSlot('16:00')" class="flex-1 py-1.5 rounded bg-surface-elevated hover:bg-border border border-border text-xs font-mono font-bold text-[#F5F5F0]">
+                        16:00 WIB
+                      </button>
+                    </div>
+                  </div>
+                  <button onclick="setSimulationState('slot-pick')" class="w-full max-w-xs mx-auto py-2.5 rounded-xl bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground text-xs font-medium border border-border block">
+                    Kembali ke Pilihan Jadwal
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- MASSIVE SECTION SPACING (py-32 md:py-48) -->
+    <!-- GAPLESS BENTO GRID SECTION (gpt-taste requirement with grid-flow-dense) -->
+    <!-- Proving mathematical zero-empty void in 12-col dense layout -->
+    <section id="bento-matrix" class="py-24 md:py-44 px-4 sm:px-6 lg:px-8 border-t border-border/80 bg-background">
+      <div class="max-w-7xl mx-auto">
+        
+        <div class="max-w-3xl mb-14 text-left">
+          <span class="text-primary text-xs font-mono tracking-widest uppercase font-semibold">Architectural Matrix</span>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-[#F5F5F0] mt-2 mb-4">
+            Komponen Interaksi & Integritas Sistem
+          </h2>
+          <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">
+            Penyelarasan arsitektur mikro-interaksi Damez Barbershop: akordeon ketersediaan barber, tipografi naratif dengan elemen visual sebaris, serta ulasan pelanggan terverifikasi.
+          </p>
+        </div>
+
+        <!-- GAPLESS BENTO GRID (grid-flow-dense applied, interlocking col-spans) -->
+        <!-- Total 12 columns: Card 1 (7 cols) + Card 2 (5 cols) = 12 cols; Card 3 (6 cols) + Card 4 (6 cols) = 12 cols. Zero voids! -->
+        <div class="grid grid-cols-1 md:grid-cols-12 grid-flow-dense gap-6">
+
+          <!-- CARD 1: HORIZONTAL ACCORDIONS (Barber Availability & Shift Timelines) [7 COLS] -->
+          <div class="md:col-span-7 bg-surface rounded-3xl p-7 border border-border/90 flex flex-col justify-between hover:border-primary/40 transition-all duration-500 shadow-md">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-mono text-primary uppercase font-bold tracking-wider">Shift & Kapasitas Barber</span>
+                <span class="text-xs font-mono text-muted-foreground">3 Master Kursi Aktif</span>
+              </div>
+              <h3 class="font-display font-bold text-2xl text-[#F5F5F0] mb-3">
+                Distribusi Beban Kerja Antar-Kursi
+              </h3>
+              <p class="text-sm text-muted-foreground mb-6 leading-relaxed">
+                Setiap barber memiliki alur kerja spesifik untuk menjaga standar sanitasi alat 10 menit tanpa menunda antrean berikutnya.
+              </p>
+
+              <!-- Interactive Horizontal Accordion Items -->
+              <div class="space-y-3" id="accordion-group">
+                
+                <!-- Barber 1 Item -->
+                <div class="border border-border rounded-2xl p-4 bg-surface-elevated/80 transition-all cursor-pointer hover:border-primary/50" onclick="toggleAccordion('barber-1')">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs font-mono">01</div>
+                      <div>
+                        <div class="font-bold text-sm text-[#F5F5F0]">Rian Pratama ("The Sculptor")</div>
+                        <div class="text-xs text-muted-foreground font-mono">Senior Master Barber (6 Thn) • Kursi 1</div>
+                      </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-status-confirmed-bg text-status-confirmed-text font-bold">Slot Terbuka</span>
+                  </div>
+                  <div id="acc-content-barber-1" class="mt-3 pt-3 border-t border-border/60 text-xs text-muted-foreground space-y-1">
+                    <div>• Spesialisasi: Classic Pompadour, Executive Scissor Work, Razor Contour.</div>
+                    <div>• Rata-rata Durasi Pangkas: 45 Menit + Sanitasi 10 Menit.</div>
+                  </div>
+                </div>
+
+                <!-- Barber 2 Item -->
+                <div class="border border-border rounded-2xl p-4 bg-surface-elevated/80 transition-all cursor-pointer hover:border-primary/50" onclick="toggleAccordion('barber-2')">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs font-mono">02</div>
+                      <div>
+                        <div class="font-bold text-sm text-[#F5F5F0]">Dimas Arisandi ("Fade Master")</div>
+                        <div class="text-xs text-muted-foreground font-mono">Clipper Specialist (4 Thn) • Kursi 2</div>
+                      </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-status-confirmed-bg text-status-confirmed-text font-bold">Slot Terbuka</span>
+                  </div>
+                  <div id="acc-content-barber-2" class="hidden mt-3 pt-3 border-t border-border/60 text-xs text-muted-foreground space-y-1">
+                    <div>• Spesialisasi: High Taper, Low Skin Fade, French Crop Modern.</div>
+                    <div>• Rata-rata Durasi Pangkas: 40 Menit + Sanitasi 10 Menit.</div>
+                  </div>
+                </div>
+
+                <!-- Barber 3 Item -->
+                <div class="border border-border rounded-2xl p-4 bg-surface-elevated/80 transition-all cursor-pointer hover:border-primary/50" onclick="toggleAccordion('barber-3')">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs font-mono">03</div>
+                      <div>
+                        <div class="font-bold text-sm text-[#F5F5F0]">Kevin Sanjaya ("Grooming Specialist")</div>
+                        <div class="text-xs text-muted-foreground font-mono">Shave & Facial Master (5 Thn) • Kursi 3</div>
+                      </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-status-confirmed-bg text-status-confirmed-text font-bold">Slot Terbuka</span>
+                  </div>
+                  <div id="acc-content-barber-3" class="hidden mt-3 pt-3 border-t border-border/60 text-xs text-muted-foreground space-y-1">
+                    <div>• Spesialisasi: Traditional Hot Towel Shave, Relaxing Beard Spa, Head Massage.</div>
+                    <div>• Rata-rata Durasi Layanan: 50 Menit + Sanitasi 10 Menit.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-xs font-mono text-muted-foreground">
+              <span>Algoritma Penyeimbang Beban</span>
+              <span class="text-primary font-bold">Capacity Load: 68% Balanced</span>
+            </div>
+          </div>
+
+
+          <!-- CARD 2: INLINE TYPOGRAPHY IMAGES COMPONENT [5 COLS] -->
+          <div class="md:col-span-5 bg-surface rounded-3xl p-7 border border-border/90 flex flex-col justify-between hover:border-primary/40 transition-all duration-500 shadow-md">
+            <div>
+              <span class="text-xs font-mono text-primary uppercase font-bold tracking-wider mb-3 block">Filosofi Ketepatan Waktu</span>
+              <h3 class="font-display font-bold text-2xl text-[#F5F5F0] mb-4">
+                Etika Waktu Gentlemen
+              </h3>
+              
+              <!-- Inline Typography Images (gpt-taste requirement) -->
+              <p class="text-sm text-muted-foreground leading-relaxed mb-6">
+                Kami menghormati setiap detik waktu Anda. Menjaga
+                <span class="inline-block px-2.5 py-0.5 rounded-full align-middle mx-1 border border-primary/50 bg-[#282018] text-[11px] text-primary text-center font-mono font-bold shadow-inner">
+                  PRESISI
+                </span>
+                kursi tanpa antre berjam-jam, menyajikan kehangatan
+                <span class="inline-block px-2.5 py-0.5 rounded-full align-middle mx-1 border border-border bg-[#222222] text-[11px] text-stone-300 text-center font-mono font-semibold">
+                  HOT TOWEL
+                </span>
+                serta teknik gunting
+                <span class="inline-block px-2.5 py-0.5 rounded-full align-middle mx-1 border border-secondary/50 bg-[#20150F] text-[11px] text-amber-200 text-center font-mono font-semibold">
+                  CLASSIC CUT
+                </span>
+                yang memancarkan wibawa pria sejati.
+              </p>
+
+              <!-- Two High-Density Feature Blocks -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div class="p-3.5 rounded-2xl bg-surface-elevated border border-border/80">
+                  <div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-mono font-bold text-xs mb-2">
+                    15m
+                  </div>
+                  <div class="text-xs font-bold text-[#F5F5F0]">Toleransi Waktu</div>
+                  <div class="text-[11px] text-muted-foreground mt-0.5">Toleransi 15 menit sebelum slot dialihkan.</div>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-surface-elevated border border-border/80">
+                  <div class="w-8 h-8 rounded-lg bg-status-confirmed-bg border border-status-confirmed-border flex items-center justify-center text-status-confirmed-text font-mono font-bold text-xs mb-2">
+                    10m
+                  </div>
+                  <div class="text-xs font-bold text-[#F5F5F0]">Buffer Sanitasi</div>
+                  <div class="text-[11px] text-muted-foreground mt-0.5">Sterilisasi clipper & gunting tiap sesi.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+              <span>Kecepatan Alur Funnel</span>
+              <span class="text-primary font-bold">&lt; 85 Detik Zero Friction</span>
+            </div>
+          </div>
+
+
+          <!-- CARD 3: FEEDBACK & TESTIMONIAL CAROUSEL [6 COLS] -->
+          <div class="md:col-span-6 bg-surface rounded-3xl p-7 border border-border/90 flex flex-col justify-between hover:border-primary/40 transition-all duration-500 shadow-md">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-mono text-primary uppercase font-bold tracking-wider">Kepuasan Pelanggan</span>
+                <div class="flex space-x-1" id="carousel-nav-arrows">
+                  <button onclick="prevTestimonial()" class="w-7 h-7 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border flex items-center justify-center transition-colors">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </button>
+                  <button onclick="nextTestimonial()" class="w-7 h-7 rounded-lg bg-surface-elevated hover:bg-border text-[#F5F5F0] border border-border flex items-center justify-center transition-colors">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Testimonial Item Container -->
+              <div id="testimonial-card" class="transition-opacity duration-300">
+                <div class="text-primary text-xs font-mono mb-2">RATING 5.0 (Google Verified)</div>
+                <blockquote id="testi-quote" class="text-sm sm:text-base text-[#F5F5F0] font-light italic leading-relaxed mb-6">
+                  "Sistem bookingnya luar biasa cepat. Begitu bayar DP 20 ribu via QRIS, tiket langsung masuk WA dan pas datang kursi Mas Rian sudah siap steril tanpa perlu nunggu semenit pun."
+                </blockquote>
+                
+                <div class="flex items-center space-x-3">
+                  <div id="testi-avatar" class="w-10 h-10 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-mono font-bold text-xs">
+                    AN
+                  </div>
+                  <div>
+                    <div id="testi-author" class="text-xs font-bold text-[#F5F5F0]">Aditya Nugraha</div>
+                    <div id="testi-role" class="text-[11px] text-muted-foreground">Pelanggan Rutin Classic Cut • Verified Booking</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+              <span>Ulasan Terintegrasi Google Maps</span>
+              <span class="text-primary font-semibold">320+ Ulasan Positif</span>
+            </div>
+          </div>
+
+
+          <!-- CARD 4: ATOMIC LOCKING & CONCURRENCY SYSTEM [6 COLS] -->
+          <div class="md:col-span-6 bg-surface rounded-3xl p-7 border border-border/90 flex flex-col justify-between hover:border-primary/40 transition-all duration-500 shadow-md">
+            <div>
+              <span class="text-xs font-mono text-primary uppercase font-bold tracking-wider mb-4 block">Arsitektur Basis Data</span>
+              <h3 class="font-display font-bold text-2xl text-[#F5F5F0] mb-3">
+                PostgreSQL tsrange & SELECT FOR UPDATE
+              </h3>
+              <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
+                Mencegah terjadinya reservasi ganda (*double booking*) dengan isolasi transaksi tingkat basis data. Slot yang terkunci tidak dapat diambil oleh koneksi paralel lain.
+              </p>
+
+              <!-- SQL Micro Code Terminal Preview -->
+              <div class="bg-background rounded-xl p-3.5 border border-border font-mono text-xs text-stone-300 overflow-x-auto">
+                <div class="text-primary font-semibold">// Transaksi Penguncian Slot Atomik 15 Menit</div>
+                <div class="mt-1 text-muted-foreground">BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;</div>
+                <div class="text-[#F5F5F0] mt-0.5">SELECT id FROM barber_slots</div>
+                <div class="text-[#F5F5F0]">WHERE barber_id = $1 AND slot_range &amp;&amp; $2</div>
+                <div class="text-amber-400 font-bold">FOR UPDATE NOWAIT;</div>
+                <div class="text-muted-foreground mt-0.5">// Eksekusi sukses status: pending_payment (15m)</div>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
+              <span>Kecepatan Respons Server</span>
+              <span class="text-status-confirmed-text font-bold">&lt; 45ms P99 Latency</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- MASSIVE SECTION SPACING (py-32 md:py-48) -->
+    <!-- DESIRE (ADVANCED GSAP MOTION & STACKING PARADIGM) -->
+    <section id="gsap-stack" class="py-24 md:py-44 px-4 sm:px-6 lg:px-8 border-t border-border/80 bg-surface/20">
+      <div class="max-w-5xl mx-auto">
+        
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-primary text-xs font-mono tracking-widest uppercase font-semibold">GSAP ScrollTrigger Dynamics</span>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-[#F5F5F0] mt-2 mb-4">
+            Koreografi Gerak & Interaksi Fisik
+          </h2>
+          <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">
+            Lapisan kartu bertumpuk dinamis (*Card Stacking*) dan teks bertahap (*Scrubbing Text Reveals*) yang memandu perhatian pengguna secara alami.
+          </p>
+        </div>
+
+        <!-- STACKING CARDS CONTAINER -->
+        <div class="space-y-6 relative" id="card-stack-container">
+          
+          <!-- Stack Card 1 -->
+          <div class="stack-card bg-surface rounded-3xl p-8 border border-border shadow-xl relative top-0 hover:-translate-y-1 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-mono text-xs font-bold text-primary">FASE 01</span>
+              <span class="text-xs font-mono text-muted-foreground">0.0s - 0.45s</span>
+            </div>
+            <h4 class="font-display font-bold text-xl text-[#F5F5F0] mb-2">Penekanan Tombol & Pemicu Atomik</h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Tombol utama mengalami transisi skala 0.98 dengan spinner amber, mengunci ketersediaan slot di basis data sebelum meluncurkan formulir QRIS.
+            </p>
+          </div>
+
+          <!-- Stack Card 2 -->
+          <div class="stack-card bg-[#1C1C1C] rounded-3xl p-8 border border-border shadow-xl relative top-0 hover:-translate-y-1 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-mono text-xs font-bold text-primary">FASE 02</span>
+              <span class="text-xs font-mono text-muted-foreground">0.45s - 900.0s</span>
+            </div>
+            <h4 class="font-display font-bold text-xl text-[#F5F5F0] mb-2">Penahanan 15 Menit & Transisi Urgensi</h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Perubahan warna bertahap dari Vintage Amber ke Ruby Crimson memberikan dorongan psikologis yang sopan agar pelanggan segera menyelesaikan transaksi.
+            </p>
+          </div>
+
+          <!-- Stack Card 3 -->
+          <div class="stack-card bg-[#222222] rounded-3xl p-8 border border-primary/50 shadow-ticket relative top-0 hover:-translate-y-1 transition-all">
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-mono text-xs font-bold text-status-confirmed-text">FASE 03 (FINAL)</span>
+              <span class="text-xs font-mono text-muted-foreground">&lt; 1.200ms Handoff</span>
+            </div>
+            <h4 class="font-display font-bold text-xl text-[#F5F5F0] mb-2">Pelepasan Tiket Boarding Pass Digital</h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Transisi pegas (*elastic back easing*) mempersembahkan voucher tiket resmi lengkap dengan barcode check-in kasir dan sinkronisasi instan ke WhatsApp.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- MASSIVE SECTION SPACING (py-32 md:py-48) -->
+    <!-- ACTION (FOOTER & HIGH-CONTRAST CONVERSION CTA) -->
+    <footer class="py-24 md:py-36 px-4 sm:px-6 lg:px-8 border-t border-border bg-background text-center relative overflow-hidden">
+      
+      <div class="max-w-4xl mx-auto">
+        
+        <span class="text-primary text-xs font-mono tracking-widest uppercase font-semibold block mb-4">Mulai Reservasi Anda</span>
+        
+        <!-- Massive High-Contrast Conversion Headline -->
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-[#F5F5F0] mb-6 leading-tight">
+          Kursi Master Barber Menanti Anda. <br class="hidden sm:inline" />
+          <span class="text-primary">Pasti, Nyaman, dan Bebas Antre.</span>
+        </h2>
+        
+        <p class="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto mb-10 font-light">
+          Kunci jadwal potong rambut pria berkualitas hari ini dengan Down Payment flat Rp 20.000 via QRIS.
+        </p>
+
+        <!-- High-Contrast Action Button (gpt-taste requirement: perfect button contrast) -->
+        <button onclick="scrollToSimulator()" class="px-10 py-5 rounded-2xl bg-primary hover:bg-primary-hover text-background font-extrabold text-base uppercase tracking-wider transition-all transform hover:-translate-y-1 shadow-glow active:scale-95">
+          Kunci Jadwal Kursi Sekarang
+        </button>
+
+        <!-- Clean Footer Secondary Links -->
+        <div class="mt-16 pt-8 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground font-mono gap-4">
+          <div>
+            © 2026 Damez Barbershop. All Rights Reserved. Crafted for Gentlemen.
+          </div>
+          <div class="flex space-x-6">
+            <a href="wireframes.md" target="_blank" class="hover:text-primary transition-colors">Master Wireframes</a>
+            <a href="DESIGN.md" target="_blank" class="hover:text-primary transition-colors">Design Tokens</a>
+            <a href="interaction-specs.md" target="_blank" class="hover:text-primary transition-colors">Interaction Specs</a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </main>
+
+
+  <!-- JAVASCRIPT INTERACTIVE SIMULATION ENGINE -->
+  <script>
+    // State Tracking Variables
+    let currentSimulationState = 'slot-pick';
+    let timerTotalSeconds = 898; // 14 mins 58 secs default
+    let timerSpeedMultiplier = 1;
+    let timerInterval = null;
+    let selectedDate = '2026-10-24';
+    let selectedSlot = '14:30';
+
+    // 7 Days Rolling Calendar Generator
+    const daysIndo = ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'];
+    const monthsIndo = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOP', 'DES'];
+
+    function initDateChips() {
+      const container = document.getElementById('date-chips-container');
+      container.innerHTML = '';
+      
+      const baseDate = new Date(2026, 9, 24); // Sat, 24 Oct 2026
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(baseDate);
+        d.setDate(baseDate.getDate() + i);
+
+        const dayName = daysIndo[d.getDay()];
+        const dateNum = d.getDate();
+        const monthName = monthsIndo[d.getMonth()];
+        const dateStr = d.toISOString().split('T')[0];
+
+        const isSelected = (i === 0);
+
+        const chip = document.createElement('button');
+        chip.className = `flex-shrink-0 w-16 h-20 rounded-xl flex flex-col items-center justify-center transition-all border ${
+          isSelected 
+            ? 'bg-primary text-background border-primary font-bold shadow-amber transform -translate-y-0.5' 
+            : 'bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground border-border'
+        }`;
+        chip.onclick = () => selectDate(dateStr, chip);
+        chip.innerHTML = `
+          <span class="text-[10px] font-mono tracking-wider ${isSelected ? 'text-background font-bold' : 'text-muted-foreground'}">${dayName}</span>
+          <span class="font-display text-xl my-0.5 ${isSelected ? 'text-background font-black' : 'text-[#F5F5F0]'}">${dateNum}</span>
+          <span class="text-[9px] font-mono ${isSelected ? 'text-background' : 'text-stone-400'}">${monthName}</span>
+        `;
+        container.appendChild(chip);
+      }
+    }
+
+    function selectDate(dateStr, btnElement) {
+      selectedDate = dateStr;
+      // Update UI active styles
+      const chips = document.querySelectorAll('#date-chips-container button');
+      chips.forEach(c => {
+        c.className = 'flex-shrink-0 w-16 h-20 rounded-xl flex flex-col items-center justify-center transition-all border bg-surface hover:bg-surface-elevated text-muted-foreground hover:text-foreground border-border';
+        const spans = c.querySelectorAll('span');
+        spans[0].className = 'text-[10px] font-mono tracking-wider text-muted-foreground';
+        spans[1].className = 'font-display text-xl my-0.5 text-[#F5F5F0]';
+        spans[2].className = 'text-[9px] font-mono text-stone-400';
+      });
+      btnElement.className = 'flex-shrink-0 w-16 h-20 rounded-xl flex flex-col items-center justify-center transition-all border bg-primary text-background border-primary font-bold shadow-amber transform -translate-y-0.5';
+      const spans = btnElement.querySelectorAll('span');
+      spans[0].className = 'text-[10px] font-mono tracking-wider text-background font-bold';
+      spans[1].className = 'font-display text-xl my-0.5 text-background font-black';
+      spans[2].className = 'text-[9px] font-mono text-background';
+
+      updateSelectedSlotText();
+    }
+
+    // Initialize Time Slot Chips
+    const morningSlotsData = [
+      { time: '10:00', status: 'available' },
+      { time: '11:30', status: 'booked' },
+      { time: '12:30', status: 'break' },
+      { time: '13:00', status: 'available' },
+    ];
+    const eveningSlotsData = [
+      { time: '14:30', status: 'selected' },
+      { time: '16:00', status: 'available' },
+      { time: '17:30', status: 'hold_user' },
+      { time: '19:00', status: 'available' },
+      { time: '20:00', status: 'available' },
+      { time: '20:30', status: 'insufficient' },
+    ];
+
+    function initTimeChips() {
+      renderSlotGrid('morning-slots', morningSlotsData);
+      renderSlotGrid('evening-slots', eveningSlotsData);
+    }
+
+    function renderSlotGrid(containerId, data) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      data.forEach(item => {
+        const btn = document.createElement('button');
+        btn.id = `slot-${item.time.replace(':', '')}`;
+
+        if (item.status === 'selected') {
+          btn.className = 'h-12 rounded-xl bg-primary text-background font-mono font-bold text-sm border border-primary shadow-amber flex flex-col items-center justify-center transition-all';
+          btn.innerHTML = `<span>${item.time}</span><span class="text-[9px] uppercase font-sans font-bold -mt-0.5">[Terpilih]</span>`;
+          btn.onclick = () => selectSlot(item.time, btn);
+        } else if (item.status === 'available') {
+          btn.className = 'h-12 rounded-xl bg-surface hover:bg-surface-elevated text-[#F5F5F0] hover:text-primary font-mono font-medium text-sm border border-border hover:border-primary/50 flex flex-col items-center justify-center transition-all active:scale-95';
+          btn.innerHTML = `<span>${item.time}</span><span class="text-[9px] text-muted-foreground font-sans">Tersedia</span>`;
+          btn.onclick = () => selectSlot(item.time, btn);
+        } else if (item.status === 'booked') {
+          btn.className = 'h-12 rounded-xl bg-[#181818] text-stone-600 font-mono text-sm border border-[#222222] flex flex-col items-center justify-center cursor-not-allowed opacity-60';
+          btn.innerHTML = `<span class="line-through">${item.time}</span><span class="text-[9px] font-sans">Terisi</span>`;
+          btn.disabled = true;
+        } else if (item.status === 'break') {
+          btn.className = 'h-12 rounded-xl bg-[#141414] text-stone-600 font-mono text-sm border border-[#1E1E1E] flex flex-col items-center justify-center cursor-not-allowed opacity-60';
+          btn.innerHTML = `<span>${item.time}</span><span class="text-[9px] font-sans">Istirahat</span>`;
+          btn.disabled = true;
+        } else if (item.status === 'hold_user') {
+          btn.className = 'h-12 rounded-xl bg-[#241B10] text-amber-500/80 font-mono text-sm border border-dashed border-amber-600/40 flex flex-col items-center justify-center cursor-pointer';
+          btn.innerHTML = `<span>${item.time}</span><span class="text-[9px] font-sans">In-Hold</span>`;
+          btn.onclick = () => alert('Slot pukul ' + item.time + ' sedang dalam proses pembayaran oleh pelanggan lain (Hold 15 menit).');
+        } else if (item.status === 'insufficient') {
+          btn.className = 'h-12 rounded-xl bg-[#141414] text-stone-600 font-mono text-sm border border-border/40 flex flex-col items-center justify-center cursor-not-allowed opacity-40';
+          btn.innerHTML = `<span class="line-through">${item.time}</span><span class="text-[8px] font-sans">Batas Tutup</span>`;
+          btn.disabled = true;
+        }
+
+        container.appendChild(btn);
+      });
+    }
+
+    function selectSlot(timeStr, btn) {
+      selectedSlot = timeStr;
+      // Re-render evening slots to reflect new selection
+      eveningSlotsData.forEach(s => {
+        if (s.time === timeStr) s.status = 'selected';
+        else if (s.status === 'selected') s.status = 'available';
+      });
+      morningSlotsData.forEach(s => {
+        if (s.time === timeStr) s.status = 'selected';
+        else if (s.status === 'selected') s.status = 'available';
+      });
+      initTimeChips();
+      updateSelectedSlotText();
+    }
+
+    function updateSelectedSlotText() {
+      const summaryText = document.getElementById('selected-slot-text');
+      summaryText.innerText = `Sabtu, 24 Okt 2026 • ${selectedSlot} - 16:00 WIB`;
+    }
+
+    // Trigger Slot Hold button
+    function triggerSlotHold() {
+      const btn = document.getElementById('btn-trigger-hold');
+      const label = document.getElementById('btn-hold-label');
+      label.innerText = 'Mengunci Slot...';
+      btn.classList.add('opacity-75', 'cursor-wait');
+
+      setTimeout(() => {
+        label.innerText = 'Kunci Slot & Bayar DP Rp 20.000';
+        btn.classList.remove('opacity-75', 'cursor-wait');
+        setSimulationState('hold-active');
+      }, 700);
+    }
+
+    // State Switcher Controller
+    function setSimulationState(stateKey) {
+      currentSimulationState = stateKey;
+
+      // Update Toolbar Active Styling
+      document.querySelectorAll('.ctrl-btn').forEach(btn => {
+        if (btn.dataset.state === stateKey) {
+          btn.classList.add('ring-2', 'ring-primary', 'font-bold');
+        } else {
+          btn.classList.remove('ring-2', 'ring-primary', 'font-bold');
+        }
+      });
+
+      const indicator = document.getElementById('active-state-indicator');
+      const viewPayment = document.getElementById('view-payment');
+      const viewTicket = document.getElementById('view-ticket');
+      const viewExpired = document.getElementById('view-expired');
+      const viewConflict = document.getElementById('view-conflict');
+
+      const qrisBeam = document.getElementById('qris-scanner-beam');
+      const qrisProcOverlay = document.getElementById('qris-processing-overlay');
+      const qrisExpOverlay = document.getElementById('qris-expired-overlay');
+      const qrisErrOverlay = document.getElementById('qris-error-overlay');
+      const qrisStatusLine = document.getElementById('qris-poller-status');
+
+      // Hide all main screen views
+      viewPayment.classList.remove('hidden');
+      viewTicket.classList.add('hidden');
+      viewExpired.classList.add('hidden');
+      viewConflict.classList.add('hidden');
+
+      // Reset QR overlays
+      qrisProcOverlay.classList.add('hidden');
+      qrisExpOverlay.classList.add('hidden');
+      qrisErrOverlay.classList.add('hidden');
+      qrisBeam.classList.remove('hidden');
+
+      if (stateKey === 'slot-pick') {
+        indicator.innerText = 'Status Aktif: [ 1. Pemilihan Slot Jam ]';
+        resetTimer();
+        pauseTimer();
+      } 
+      else if (stateKey === 'hold-active') {
+        indicator.innerText = 'Status Aktif: [ 2. Slot Hold & Timer Aktif ]';
+        startTimer();
+      } 
+      else if (stateKey === 'qris-scan') {
+        indicator.innerText = 'Status Aktif: [ 3. Menunggu Pemindaian QRIS ]';
+        startTimer();
+      } 
+      else if (stateKey === 'processing') {
+        indicator.innerText = 'Status Aktif: [ 4. QRIS Terdeteksi / Memproses ]';
+        qrisProcOverlay.classList.remove('hidden');
+        qrisBeam.classList.add('hidden');
+        qrisStatusLine.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-spin"></span><span class="text-amber-400 text-[11px] font-bold">Memverifikasi settlement webhook...</span>`;
+        // Auto resolve to success after 1.5s
+        setTimeout(() => {
+          if (currentSimulationState === 'processing') {
+            setSimulationState('success-pass');
+          }
+        }, 1500);
+      } 
+      else if (stateKey === 'success-pass') {
+        indicator.innerText = 'Status Aktif: [ 5. Lunas & Tiket Digital Terbit ]';
+        viewPayment.classList.add('hidden');
+        viewTicket.classList.remove('hidden');
+        pauseTimer();
+        // Trigger celebratory confetti burst
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.65 },
+            colors: ['#D97706', '#F59E0B', '#34D399', '#F5F5F0']
+          });
+        }
+      } 
+      else if (stateKey === 'expired') {
+        indicator.innerText = 'Status Aktif: [ 6. Waktu Penahanan Habis (Expired) ]';
+        viewPayment.classList.add('hidden');
+        viewExpired.classList.remove('hidden');
+        pauseTimer();
+      } 
+      else if (stateKey === 'error-conflict') {
+        indicator.innerText = 'Status Aktif: [ 7. Konflik Slot (HTTP 409) ]';
+        viewPayment.classList.add('hidden');
+        viewConflict.classList.remove('hidden');
+        pauseTimer();
+      }
+    }
+
+    // 15-Minute Timer Algorithm
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timerTotalSeconds = Math.max(0, timerTotalSeconds - timerSpeedMultiplier);
+        updateTimerDisplay();
+
+        if (timerTotalSeconds <= 0) {
+          clearInterval(timerInterval);
+          setSimulationState('expired');
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timerTotalSeconds = 898; // 14:58
+      updateTimerDisplay();
+    }
+
+    function setTimerSpeed(multiplier) {
+      timerSpeedMultiplier = multiplier;
+      document.querySelectorAll('#spd-1, #spd-10, #spd-60').forEach(b => {
+        b.className = 'px-2.5 py-1 rounded bg-surface hover:bg-border text-[#F5F5F0] border border-border text-xs';
+      });
+      const activeBtn = document.getElementById(`spd-${multiplier}`);
+      if (activeBtn) activeBtn.className = 'px-2.5 py-1 rounded bg-primary text-background font-bold text-xs';
+      startTimer();
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timerTotalSeconds / 60);
+      const s = timerTotalSeconds % 60;
+      const mStr = m < 10 ? '0' + m : m;
+      const sStr = s < 10 ? '0' + s : s;
+
+      document.getElementById('timer-display-mini').innerText = `${mStr}:${sStr}`;
+      document.getElementById('timer-display-large').innerText = `${mStr} : ${sStr}`;
+
+      const pct = (timerTotalSeconds / 900) * 100;
+      document.getElementById('timer-progress-bar').style.width = `${pct}%`;
+      document.getElementById('timer-progress-ring').setAttribute('stroke-dasharray', `${pct}, 100`);
+
+      // Urgency Morphing
+      const timerBox = document.getElementById('timer-box');
+      const badge = document.getElementById('timer-urgency-badge');
+      const p1 = document.getElementById('phase-safe-card');
+      const p2 = document.getElementById('phase-warn-card');
+      const p3 = document.getElementById('phase-crit-card');
+
+      if (timerTotalSeconds > 300) {
+        // Safe Phase (Amber)
+        timerBox.className = 'p-4 rounded-2xl bg-surface border border-primary/50 text-center relative overflow-hidden transition-colors duration-500';
+        badge.className = 'inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-primary/20 text-primary font-semibold';
+        badge.innerText = 'Slot Terkunci Aman';
+        p1.className = 'p-3 rounded-xl border border-primary/50 bg-primary/10 transition-all';
+        p2.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+        p3.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+      } else if (timerTotalSeconds > 120) {
+        // Warning Phase (Tangerine)
+        timerBox.className = 'p-4 rounded-2xl bg-[#261E14] border border-amber-500 text-center relative overflow-hidden transition-colors duration-500';
+        badge.className = 'inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-400 font-bold animate-pulse';
+        badge.innerText = 'Waktu Kurang 5 Menit';
+        p1.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+        p2.className = 'p-3 rounded-xl border border-amber-500 bg-amber-500/10 transition-all';
+        p3.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+      } else {
+        // Critical Phase (Ruby Crimson)
+        timerBox.className = 'p-4 rounded-2xl bg-[#311414] border border-red-500 text-center relative overflow-hidden transition-colors duration-500 animate-pulse';
+        badge.className = 'inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/20 text-red-400 font-bold';
+        badge.innerText = 'PERHATIAN: Segera Bayar';
+        p1.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+        p2.className = 'p-3 rounded-xl border border-border bg-surface-elevated transition-all';
+        p3.className = 'p-3 rounded-xl border border-red-500 bg-red-500/10 transition-all';
+      }
+    }
+
+    // Simulation Helper Actions
+    function simulateCopyAmount() {
+      const btn = document.getElementById('copy-btn-label');
+      btn.innerText = 'Tersalin!';
+      setTimeout(() => {
+        btn.innerText = 'Salin Rp 20.000';
+      }, 1500);
+    }
+
+    function simulateScanDetected() {
+      setSimulationState('processing');
+    }
+
+    function selectQuickAltSlot(timeStr) {
+      selectedSlot = timeStr;
+      updateSelectedSlotText();
+      setSimulationState('slot-pick');
+    }
+
+    function downloadICSCalendar() {
+      const icsData = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Damez Barbershop//Gentlemen Grooming Booking//ID
+BEGIN:VEVENT
+SUMMARY:Damez Barbershop — Classic Cut & Beard Sculpting
+DESCRIPTION:Reservasi kursi resmi di Damez Barbershop bersama Master Barber Rian Pratama. Sisa pembayaran di kasir Rp 75.000.
+DTSTART:20261024T073000Z
+DTEND:20261024T090000Z
+LOCATION:Damez Barbershop, Jl. Utama No. 42
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+
+      const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.setAttribute('download', 'Damez-Booking-DMZ-042.ics');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Horizontal Accordion Toggles
+    function toggleAccordion(barberKey) {
+      const items = ['barber-1', 'barber-2', 'barber-3'];
+      items.forEach(k => {
+        const content = document.getElementById(`acc-content-${k}`);
+        if (k === barberKey) {
+          content.classList.toggle('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    // Testimonials Carousel
+    const testimonials = [
+      {
+        quote: "Sistem bookingnya luar biasa cepat. Begitu bayar DP 20 ribu via QRIS, tiket langsung masuk WA dan pas datang kursi Mas Rian sudah siap steril tanpa perlu nunggu semenit pun.",
+        author: "Aditya Nugraha",
+        role: "Pelanggan Rutin Classic Cut • Verified Booking",
+        avatar: "AN"
+      },
+      {
+        quote: "Paling suka fitur hold 15 menitnya, transparan dan nggak bikin panik pas buka m-banking. Potongan fade Mas Dimas sangat presisi dan detail.",
+        author: "Reza Firmansyah",
+        role: "Gentleman Grooming • Verified Booking",
+        avatar: "RF"
+      },
+      {
+        quote: "Boarding pass digitalnya keren banget, serasa naik first class tapi buat cukur rambut. Fitur simpan ke Google Calendar sangat membantu jadwal kerja saya.",
+        author: "Farhan Mahendra",
+        role: "Beard Sculpting & Shave • Verified Booking",
+        avatar: "FM"
+      }
+    ];
+    let currentTestiIndex = 0;
+
+    function renderTestimonial(index) {
+      const item = testimonials[index];
+      const card = document.getElementById('testimonial-card');
+      card.style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('testi-quote').innerText = `"${item.quote}"`;
+        document.getElementById('testi-author').innerText = item.author;
+        document.getElementById('testi-role').innerText = item.role;
+        document.getElementById('testi-avatar').innerText = item.avatar;
+        card.style.opacity = '1';
+      }, 200);
+    }
+
+    function nextTestimonial() {
+      currentTestiIndex = (currentTestiIndex + 1) % testimonials.length;
+      renderTestimonial(currentTestiIndex);
+    }
+
+    function prevTestimonial() {
+      currentTestiIndex = (currentTestiIndex - 1 + testimonials.length) % testimonials.length;
+      renderTestimonial(currentTestiIndex);
+    }
+
+    function scrollToSimulator() {
+      document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Page Load Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initDateChips();
+      initTimeChips();
+      startTimer();
+
+      // Register GSAP ScrollTrigger Effects
+      if (typeof gsap !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // GSAP Card Stacking Physics
+        gsap.utils.toArray('.stack-card').forEach((card, i) => {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
+            },
+            y: 35,
+            opacity: 0.2,
+            duration: 0.6,
+            ease: 'power2.out',
+            delay: i * 0.12
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

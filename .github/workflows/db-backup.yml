@@ -1,0 +1,58 @@
+name: Supabase Scheduled Daily Database Backup
+
+on:
+  schedule:
+    # Eksekusi setiap hari jam 00:00 WIB (17:00 UTC)
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+    inputs:
+      retention_days:
+        description: 'Lama retensi cadangan (hari)'
+        required: true
+        default: '30'
+
+concurrency:
+  group: supabase-backup
+  cancel-in-progress: false
+
+jobs:
+  daily-backup:
+    name: Supabase Database Backup & AES-256 Encryption
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Execute automated backup & AES-256 encryption
+        id: backup_run
+        run: node --experimental-strip-types scripts/backup-db.ts
+        env:
+          DB_BACKUP_ENCRYPTION_KEY: ${{ secrets.DB_BACKUP_ENCRYPTION_KEY || 'damez_barber_default_key_2026' }}
+          SUPABASE_DB_HOST: ${{ secrets.SUPABASE_DB_HOST }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Upload encrypted database backup artifact (30-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: damez-supabase-backup-${{ github.run_id }}
+          path: backups/*.dump.gpg
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Log backup success and compliance audit
+        run: |
+          echo "=========================================================="
+          echo "DAMEZ BARBERSHOP DATABASE BACKUP COMPLETED SUCCESSFULLY"
+          echo "Encryption: AES-256-CBC with PBKDF2-SHA256 (UU PDP 27/2022)"
+          echo "Retention: 30 Days (GitHub Actions Secure Artifact)"
+          echo "Schedule: Daily at 00:00 WIB"
+          echo "=========================================================="

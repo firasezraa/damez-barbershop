@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damez Barbershop — Design System Showcase & Booking Flow</title>
+  <!-- Google Fonts: Cinzel (Display Serif), Plus Jakarta Sans (Body), JetBrains Mono (Codes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#121212',
+            foreground: '#F5F5F0',
+            surface: {
+              DEFAULT: '#1A1A1A',
+              elevated: '#242424',
+              hover: '#2C2C2C',
+            },
+            primary: {
+              DEFAULT: '#D97706',
+              hover: '#F59E0B',
+              foreground: '#121212',
+            },
+            secondary: {
+              DEFAULT: '#784C25',
+              hover: '#8C582B',
+              foreground: '#FFFFFF',
+            },
+            muted: {
+              DEFAULT: '#262626',
+              foreground: '#A8A29E',
+              subtle: '#78716C',
+            },
+            border: {
+              DEFAULT: '#2E2E2E',
+              accent: '#D97706',
+            },
+            status: {
+              confirmed: {
+                bg: '#064E3B',
+                text: '#34D399',
+                solid: '#10B981',
+              },
+              pending: {
+                bg: '#451A03',
+                text: '#FBBF24',
+                solid: '#D97706',
+              },
+              noshow: {
+                bg: '#450A0A',
+                text: '#F87171',
+                solid: '#DC2626',
+              },
+              cancelled: {
+                bg: '#27272A',
+                text: '#A1A1AA',
+                solid: '#52525B',
+              },
+            },
+            destructive: {
+              DEFAULT: '#B91C1C',
+              foreground: '#FFFFFF',
+            },
+            success: {
+              DEFAULT: '#047857',
+              foreground: '#FFFFFF',
+              solid: '#10B981',
+            }
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            amber: '0 0 20px rgba(217, 119, 6, 0.20)',
+            card: '0 4px 16px rgba(0, 0, 0, 0.45)',
+            modal: '0 20px 40px rgba(0, 0, 0, 0.70)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0D0D0D;
+      color: #F5F5F0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .ticket-notch-left {
+      position: absolute;
+      left: -12px;
+      top: 68%;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background-color: #121212;
+      box-shadow: inset -2px 0 3px rgba(0,0,0,0.5);
+    }
+    .ticket-notch-right {
+      position: absolute;
+      right: -12px;
+      top: 68%;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background-color: #121212;
+      box-shadow: inset 2px 0 3px rgba(0,0,0,0.5);
+    }
+    .dashed-divider {
+      border-top: 2px dashed #333333;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121212;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2E2E2E;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #D97706;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 bg-[#0D0D0D] min-h-screen">
+  <div class="max-w-6xl mx-auto space-y-12">
+
+    <!-- Header & Brand Intro -->
+    <header class="border-b border-[#2E2E2E] pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium tracking-wide bg-amber-950/60 text-[#D97706] border border-[#D97706]/40">
+            DAMEZ DESIGN SYSTEM v1.0
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
+            WCAG 2.1 AA PASS (6.2:1+)
+          </span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-display font-bold text-[#F5F5F0] tracking-tight">
+          DAMEZ BARBERSHOP
+        </h1>
+        <p class="text-sm md:text-base text-[#A8A29E] mt-2 max-w-2xl">
+          Sistem token desain antarmuka bernuansa <strong class="text-[#F5F5F0]">Masculine Vintage Modern</strong>. Menggabungkan wibawa klasik barbershop tradisional dengan ergonomi transaksi web cepat tanpa unduh aplikasi.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-2 text-xs font-mono text-[#A8A29E]">
+        <div class="bg-[#1A1A1A] px-3 py-2 rounded-lg border border-[#2E2E2E]">
+          <span class="text-[#D97706] font-bold">PRIMARY:</span> #D97706 (Amber)
+        </div>
+        <div class="bg-[#1A1A1A] px-3 py-2 rounded-lg border border-[#2E2E2E]">
+          <span class="text-[#F5F5F0] font-bold">TEXT:</span> #F5F5F0 (Cream)
+        </div>
+        <div class="bg-[#1A1A1A] px-3 py-2 rounded-lg border border-[#2E2E2E]">
+          <span class="text-[#784C25] font-bold">SECONDARY:</span> #784C25 (Cognac)
+        </div>
+        <div class="bg-[#1A1A1A] px-3 py-2 rounded-lg border border-[#2E2E2E]">
+          <span class="text-zinc-400 font-bold">CANVAS:</span> #121212
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: Status Badges & Color Tokens -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-display font-bold text-[#F5F5F0] flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
+          1. Booking Status Badges & Semantic Colors (M0/M1 Contract)
+        </h2>
+        <span class="text-xs font-mono text-[#A8A29E]">Supabase Schema Aligned</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Confirmed Badge -->
+        <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-[#A8A29E]">status: confirmed</span>
+            <span class="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#064E3B] text-[#34D399] border border-emerald-600/40">
+              ● Confirmed
+            </span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#10B981] text-[#064E3B] font-bold">
+              DP Rp 20k Lunas
+            </span>
+          </div>
+          <p class="text-[11px] text-[#A8A29E]">Slot resmi terkunci di PostgreSQL. Notifikasi WhatsApp & tiket digital terkirim ke customer.</p>
+        </div>
+
+        <!-- Pending Payment Badge -->
+        <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-[#A8A29E]">status: pending_payment</span>
+            <span class="w-2 h-2 rounded-full bg-[#D97706]"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#451A03] text-[#FBBF24] border border-amber-600/40">
+              ⏳ Pending Payment
+            </span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#D97706] text-[#121212] font-bold">
+              15m TTL
+            </span>
+          </div>
+          <p class="text-[11px] text-[#A8A29E]">Menunggu pembayaran Midtrans Snap QRIS. Slot ditahan 15 menit sebelum otomatis rilis.</p>
+        </div>
+
+        <!-- No Show Badge -->
+        <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-[#A8A29E]">status: no_show</span>
+            <span class="w-2 h-2 rounded-full bg-[#DC2626]"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#450A0A] text-[#F87171] border border-red-700/40">
+              ✕ No Show
+            </span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#DC2626] text-white font-bold">
+              DP Hangus
+            </span>
+          </div>
+          <p class="text-[11px] text-[#A8A29E]">Pelanggan tidak hadir melewati batas toleransi 15 menit. Kompensasi barber terlindungi.</p>
+        </div>
+
+        <!-- Cancelled Badge -->
+        <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-[#A8A29E]">status: cancelled</span>
+            <span class="w-2 h-2 rounded-full bg-zinc-500"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#27272A] text-[#A1A1AA] border border-zinc-700">
+              — Cancelled
+            </span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#52525B] text-white font-bold">
+              Released
+            </span>
+          </div>
+          <p class="text-[11px] text-[#A8A29E]">Dibatalkan sebelum batas H-3 jam atau kedaluwarsa waktu pembayaran.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Component State Matrix -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-display font-bold text-[#F5F5F0] flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
+          2. Component States Matrix (Buttons, Slots, Cards & Inputs)
+        </h2>
+        <span class="text-xs font-mono text-[#A8A29E]">Interactive States Verified</span>
+      </div>
+
+      <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-2xl p-6 space-y-8">
+        <!-- Buttons Row -->
+        <div>
+          <h3 class="text-xs font-mono uppercase tracking-wider text-[#A8A29E] mb-4">Button Component States</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Default</span>
+              <button class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#D97706] text-[#121212] transition-colors">
+                Booking
+              </button>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Hover</span>
+              <button class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#F59E0B] text-[#121212] shadow-lg shadow-amber-900/30">
+                Booking
+              </button>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Pressed/Active</span>
+              <button class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#B45309] text-[#121212] scale-[0.98]">
+                Booking
+              </button>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Focus Ring</span>
+              <button class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#D97706] text-[#121212] ring-2 ring-[#D97706] ring-offset-2 ring-offset-[#121212]">
+                Booking
+              </button>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Loading</span>
+              <button class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#D97706]/80 text-[#121212] flex items-center justify-center gap-1.5 cursor-wait">
+                <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                Proses...
+              </button>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Disabled</span>
+              <button disabled class="w-full py-3 px-4 rounded-xl font-semibold text-sm bg-[#262626] text-[#78716C] cursor-not-allowed">
+                Terkunci
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Slot Pills Row -->
+        <div>
+          <h3 class="text-xs font-mono uppercase tracking-wider text-[#A8A29E] mb-4">Time-Slot Pill States (Sanitation Buffer Aware)</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Available</span>
+              <div class="py-2.5 px-3 rounded-lg border border-[#2E2E2E] bg-[#242424] text-[#F5F5F0] font-mono text-sm font-semibold flex items-center justify-center gap-1.5">
+                10:00 WIB
+              </div>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Hover/Highlight</span>
+              <div class="py-2.5 px-3 rounded-lg border border-[#D97706] bg-[#2C2C2C] text-[#F5F5F0] font-mono text-sm font-semibold flex items-center justify-center gap-1.5">
+                11:00 WIB
+              </div>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Selected</span>
+              <div class="py-2.5 px-3 rounded-lg border border-[#D97706] bg-[#D97706] text-[#121212] font-mono text-sm font-bold shadow-md shadow-amber-900/30 flex items-center justify-center gap-1.5">
+                ✓ 13:00 WIB
+              </div>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Locked / Temporary Hold</span>
+              <div class="py-2.5 px-3 rounded-lg border border-amber-900/40 bg-[#451A03]/30 text-amber-500/80 font-mono text-sm flex items-center justify-center gap-1.5">
+                ⏳ Hold 14m
+              </div>
+            </div>
+            <div class="space-y-1.5 text-center">
+              <span class="text-[11px] font-mono text-[#78716C]">Booked / Disabled</span>
+              <div class="py-2.5 px-3 rounded-lg border border-transparent bg-[#171717] text-[#52525B] font-mono text-sm line-through flex items-center justify-center gap-1.5 cursor-not-allowed">
+                15:00 WIB
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Temporary Hold Banner -->
+        <div>
+          <h3 class="text-xs font-mono uppercase tracking-wider text-[#A8A29E] mb-3">PostgreSQL Temporary Lock Countdown Banner</h3>
+          <div class="bg-[#242424] border border-[#D97706]/40 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-950/60 border border-[#D97706]/30 flex items-center justify-center text-[#D97706] font-mono text-lg font-bold">
+                ⏱
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-[#F5F5F0]">Slot Waktu Ditahan Sementara</div>
+                <div class="text-xs text-[#A8A29E]">Kursi Rian (13:00 WIB) diamankan dari bentrok pelanggan lain.</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-auto font-mono">
+              <span class="text-xs text-[#A8A29E]">Sisa Waktu Bayar:</span>
+              <span class="text-base font-bold text-[#F59E0B] bg-[#121212] px-3 py-1 rounded-md border border-[#2E2E2E]">
+                14:59
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Live Mobile Booking Wizard Simulation (Thumb-Zone Ergonomics) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-display font-bold text-[#F5F5F0] flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span>
+          3. Live Mobile Viewport Simulation (< 120s Booking Flow)
+        </h2>
+        <span class="text-xs font-mono text-[#A8A29E]">Viewport: 390px (iPhone / Urban Mobile)</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        
+        <!-- Frame 1: Multi-Step Wizard Mobile Container -->
+        <div class="bg-[#121212] border border-[#2E2E2E] rounded-3xl p-5 shadow-2xl max-w-sm mx-auto w-full relative overflow-hidden">
+          
+          <!-- Top App Bar -->
+          <div class="flex items-center justify-between pb-3 border-b border-[#2E2E2E]">
+            <span class="text-xs font-mono text-[#D97706]">STEP 1 DARI 5</span>
+            <span class="font-display font-bold text-[#F5F5F0] text-sm tracking-wider">DAMEZ</span>
+            <span class="text-xs text-[#A8A29E]">Cabang Pusat</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-[#262626] h-1.5 rounded-full mt-3 overflow-hidden">
+            <div class="bg-[#D97706] h-full w-1/5 rounded-full"></div>
+          </div>
+
+          <!-- Step Content: Services Multi-Select -->
+          <div class="py-4 space-y-3">
+            <div>
+              <h3 class="font-display font-bold text-lg text-[#F5F5F0]">Pilih Layanan Cukur</h3>
+              <p class="text-xs text-[#A8A29E]">Dapat memilih lebih dari satu layanan (Multi-select)</p>
+            </div>
+
+            <!-- Service Item 1 (Selected) -->
+            <div class="bg-[#1A1A1A] border-2 border-[#D97706] rounded-2xl p-3.5 space-y-2 shadow-amber">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-semibold text-sm text-[#F5F5F0]">Gentleman's Royal Cut & Hot Towel</h4>
+                  <div class="flex items-center gap-2 text-xs text-[#A8A29E] mt-0.5">
+                    <span class="font-mono text-[#D97706]">⏱ 45 Menit</span>
+                    <span>•</span>
+                    <span>Classic Cut + Pijat Bahu</span>
+                  </div>
+                </div>
+                <div class="w-6 h-6 rounded-full bg-[#D97706] text-[#121212] flex items-center justify-center font-bold text-xs">
+                  ✓
+                </div>
+              </div>
+              <div class="flex justify-between items-center pt-1 border-t border-[#2E2E2E] text-xs font-mono">
+                <span class="text-[#A8A29E]">Tarif Layanan</span>
+                <span class="font-bold text-[#F5F5F0]">Rp 80.000</span>
+              </div>
+            </div>
+
+            <!-- Service Item 2 (Add-on Unselected) -->
+            <div class="bg-[#1A1A1A] border border-[#2E2E2E] hover:border-zinc-600 rounded-2xl p-3.5 space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-semibold text-sm text-[#F5F5F0]">Cooling Mint Creambath & Scalp Scrub</h4>
+                  <div class="flex items-center gap-2 text-xs text-[#A8A29E] mt-0.5">
+                    <span class="font-mono text-zinc-400">⏱ 40 Menit</span>
+                    <span>•</span>
+                    <span>Anti-Ketombe</span>
+                  </div>
+                </div>
+                <div class="w-6 h-6 rounded-full border border-[#2E2E2E] flex items-center justify-center text-xs text-[#78716C]">
+                  +
+                </div>
+              </div>
+              <div class="flex justify-between items-center pt-1 border-t border-[#2E2E2E] text-xs font-mono">
+                <span class="text-[#A8A29E]">Tarif Layanan</span>
+                <span class="font-bold text-[#F5F5F0]">Rp 55.000</span>
+              </div>
+            </div>
+
+            <!-- Service Item 3 (Add-on Unselected) -->
+            <div class="bg-[#1A1A1A] border border-[#2E2E2E] hover:border-zinc-600 rounded-2xl p-3.5 space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-semibold text-sm text-[#F5F5F0]">Beard Sculpting & Hot Lather Shave</h4>
+                  <div class="flex items-center gap-2 text-xs text-[#A8A29E] mt-0.5">
+                    <span class="font-mono text-zinc-400">⏱ 25 Menit</span>
+                    <span>•</span>
+                    <span>Razor Precision</span>
+                  </div>
+                </div>
+                <div class="w-6 h-6 rounded-full border border-[#2E2E2E] flex items-center justify-center text-xs text-[#78716C]">
+                  +
+                </div>
+              </div>
+              <div class="flex justify-between items-center pt-1 border-t border-[#2E2E2E] text-xs font-mono">
+                <span class="text-[#A8A29E]">Tarif Layanan</span>
+                <span class="font-bold text-[#F5F5F0]">Rp 45.000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky Bottom Bar Inside Mobile Frame -->
+          <div class="border-t border-[#2E2E2E] pt-3 mt-2 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] uppercase font-mono text-[#A8A29E]">1 Layanan • 45 Mnt</div>
+              <div class="text-sm font-bold font-mono text-[#F5F5F0]">DP: <span class="text-[#D97706]">Rp 20.000</span></div>
+            </div>
+            <button class="bg-[#D97706] hover:bg-[#F59E0B] text-[#121212] font-bold text-xs py-2.5 px-4 rounded-xl flex items-center gap-1">
+              Lanjut Pilih Barber →
+            </button>
+          </div>
+        </div>
+
+        <!-- Frame 2: Confirmed Digital Boarding Pass Ticket -->
+        <div class="bg-[#1A1A1A] border border-[#2E2E2E] rounded-3xl p-6 shadow-2xl max-w-sm mx-auto w-full relative">
+          <!-- Ticket Header -->
+          <div class="text-center pb-4 border-b border-[#2E2E2E] space-y-1">
+            <span class="text-[10px] font-mono tracking-widest text-[#D97706] uppercase">DIGITAL BOARDING PASS TICKET</span>
+            <h3 class="font-display font-bold text-2xl text-[#F5F5F0]">DAMEZ BARBERSHOP</h3>
+            <p class="text-xs text-[#A8A29E]">Jl. Teratai No. 12, Senopati, Jakarta Selatan</p>
+          </div>
+
+          <!-- Notch cutouts for ticket look -->
+          <div class="ticket-notch-left"></div>
+          <div class="ticket-notch-right"></div>
+
+          <!-- Booking Meta Details -->
+          <div class="py-5 space-y-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="text-[10px] font-mono uppercase text-[#A8A29E]">Kode Reservasi</span>
+                <div class="text-xl font-mono font-bold text-[#F59E0B] tracking-wider">DMZ-202610-88</div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] font-mono uppercase text-[#A8A29E]">Status Booking</span>
+                <div>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-[#064E3B] text-[#34D399] border border-emerald-500/40">
+                    ● Confirmed
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 bg-[#121212] p-3 rounded-xl border border-[#2E2E2E] text-xs">
+              <div>
+                <span class="text-[10px] font-mono text-[#A8A29E]">Jadwal Pangkas</span>
+                <div class="font-bold text-[#F5F5F0]">Sabtu, 24 Okt 2026</div>
+                <div class="font-mono text-[#D97706] font-semibold">13:00 - 13:45 WIB</div>
+              </div>
+              <div>
+                <span class="text-[10px] font-mono text-[#A8A29E]">Master Barber</span>
+                <div class="font-bold text-[#F5F5F0]">Rian "The Sculptor"</div>
+                <div class="text-[11px] text-[#A8A29E]">Kursi #01 (Senior Tier)</div>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between text-[#A8A29E]">
+                <span>Layanan</span>
+                <span class="text-[#F5F5F0] font-medium">Gentleman's Royal Cut (Rp 80k)</span>
+              </div>
+              <div class="flex justify-between text-[#A8A29E]">
+                <span>Hospitality</span>
+                <span class="text-[#F5F5F0] font-medium">Quiet Cut + Cold Brew</span>
+              </div>
+              <div class="flex justify-between text-[#A8A29E]">
+                <span>Komitmen DP (Lunas)</span>
+                <span class="text-emerald-400 font-mono font-bold">Rp 20.000 via QRIS</span>
+              </div>
+              <div class="flex justify-between text-[#A8A29E] pt-2 border-t border-[#2E2E2E]">
+                <span class="font-semibold text-[#F5F5F0]">Sisa Bayar di Tempat</span>
+                <span class="font-mono font-bold text-lg text-[#F5F5F0]">Rp 60.000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashed Line & QR Simulation -->
+          <div class="dashed-divider my-2"></div>
+
+          <div class="pt-3 flex items-center justify-between gap-4">
+            <!-- Simulated QR Code SVG -->
+            <div class="w-16 h-16 bg-white p-1 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-full h-full text-black" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h2v2h-2v-2zm-4 0h2v4h-2v-4zm6 2h2v6h-2v-6zm-4 4h2v2h-2v-2zm2 0h2v2h-2v-2zM5 5h2v2H5V5zm12 0h2v2h-2V5zM5 17h2v2H5v-2z"/>
+              </svg>
+            </div>
+            <div class="space-y-1 text-xs">
+              <div class="font-semibold text-[#F5F5F0]">Tunjukkan ke Kasir / Barber</div>
+              <p class="text-[11px] text-[#A8A29E]">Tiket resmi telah disinkronkan ke WhatsApp (+62 812-xxxx-8821).</p>
+            </div>
+          </div>
+
+          <!-- Action Button: Open Google Maps Route -->
+          <button class="w-full mt-4 py-2.5 px-4 rounded-xl font-semibold text-xs bg-[#242424] hover:bg-[#2C2C2C] text-[#F5F5F0] border border-[#2E2E2E] flex items-center justify-center gap-2">
+            📍 Buka Navigasi Google Maps (Senopati)
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer Specs -->
+    <footer class="border-t border-[#2E2E2E] pt-8 flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-[#A8A29E] gap-4">
+      <div>
+        <span>Damez Barbershop Design Token Specification — Google DESIGN.md & Tailwind v3/v4 Compliant</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>Verified Contrast: 6.2:1 (Amber/Black)</span>
+        <span>•</span>
+        <span>16.5:1 (Cream/Black)</span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

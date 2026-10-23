@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "version": "1.0.0",
+    "module": "content/whatsapp-templates.json",
+    "brand": "Damez Barbershop",
+    "location": "Jl. Senopati Raya No. 42, Kebayoran Baru, Jakarta Selatan 12190",
+    "timezone": "Asia/Jakarta (WIB / UTC+07:00)",
+    "official_phone": "+62 812-3456-7890",
+    "google_maps_url": "https://maps.app.goo.gl/damezsenopati",
+    "supported_gateways": ["fonnte", "wablas"],
+    "anti_emoji_policy": true,
+    "humanizer_compliance": {
+      "em_dash_count": 0,
+      "en_dash_count": 0,
+      "double_hyphen_count": 0,
+      "emoji_count": 0,
+      "ai_fluff_words_count": 0,
+      "tone": "Lugas, maskulin, sopan, menghargai waktu, transparan, zero-guilt"
+    },
+    "legal_compliance": "UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP Pasal 20, 22, 24, 27)"
+  },
+  "rules": {
+    "delivery_sla_seconds": 5,
+    "dp_amount_idr": 20000,
+    "cancellation_window_hours": 3,
+    "arrival_tolerance_minutes": 15,
+    "sanitation_buffer_minutes": 10
+  },
+  "templates": {
+    "booking_confirmed": {
+      "id": "booking_confirmed",
+      "title": "Konfirmasi Pembayaran DP dan Tiket Reservasi",
+      "recipient": "customer",
+      "category": "transactional",
+      "trigger": "midtrans_webhook_settlement",
+      "description": "Dikirimkan otomatis ke WhatsApp pelanggan dalam waktu kurang dari 5 detik setelah pembayaran DP Rp 20.000 terverifikasi oleh Midtrans.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "service_names",
+        "service_duration",
+        "barber_name",
+        "chair_number",
+        "booking_date",
+        "start_time",
+        "end_time",
+        "dp_amount_formatted",
+        "remaining_balance_formatted",
+        "tolerance_time",
+        "reschedule_deadline_time",
+        "address",
+        "google_maps_url",
+        "ticket_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nPembayaran uang muka (DP) untuk reservasi kursi Anda di Damez Barbershop telah berhasil diverifikasi.\n\nRincian Reservasi Kursi:\n- Kode Booking: {{booking_code}}\n- Layanan: {{service_names}} ({{service_duration}} menit)\n- Master Barber: {{barber_name}} (Kursi {{chair_number}})\n- Hari dan Tanggal: {{booking_date}}\n- Jam Sesi: {{start_time}} sampai {{end_time}} WIB\n- Status DP: Rp {{dp_amount_formatted}} (Lunas via QRIS)\n- Sisa Tagihan di Kasir: Rp {{remaining_balance_formatted}}\n\nPetunjuk Kedatangan dan Ketentuan:\n1. Harap tiba 5 sampai 10 menit sebelum pukul {{start_time}} WIB. Anda dapat bersantai di ruang tunggu berpendingin udara dan menikmati kopi dingin seduh gratis kami.\n2. Batas toleransi keterlambatan maksimal 15 menit (sampai pukul {{tolerance_time}} WIB). Jika melewati batas waktu tersebut tanpa kabar, kursi dialihkan ke antrean tamu walk-in demi menjaga jadwal pelanggan berikutnya.\n3. Perubahan jadwal (reschedule) mandiri dapat dilakukan maksimal 3 jam sebelum jadwal sesi (sebelum pukul {{reschedule_deadline_time}} WIB) melalui tautan tiket Anda.\n\nLokasi Damez Barbershop:\n{{address}}\nPetunjuk Rute: {{google_maps_url}}\n\nBuka Tiket Digital Anda:\n{{ticket_url}}\n\nTerima kasih atas komitmen Anda. Sampai jumpa di kursi pangkas Damez Barbershop.",
+      "preview": "Halo Budi Santoso,\n\nPembayaran uang muka (DP) untuk reservasi kursi Anda di Damez Barbershop telah berhasil diverifikasi.\n\nRincian Reservasi Kursi:\n- Kode Booking: DMZ-20261024-001\n- Layanan: Gentlemen Classic Haircut (45 menit)\n- Master Barber: Rian Pratama (Kursi 1)\n- Hari dan Tanggal: Sabtu, 24 Oktober 2026\n- Jam Sesi: 14:00 sampai 14:45 WIB\n- Status DP: Rp 20.000 (Lunas via QRIS)\n- Sisa Tagihan di Kasir: Rp 30.000\n\nPetunjuk Kedatangan dan Ketentuan:\n1. Harap tiba 5 sampai 10 menit sebelum pukul 14:00 WIB. Anda dapat bersantai di ruang tunggu berpendingin udara dan menikmati kopi dingin seduh gratis kami.\n2. Batas toleransi keterlambatan maksimal 15 menit (sampai pukul 14:15 WIB). Jika melewati batas waktu tersebut tanpa kabar, kursi dialihkan ke antrean tamu walk-in demi menjaga jadwal pelanggan berikutnya.\n3. Perubahan jadwal (reschedule) mandiri dapat dilakukan maksimal 3 jam sebelum jadwal sesi (sebelum pukul 11:00 WIB) melalui tautan tiket Anda.\n\nLokasi Damez Barbershop:\nJl. Senopati Raya No. 42, Kebayoran Baru, Jakarta Selatan 12190\nPetunjuk Rute: https://maps.app.goo.gl/damezsenopati\n\nBuka Tiket Digital Anda:\nhttps://damezbarber.com/tickets/DMZ-20261024-001\n\nTerima kasih atas komitmen Anda. Sampai jumpa di kursi pangkas Damez Barbershop."
+    },
+    "barber_booking_alert": {
+      "id": "barber_booking_alert",
+      "title": "Pemberitahuan Reservasi Baru untuk Master Barber",
+      "recipient": "barber",
+      "category": "internal_alert",
+      "trigger": "booking_confirmed_in_system",
+      "description": "Dikirimkan otomatis ke nomor WhatsApp pribadi master barber yang dipilih begitu pelanggan menyelesaikan pembayaran DP.",
+      "variables": [
+        "barber_name",
+        "booking_code",
+        "customer_name",
+        "service_names",
+        "service_duration",
+        "booking_date",
+        "start_time",
+        "end_time",
+        "special_notes"
+      ],
+      "message": "Halo {{barber_name}},\n\nTerdapat reservasi baru yang telah lunas DP dan terjadwal di kursi Anda.\n\nRincian Pemesan:\n- Kode Booking: {{booking_code}}\n- Nama Pelanggan: {{customer_name}}\n- Layanan: {{service_names}} (Durasi {{service_duration}} menit)\n- Hari dan Tanggal: {{booking_date}}\n- Waktu Pangkas: {{start_time}} sampai {{end_time}} WIB\n- Catatan Khusus: {{special_notes}}\n\nMohon pastikan perlengkapan gunting, clipper, dan kain leher higienis telah disterilkan dalam lemari UV sebelum sesi dimulai.",
+      "preview": "Halo Rian Pratama,\n\nTerdapat reservasi baru yang telah lunas DP dan terjadwal di kursi Anda.\n\nRincian Pemesan:\n- Kode Booking: DMZ-20261024-001\n- Nama Pelanggan: Budi Santoso\n- Layanan: Gentlemen Classic Haircut (Durasi 45 menit)\n- Hari dan Tanggal: Sabtu, 24 Oktober 2026\n- Waktu Pangkas: 14:00 sampai 14:45 WIB\n- Catatan Khusus: Opsi Quiet Cut (hening dan santai)\n\nMohon pastikan perlengkapan gunting, clipper, dan kain leher higienis telah disterilkan dalam lemari UV sebelum sesi dimulai."
+    },
+    "arrival_reminder_h2": {
+      "id": "arrival_reminder_h2",
+      "title": "Pengingat Jadwal Kedatangan H-2 Jam",
+      "recipient": "customer",
+      "category": "reminder",
+      "trigger": "cron_scheduler_2_hours_before",
+      "description": "Dikirimkan 2 jam sebelum sesi dimulai. Mengingatkan jadwal dan menegaskan bahwa jendela perubahan mandiri H-3 jam telah ditutup.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "barber_name",
+        "booking_date",
+        "start_time",
+        "tolerance_time",
+        "remaining_balance_formatted",
+        "address",
+        "google_maps_url",
+        "ticket_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nPengingat ramah untuk jadwal pangkas rambut Anda di Damez Barbershop hari ini.\n\nRincian Sesi Anda:\n- Kode Booking: {{booking_code}}\n- Master Barber: {{barber_name}}\n- Waktu Kedatangan: {{start_time}} WIB (Hari ini, {{booking_date}})\n- Batas Toleransi Kedatangan: {{tolerance_time}} WIB\n- Sisa Tagihan di Kasir: Rp {{remaining_balance_formatted}}\n\nCatatan Penting:\nSesuai aturan operasional toko, batas waktu penjadwalan ulang mandiri telah berakhir pada batas H-3 jam. Kursi dan peralatan kerja barber Anda saat ini sedang dipersiapkan khusus untuk Anda.\n\nAlamat Toko:\n{{address}}\nNavigasi Cepat: {{google_maps_url}}\n\nBuka Tiket Anda:\n{{ticket_url}}\n\nSampai bertemu di Damez Barbershop.",
+      "preview": "Halo Budi Santoso,\n\nPengingat ramah untuk jadwal pangkas rambut Anda di Damez Barbershop hari ini.\n\nRincian Sesi Anda:\n- Kode Booking: DMZ-20261024-001\n- Master Barber: Rian Pratama\n- Waktu Kedatangan: 14:00 WIB (Hari ini, Sabtu, 24 Oktober 2026)\n- Batas Toleransi Kedatangan: 14:15 WIB\n- Sisa Tagihan di Kasir: Rp 30.000\n\nCatatan Penting:\nSesuai aturan operasional toko, batas waktu penjadwalan ulang mandiri telah berakhir pada batas H-3 jam. Kursi dan peralatan kerja barber Anda saat ini sedang dipersiapkan khusus untuk Anda.\n\nAlamat Toko:\nJl. Senopati Raya No. 42, Kebayoran Baru, Jakarta Selatan 12190\nNavigasi Cepat: https://maps.app.goo.gl/damezsenopati\n\nBuka Tiket Anda:\nhttps://damezbarber.com/tickets/DMZ-20261024-001\n\nSampai bertemu di Damez Barbershop."
+    },
+    "arrival_reminder_h30m": {
+      "id": "arrival_reminder_h30m",
+      "title": "Pengingat Terakhir H-30 Menit",
+      "recipient": "customer",
+      "category": "reminder",
+      "trigger": "cron_scheduler_30_minutes_before",
+      "description": "Dikirimkan 30 menit sebelum sesi dimulai untuk membantu navigasi perjalanan pelanggan di area Senopati.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "barber_name",
+        "start_time",
+        "google_maps_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nSesi pangkas rambut Anda bersama {{barber_name}} akan dimulai 30 menit lagi, tepat pukul {{start_time}} WIB.\n\nJika Anda sudah berada di sekitar Senopati, silakan langsung menuju ke toko kami. Ruang tunggu berpendingin udara dan segelas kopi dingin segar telah siap menyambut Anda.\n\nNavigasi Google Maps:\n{{google_maps_url}}\n\nKode Booking Anda: {{booking_code}}",
+      "preview": "Halo Budi Santoso,\n\nSesi pangkas rambut Anda bersama Rian Pratama akan dimulai 30 menit lagi, tepat pukul 14:00 WIB.\n\nJika Anda sudah berada di sekitar Senopati, silakan langsung menuju ke toko kami. Ruang tunggu berpendingin udara dan segelas kopi dingin segar telah siap menyambut Anda.\n\nNavigasi Google Maps:\nhttps://maps.app.goo.gl/damezsenopati\n\nKode Booking Anda: DMZ-20261024-001"
+    },
+    "booking_rescheduled": {
+      "id": "booking_rescheduled",
+      "title": "Konfirmasi Pemindahan Jadwal Berhasil",
+      "recipient": "customer",
+      "category": "transactional",
+      "trigger": "customer_reschedule_success",
+      "description": "Dikirimkan ketika pelanggan berhasil memindahkan jadwal pangkas secara mandiri sebelum batas H-3 jam.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "service_names",
+        "barber_name",
+        "old_date",
+        "old_time",
+        "new_date",
+        "new_start_time",
+        "new_end_time",
+        "remaining_balance_formatted",
+        "ticket_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nPerubahan jadwal reservasi Anda di Damez Barbershop telah berhasil dikonfirmasi.\n\nPerubahan Jadwal Sesi:\n- Jadwal Sebelumnya: {{old_date}}, pukul {{old_time}} WIB\n- Jadwal Baru: {{new_date}}, pukul {{new_start_time}} sampai {{new_end_time}} WIB\n- Master Barber: {{barber_name}}\n- Layanan: {{service_names}}\n- Kode Booking: {{booking_code}}\n\nUang muka Rp 20.000 Anda telah otomatis dialihkan ke jadwal baru ini tanpa biaya tambahan apa pun. Sisa pembayaran sebesar Rp {{remaining_balance_formatted}} tetap dilunasi di meja kasir setelah sesi pangkas selesai.\n\nBuka Tiket Digital Pembaruan:\n{{ticket_url}}\n\nTerima kasih telah memberitahu kami lebih awal.",
+      "preview": "Halo Budi Santoso,\n\nPerubahan jadwal reservasi Anda di Damez Barbershop telah berhasil dikonfirmasi.\n\nPerubahan Jadwal Sesi:\n- Jadwal Sebelumnya: Sabtu, 24 Oktober 2026, pukul 14:00 WIB\n- Jadwal Baru: Minggu, 25 Oktober 2026, pukul 16:00 sampai 16:45 WIB\n- Master Barber: Rian Pratama\n- Layanan: Gentlemen Classic Haircut\n- Kode Booking: DMZ-20261024-001\n\nUang muka Rp 20.000 Anda telah otomatis dialihkan ke jadwal baru ini tanpa biaya tambahan apa pun. Sisa pembayaran sebesar Rp 30.000 tetap dilunasi di meja kasir setelah sesi pangkas selesai.\n\nBuka Tiket Digital Pembaruan:\nhttps://damezbarber.com/tickets/DMZ-20261024-001\n\nTerima kasih telah memberitahu kami lebih awal."
+    },
+    "booking_cancelled_customer": {
+      "id": "booking_cancelled_customer",
+      "title": "Pemberitahuan Pembatalan Reservasi",
+      "recipient": "customer",
+      "category": "transactional",
+      "trigger": "customer_cancellation_confirmed",
+      "description": "Dikirimkan saat pelanggan membatalkan reservasi, dengan penegasan status uang muka sesuai ketentuan batas waktu H-3 jam.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "booking_date",
+        "start_time",
+        "dp_status_explanation",
+        "rebook_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nReservasi kursi Anda untuk jadwal {{booking_date}} pukul {{start_time}} WIB (Kode: {{booking_code}}) telah resmi dibatalkan dalam sistem kami.\n\nStatus Uang Muka (DP):\n{{dp_status_explanation}}\n\nJika di kemudian hari Anda membutuhkan perawatan rambut pria atau perapian jenggot, Anda dapat memilih jadwal baru kapan saja melalui tautan berikut:\n{{rebook_url}}\n\nTerima kasih telah mengabari kami.",
+      "preview": "Halo Budi Santoso,\n\nReservasi kursi Anda untuk jadwal Sabtu, 24 Oktober 2026 pukul 14:00 WIB (Kode: DMZ-20261024-001) telah resmi dibatalkan dalam sistem kami.\n\nStatus Uang Muka (DP):\nKarena pembatalan dilakukan lebih awal dari batas H-3 jam, kuota reservasi Anda telah ditutup tanpa kewajiban sisa pelunasan. Anda dapat melakukan pemesanan jadwal baru kapan saja.\n\nJika di kemudian hari Anda membutuhkan perawatan rambut pria atau perapian jenggot, Anda dapat memilih jadwal baru kapan saja melalui tautan berikut:\nhttps://damezbarber.com/booking\n\nTerima kasih telah mengabari kami."
+    },
+    "booking_no_show_alert": {
+      "id": "booking_no_show_alert",
+      "title": "Pemberitahuan Pelepasan Kursi (No-Show)",
+      "recipient": "customer",
+      "category": "notice",
+      "trigger": "admin_marks_no_show_after_15m",
+      "description": "Dikirimkan dengan nada santun ketika toleransi 15 menit telah habis tanpa kabar dan kursi dialihkan ke antrean tamu walk-in.",
+      "variables": [
+        "customer_name",
+        "booking_code",
+        "barber_name",
+        "booking_date",
+        "start_time",
+        "tolerance_time",
+        "admin_wa_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nKami menginformasikan bahwa sesi pangkas rambut Anda di Damez Barbershop untuk jadwal {{booking_date}} pukul {{start_time}} WIB (Kode: {{booking_code}}) telah melewati batas waktu toleransi kehadiran 15 menit (pukul {{tolerance_time}} WIB).\n\nDemi menjaga keadilan jadwal bagi pelanggan pada sesi berikutnya, kursi kerja {{barber_name}} telah kami alihkan kepada antrean tamu yang menunggu di lokasi. Sesuai ketentuan operasional toko kami, uang muka flat Rp 20.000 dinyatakan hangus sebagai kompensasi waktu kerja barber.\n\nJika Anda saat ini sedang dalam perjalanan menuju toko dan tetap ingin memotong rambut hari ini, silakan hubungi kasir meja depan kami. Kami akan dengan senang hati mendaftarkan Anda ke antrean tamu walk-in pada jadwal kosong terdekat:\n{{admin_wa_url}}\n\nTerima kasih atas pengertian Anda.",
+      "preview": "Halo Budi Santoso,\n\nKami menginformasikan bahwa sesi pangkas rambut Anda di Damez Barbershop untuk jadwal Sabtu, 24 Oktober 2026 pukul 14:00 WIB (Kode: DMZ-20261024-001) telah melewati batas waktu toleransi kehadiran 15 menit (pukul 14:15 WIB).\n\nDemi menjaga keadilan jadwal bagi pelanggan pada sesi berikutnya, kursi kerja Rian Pratama telah kami alihkan kepada antrean tamu yang menunggu di lokasi. Sesuai ketentuan operasional toko kami, uang muka flat Rp 20.000 dinyatakan hangus sebagai kompensasi waktu kerja barber.\n\nJika Anda saat ini sedang dalam perjalanan menuju toko dan tetap ingin memotong rambut hari ini, silakan hubungi kasir meja depan kami. Kami akan dengan senang hati mendaftarkan Anda ke antrean tamu walk-in pada jadwal kosong terdekat:\nhttps://wa.me/6281234567890\n\nTerima kasih atas pengertian Anda."
+    },
+    "slot_hold_expired": {
+      "id": "slot_hold_expired",
+      "title": "Pemulihan Kursi Pasca Batas Waktu Bayar Habis (Zero-Guilt Recovery)",
+      "recipient": "customer",
+      "category": "recovery",
+      "trigger": "slot_hold_timer_expired_unpaid",
+      "description": "Pesan ramah pemulihan jika calon pelanggan meminta bantuan setelah batas waktu pembayaran QRIS 15 menit berakhir.",
+      "variables": [
+        "customer_name",
+        "service_names",
+        "barber_name",
+        "rebook_url"
+      ],
+      "message": "Halo {{customer_name}},\n\nWaktu penahanan 15 menit untuk kursi pangkas Anda di Damez Barbershop telah selesai, dan kursi tersebut telah kami buka kembali untuk jadwal publik. Uang Anda belum terpotong.\n\nPilihan layanan ({{service_names}}) dan master barber ({{barber_name}}) masih kami simpan agar Anda tidak perlu memilih ulang dari awal. Jika Anda ingin melanjutkan reservasi, silakan pilih jam kedatangan baru melalui tautan cepat berikut:\n{{rebook_url}}\n\nSampai jumpa di Damez Barbershop.",
+      "preview": "Halo Budi Santoso,\n\nWaktu penahanan 15 menit untuk kursi pangkas Anda di Damez Barbershop telah selesai, dan kursi tersebut telah kami buka kembali untuk jadwal publik. Uang Anda belum terpotong.\n\nPilihan layanan (Gentlemen Classic Haircut) dan master barber (Rian Pratama) masih kami simpan agar Anda tidak perlu memilih ulang dari awal. Jika Anda ingin melanjutkan reservasi, silakan pilih jam kedatangan baru melalui tautan cepat berikut:\nhttps://damezbarber.com/booking?resume=true\n\nSampai jumpa di Damez Barbershop."
+    }
+  },
+  "gateway_payload_mappings": {
+    "fonnte": {
+      "endpoint": "POST https://api.fonnte.com/send",
+      "headers": {
+        "Authorization": "FONNTE_API_TOKEN"
+      },
+      "payload_format": {
+        "target": "{{recipient_phone}}",
+        "message": "{{rendered_message}}",
+        "countryCode": "62"
+      }
+    },
+    "wablas": {
+      "endpoint": "POST https://wablas.com/api/v2/send-message",
+      "headers": {
+        "Authorization": "WABLAS_TOKEN.WABLAS_SECRET_KEY"
+      },
+      "payload_format": {
+        "data": [
+          {
+            "phone": "{{recipient_phone}}",
+            "message": "{{rendered_message}}"
+          }
+        ]
+      }
+    }
+  }
+}

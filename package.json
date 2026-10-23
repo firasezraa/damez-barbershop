@@ -1,0 +1,38 @@
+{
+  "name": "damez-barber",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/verify-schema.js && node --experimental-strip-types tests/database-types.test.ts && node tests/test-pg-mem.js && node --experimental-strip-types tests/timezone.test.ts && node --experimental-strip-types tests/slot-engine.test.ts && node --experimental-strip-types tests/api-slots-route.test.ts && node --experimental-strip-types tests/midtrans-payment.test.ts && node --experimental-strip-types tests/midtrans-webhook.test.ts && node --experimental-strip-types tests/slot-auto-expire.test.ts && node --experimental-strip-types tests/landing-page.test.ts && node --experimental-strip-types tests/concurrency-race-condition.test.ts && node --experimental-strip-types tests/security-audit-tampering.test.ts && node --experimental-strip-types tests/admin-dashboard.test.ts && node --experimental-strip-types tests/whatsapp-notification.test.ts && node --experimental-strip-types tests/booking-form.test.ts && node --experimental-strip-types tests/payment-screen-boarding-pass.test.ts && node --experimental-strip-types tests/concurrency.test.ts && node --experimental-strip-types tests/booking.spec.ts && node --experimental-strip-types tests/devops-deployment-and-backup.test.ts",
+    "test:concurrency": "node --experimental-strip-types tests/concurrency.test.ts",
+    "test:e2e": "node --experimental-strip-types tests/booking.spec.ts",
+    "test:devops": "node --experimental-strip-types tests/devops-deployment-and-backup.test.ts",
+    "backup:db": "node --experimental-strip-types scripts/backup-db.ts",
+    "worker:expire": "node --experimental-strip-types scripts/slot-expire-worker.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.61.0",
+    "midtrans-client": "^1.4.3",
+    "next": "^15.2.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/midtrans-client": "^1.4.0",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "pg-mem": "^3.0.14",
+    "postcss": "^8.5.31",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.8.2"
+  }
+}

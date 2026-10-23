@@ -1,0 +1,29 @@
+SIMULASI FINANSIAL MITIGASI NO-SHOW DAMEZ BARBERSHOP
+Komparasi Skenario Baseline (Tanpa DP) vs Skenario Damez (DP Flat Rp 20.000)
+
+Komponen Evaluasi,Skenario A: Tanpa DP (Status Quo WA),Skenario B: DP Flat Rp 20.000 (Damez),Selisih / Dampak Positif
+Rata-rata Booking Harian Diminta,25,25,0
+Tingkat No-Show (No-Show Rate %),25.0%,5.0%,-20.0%
+Kasus No-Show Harian (Customer),6.0,1.25,-4.75
+Customer Hadir & Menyelesaikan Cukur,19.0,23.75,4.75
+Average Order Value (AOV),60000,60000,0
+Pendapatan Cukur Hadir Harian (Rp),1140000,1425000,285000
+Pendapatan Retensi DP Hangus Harian (Rp),0,25000,25000
+Tingkat Recapture Walk-in pada Menit ke-15,0.0%,60.0%,60.0%
+Customer Walk-in Pengisi Slot No-Show,0.0,0.75,0.75
+Pendapatan Tambahan Walk-in Recovery (Rp),0,45000,45000
+Total Omzet Kotor Harian (Rp),1140000,1495000,355000
+Kerugian Omzet Harian (Rp),360000,20000,-340000
+
+PROYEKSI BULANAN (30 HARI OPERASIONAL)
+Metrik Finansial Bulanan,Skenario A (Tanpa DP),Skenario B (Dengan DP),Dampak Ekonomi
+Total Booking Terjadwal,750,750,0
+Total Kasus No-Show (Bulan),180,37.5,-142.5
+Omzet Cukur Hadir (Rp),34200000,42750000,8550000
+Pendapatan DP Hangus (Rp),0,750000,750000
+Pendapatan Resale Walk-in (Rp),0,1350000,1350000
+Total Omzet Diterima Gerai (Rp),34200000,44850000,10650000
+Potensi Kerugian No-Show Lenyap (Rp),10800000,600000,-10200000
+Biaya Payment Gateway Midtrans QRIS (Rp),0,105000,-105000
+Biaya WhatsApp Gateway API (Rp),0,375000,-375000
+Net Nilai Ekonomi Diselamatkan / Bulan (Rp),0,10800000,10800000

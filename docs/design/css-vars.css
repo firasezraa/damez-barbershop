@@ -1,0 +1,42 @@
+:root {
+  --color-primary: #d97706;
+  --color-primary-hover: #f59e0b;
+  --color-primary-foreground: #121212;
+  --color-secondary: #784c25;
+  --color-secondary-hover: #8c582b;
+  --color-secondary-foreground: #ffffff;
+  --color-background: #121212;
+  --color-surface: #1a1a1a;
+  --color-surface-elevated: #242424;
+  --color-surface-hover: #2c2c2c;
+  --color-text-primary: #f5f5f0;
+  --color-text-muted: #a8a29e;
+  --color-border: #2e2e2e;
+  --color-border-accent: #d97706;
+  --color-status-confirmed: #064e3b;
+  --color-status-confirmed-text: #34d399;
+  --color-status-pending: #451a03;
+  --color-status-pending-text: #fbbf24;
+  --color-status-noshow: #450a0a;
+  --color-status-noshow-text: #f87171;
+  --color-status-cancelled: #27272a;
+  --color-status-cancelled-text: #a1a1aa;
+  --color-destructive: #b91c1c;
+  --color-destructive-foreground: #ffffff;
+  --color-success: #047857;
+  --color-success-foreground: #ffffff;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-md: 8px;
+  --rounded-lg: 12px;
+  --rounded-xl: 16px;
+  --rounded-full: 9999px;
+}
+
