@@ -2,30 +2,31 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 import {
-  Scissors,
-  CheckCircle2,
-  Calendar,
-  Clock,
-  User,
-  Armchair,
-  MapPin,
-  Copy,
-  Check,
-  Printer,
-  Share2,
-  MessageCircle,
-  Home,
-  ShieldCheck,
-  AlertCircle,
-  Building2,
-  Receipt,
-} from "lucide-react";
+  IconScissors,
+  IconCircleCheck,
+  IconCalendar,
+  IconClock,
+  IconUser,
+  IconArmchair,
+  IconMapPin,
+  IconCopy,
+  IconCheck,
+  IconPrinter,
+  IconShare,
+  IconBrandWhatsapp,
+  IconHome,
+  IconShieldCheck,
+  IconAlertCircle,
+  IconTicket,
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { PaymentBookingDetail } from "@/components/payment/types";
 import { SHOP_METADATA } from "@/components/booking/constants";
+import { SPRING_TOKENS } from "@/lib/motion";
 
 interface DigitalBoardingPassProps {
   booking: PaymentBookingDetail;
@@ -91,7 +92,7 @@ export function DigitalBoardingPass({
       {/* Top Success Announcement */}
       <div className="flex flex-col items-center text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-3 shadow-lg shadow-emerald-950/30">
-          <CheckCircle2 className="size-8" />
+          <IconCircleCheck size="lg" aria-hidden="true" />
         </div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground font-display">
           Reservasi Berhasil Dikonfirmasi
@@ -102,13 +103,19 @@ export function DigitalBoardingPass({
       </div>
 
       {/* THE DIGITAL BOARDING PASS CARD */}
-      <div className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-surface shadow-2xl shadow-black/80 print:shadow-none print:border-black">
+      <motion.div
+        initial={{ opacity: 0, y: 65, scale: 0.88, rotateX: 14 }}
+        animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+        transition={SPRING_TOKENS.bounce}
+        style={{ perspective: 1000, transformStyle: "preserve-3d" }}
+        className="relative overflow-hidden rounded-3xl border-2 border-primary/40 bg-surface shadow-2xl shadow-black/80 print:shadow-none print:border-black"
+      >
         {/* Pass Top Banner (Aviation / Barber Header) */}
         <div className="relative bg-gradient-to-r from-surface-elevated via-surface to-surface-elevated px-6 py-5 border-b border-border/80">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-xl bg-primary/20 text-primary border border-primary/40">
-                <Scissors className="size-5" />
+                <IconScissors size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-black tracking-widest text-primary uppercase">
@@ -146,12 +153,12 @@ export function DigitalBoardingPass({
                 >
                   {copiedCode ? (
                     <>
-                      <Check data-icon="inline-start" className="size-3.5 text-emerald-500" />
+                      <IconCheck data-icon="inline-start" size="micro" className="text-emerald-500" aria-hidden="true" />
                       <span>Tersalin</span>
                     </>
                   ) : (
                     <>
-                      <Copy data-icon="inline-start" className="size-3.5" />
+                      <IconCopy data-icon="inline-start" size="micro" aria-hidden="true" />
                       <span>Salin</span>
                     </>
                   )}
@@ -186,7 +193,7 @@ export function DigitalBoardingPass({
           {/* Passenger Name */}
           <div className="flex items-start gap-2.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-              <User className="size-4" />
+              <IconUser size="micro" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -204,7 +211,7 @@ export function DigitalBoardingPass({
           {/* Master Barber */}
           <div className="flex items-start gap-2.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-              <Armchair className="size-4" />
+              <IconArmchair size="micro" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -222,7 +229,7 @@ export function DigitalBoardingPass({
           {/* Date */}
           <div className="flex items-start gap-2.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-              <Calendar className="size-4" />
+              <IconCalendar size="micro" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -240,7 +247,7 @@ export function DigitalBoardingPass({
           {/* Time & Duration */}
           <div className="flex items-start gap-2.5">
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-              <Clock className="size-4" />
+              <IconClock size="micro" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -306,8 +313,8 @@ export function DigitalBoardingPass({
 
         {/* Barcode Graphic for Cashier Scanner */}
         <div className="px-6 py-5 border-t border-border bg-surface-elevated/60 flex flex-col items-center justify-center text-center">
-          {/* Vector Stylized Barcode */}
-          <div className="flex items-center justify-center gap-[3px] h-12 w-full max-w-xs px-4 py-1.5 bg-white rounded-lg">
+          {/* Vector Stylized Barcode with Laser Sweep Motion */}
+          <div className="relative overflow-hidden flex items-center justify-center gap-[3px] h-12 w-full max-w-xs px-4 py-1.5 bg-white rounded-lg">
             {/* Alternating barcode lines */}
             {[
               3, 1, 2, 4, 1, 2, 3, 1, 4, 2, 1, 3, 2, 1, 4, 1, 3, 2, 1, 3, 4, 1,
@@ -319,6 +326,18 @@ export function DigitalBoardingPass({
                 style={{ width: `${width}px` }}
               />
             ))}
+            {/* Laser Shimmer Bar */}
+            <motion.div
+              initial={{ x: "-150%" }}
+              animate={{ x: "250%" }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+                repeatDelay: 0.8,
+              }}
+              className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent pointer-events-none"
+            />
           </div>
 
           <span className="mt-2 font-mono text-[11px] tracking-widest text-muted-foreground">
@@ -332,17 +351,17 @@ export function DigitalBoardingPass({
         {/* Arrival Terms and Location Note */}
         <div className="px-6 py-4 border-t border-border text-[11px] text-muted-foreground leading-relaxed flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5 font-semibold text-foreground">
-            <MapPin className="size-3.5 text-primary shrink-0" />
+            <IconMapPin size="micro" className="text-primary shrink-0" aria-hidden="true" />
             <span>Lokasi: {SHOP_METADATA.location}</span>
           </div>
           <div className="flex items-start gap-1.5">
-            <ShieldCheck className="size-3.5 text-emerald-500 shrink-0 mt-0.5" />
+            <IconShieldCheck size="micro" className="text-emerald-500 shrink-0 mt-0.5" aria-hidden="true" />
             <span>
               Jaminan Kursi Siap: Hadir 10 menit lebih awal. Toleransi keterlambatan maksimal 15 menit sebelum kursi dialihkan.
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* WHATSAPP ADMIN BUTTON (Mandatory Spec) */}
       <div className="flex flex-col gap-3">
@@ -357,7 +376,7 @@ export function DigitalBoardingPass({
             size="lg"
             className="w-full bg-[#25D366] text-white hover:bg-[#20BD5A] font-bold shadow-lg shadow-[#25D366]/20 border-0"
           >
-            <MessageCircle data-icon="inline-start" className="size-5" />
+            <IconBrandWhatsapp data-icon="inline-start" size="sm" aria-hidden="true" />
             Hubungi Admin via WhatsApp
           </Button>
         </a>
@@ -371,7 +390,7 @@ export function DigitalBoardingPass({
             onClick={handlePrint}
             className="text-xs"
           >
-            <Printer data-icon="inline-start" className="size-3.5" />
+            <IconPrinter data-icon="inline-start" size="micro" aria-hidden="true" />
             Cetak Tiket
           </Button>
 
@@ -384,12 +403,12 @@ export function DigitalBoardingPass({
           >
             {copiedLink ? (
               <>
-                <Check data-icon="inline-start" className="size-3.5 text-emerald-500" />
+                <IconCheck data-icon="inline-start" size="micro" className="text-emerald-500" aria-hidden="true" />
                 Tersalin
               </>
             ) : (
               <>
-                <Share2 data-icon="inline-start" className="size-3.5" />
+                <IconShare data-icon="inline-start" size="micro" aria-hidden="true" />
                 Bagikan Tiket
               </>
             )}
@@ -402,7 +421,7 @@ export function DigitalBoardingPass({
               size="sm"
               className="w-full text-xs"
             >
-              <Home data-icon="inline-start" className="size-3.5" />
+              <IconHome data-icon="inline-start" size="micro" aria-hidden="true" />
               Ke Beranda
             </Button>
           </Link>

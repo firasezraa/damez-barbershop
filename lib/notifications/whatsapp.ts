@@ -631,8 +631,8 @@ export function normalizeIndonesianPhoneNumber(phone: string): string {
     return ''
   }
 
-  // Remove whitespace, dashes, dots, brackets
-  let cleaned: string = phone.trim().replace(/[\s\-\(\)\.]/g, '')
+  // Remove whitespace, dashes, dots, brackets, zero-width space, underscores, slashes
+  let cleaned: string = phone.trim().replace(/[\u200B-\u200D\uFEFF\s\-\(\)\._\/]/g, '')
 
   if (cleaned.startsWith('+62')) {
     cleaned = '62' + cleaned.slice(3)
@@ -649,11 +649,11 @@ export function normalizeIndonesianPhoneNumber(phone: string): string {
 
 /**
  * Validates Indonesian mobile phone number:
- * Must start with 628 and have 10 to 15 digits total.
+ * Must start with 628[1-9] and have 10 to 14 digits total (E.164 without plus sign).
  */
 export function isValidIndonesianPhoneNumber(phone: string): boolean {
   const normalized: string = normalizeIndonesianPhoneNumber(phone)
-  return /^628\d{8,12}$/.test(normalized)
+  return /^628[1-9]\d{7,11}$/.test(normalized)
 }
 
 // ============================================================================

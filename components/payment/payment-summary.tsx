@@ -2,16 +2,16 @@
 
 import * as React from "react";
 import {
-  Calendar,
-  Clock,
-  User,
-  Scissors,
-  Armchair,
-  CheckCircle2,
-  Info,
-  CreditCard,
-  Building2,
-} from "lucide-react";
+  IconCalendar,
+  IconClock,
+  IconUser,
+  IconScissors,
+  IconArmchair,
+  IconCircleCheck,
+  IconAlertCircle,
+  IconCreditCard,
+  IconMapPin,
+} from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { PaymentBookingDetail } from "./types";
@@ -65,7 +65,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
         {/* Barber */}
         <div className="flex items-start gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-            <Armchair className="size-4" />
+            <IconArmchair size="micro" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Master Barber</span>
@@ -81,7 +81,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
         {/* Schedule */}
         <div className="flex items-start gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-            <Calendar className="size-4" />
+            <IconCalendar size="micro" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Tanggal & Jam</span>
@@ -97,7 +97,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
         {/* Customer */}
         <div className="flex items-start gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-            <User className="size-4" />
+            <IconUser size="micro" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Nama Pelanggan</span>
@@ -113,7 +113,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
         {/* Location */}
         <div className="flex items-start gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary border border-border">
-            <Building2 className="size-4" />
+            <IconMapPin size="micro" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Lokasi Toko</span>
@@ -139,7 +139,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
               className="flex items-center justify-between text-sm"
             >
               <div className="flex items-center gap-2">
-                <Scissors className="size-3.5 text-primary" />
+                <IconScissors size="micro" className="text-primary" aria-hidden="true" />
                 <span className="font-medium text-foreground">{svc.name}</span>
                 <span className="text-xs text-muted-foreground">
                   ({svc.duration_minutes} mnt)
@@ -163,7 +163,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
         {/* Highlighted Down Payment */}
         <div className="flex items-center justify-between rounded-xl bg-primary/10 border border-primary/30 p-2.5">
           <div className="flex items-center gap-2">
-            <CreditCard className="size-4 text-primary" />
+            <IconCreditCard size="micro" className="text-primary" aria-hidden="true" />
             <div className="flex flex-col">
               <span className="text-xs font-bold text-foreground">
                 Uang Muka (DP) Wajib:
@@ -195,7 +195,7 @@ export function PaymentSummary({ booking, className }: PaymentSummaryProps) {
 
         {/* Note on Payment Settlement */}
         <div className="mt-1 flex items-start gap-1.5 text-[11px] text-muted-foreground">
-          <Info className="size-3.5 text-primary shrink-0 mt-0.5" />
+          <IconAlertCircle size="micro" className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
           <span>
             Sisa pelunasan sebesar {formattedRemaining} dapat dibayarkan di kasir dengan tunai atau QRIS toko.
           </span>

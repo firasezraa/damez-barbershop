@@ -1,13 +1,12 @@
 import * as React from "react";
 import {
-  Clock,
-  Users,
-  CreditCard,
-  Sparkles,
-  Shield,
-  Coffee,
-  CheckCircle,
-} from "lucide-react";
+  IconClock,
+  IconUsers,
+  IconCreditCard,
+  IconSparkles,
+  IconShieldCheck,
+  IconCircleCheck,
+} from "@/components/ui/icons";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export function ValuePillars() {
@@ -34,7 +33,7 @@ export function ValuePillars() {
             <div className="absolute top-0 left-0 h-1 w-full bg-primary" />
             <CardHeader>
               <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/25 text-primary mb-2">
-                <Clock className="size-6" />
+                <IconClock size="md" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg">
                 Bebas Antrean Fisik yang Melelahkan
@@ -52,7 +51,7 @@ export function ValuePillars() {
             <div className="absolute top-0 left-0 h-1 w-full bg-secondary" />
             <CardHeader>
               <div className="flex size-12 items-center justify-center rounded-xl bg-secondary/20 border border-secondary/40 text-[#D97706] mb-2">
-                <Users className="size-6" />
+                <IconUsers size="md" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg">
                 Tiga Master Barber Berdedikasi Penuh
@@ -70,7 +69,7 @@ export function ValuePillars() {
             <div className="absolute top-0 left-0 h-1 w-full bg-primary" />
             <CardHeader>
               <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/25 text-primary mb-2">
-                <CreditCard className="size-6" />
+                <IconCreditCard size="md" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg">
                 Transparansi Harga Sejak Awal
@@ -96,7 +95,7 @@ export function ValuePillars() {
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/30 px-3 py-1 text-xs font-semibold text-primary w-fit">
-              <CheckCircle className="size-4" />
+              <IconCircleCheck size="micro" aria-hidden="true" />
               <span>Standar Operasional 100% Terverifikasi</span>
             </div>
           </div>

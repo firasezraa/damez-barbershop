@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Clock, Check, ArrowRight, Tag } from "lucide-react";
+import {
+  IconClock,
+  IconCheck,
+  IconArrowRight,
+  IconTag,
+  getServiceIcon,
+} from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -196,7 +202,7 @@ export function ServicesGrid() {
                     {service.badgeLabel}
                   </Badge>
                   <div className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground bg-surface-elevated px-2.5 py-1 rounded-md border border-border/60">
-                    <Clock className="size-3.5 text-primary" />
+                    <IconClock size="micro" className="text-primary" aria-hidden="true" />
                     <span>{service.durationMinutes} Menit</span>
                   </div>
                 </div>
@@ -248,7 +254,7 @@ export function ServicesGrid() {
                       className="w-full justify-between"
                     >
                       <span>Pilih Layanan Ini</span>
-                      <ArrowRight className="size-4" />
+                      <IconArrowRight size="micro" aria-hidden="true" />
                     </Button>
                   </a>
                 </CardFooter>

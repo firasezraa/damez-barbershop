@@ -3,7 +3,7 @@
 > **Project**: Damez Barbershop (Company Profile + Online Booking di Tempat dengan Down Payment Flat Rp 20.000)  
 > **Framework**: AI Company Multi-Agent Operating System (Hermes Kanban Engine)  
 > **Chief Orchestration Officer**: `orchestrator` (`orchestrator:decomposer` & `orchestrator:linker`)  
-> **Status Board**: Milestone 0 (Discovery & Business Locking) COMPLETED & VERIFIED -> Milestone 1 (Design System & Wireframing) READY TO DISPATCH  
+> **Status Board**: Milestone 0 s/d 8 COMPLETED & VERIFIED -> Milestone 9 (Git Release & Remote Sync to dev) IN PROGRESS  
 > **Workspace Direktori**: `dir:C:/Users/Acer/OneDrive/Desktop/DamezBarber` (Persistent Workspace pinned across all tasks)  
 > **Terakhir Diperbarui**: 2026-10-23  
 
@@ -43,50 +43,31 @@ Seluruh perencanaan dan unit kerja diturunkan dari parameter bisnis yang telah d
 └─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
-### ✅ [Done — Milestone 0: Discovery & Milestone 3: Schema & Milestone 2: Operations]
-- `TSK-M0-01` (`t_2f541ed2`): Finalisasi WBS & Dependency Linkage (`orchestrator:decomposer` & `linker`)
-- `TSK-M0-02` (`t_15c88593`): PRD v1.0 & Scope Baseline MVP (`product:prd-spec` & `prioritizer`) → `docs/PRD.md`
-- `TSK-M0-03` (`t_fdf8ada5`): Riset Pasar Barbershop, Layanan & Benchmark Harga (`researcher:market`) → `docs/research/market-services-benchmark.md`
-- `TSK-M0-04` (`t_ed31ef48`): Audit Teknis Fee Gateway Midtrans & Integrasi WA API (`researcher:factcheck`) → `docs/research/gateway-and-wa-feasibility.md`
-- `TSK-M0-05` (`t_9fbbfe80`): Model Kapasitas Slot & Simulasi Mitigasi No-Show (`researcher:data` & `product:monetization`) → `docs/research/slot-capacity-and-noshow-model.md`
-- `TSK-M0-06` (`t_7225f497`): Quality Gate M0 Review & Handoff Sign-off (`orchestrator:verifier`) → `docs/reports/M0-quality-gate-report.md`
-- `TSK-M2-04` (`t_93fe1057`): SOP Operasional Admin & Barber Dashboard (`writer:techdocs`) → `docs/admin-operations-guide.md`
-- `TSK-M3-01` (`t_003055e6`): Setup Database Schema Supabase & Constraints (`coder:backend`) → `supabase/migrations/001_initial_schema.sql`, `types/database.types.ts`
-- `TSK-M4-01` (`t_536428af`): Integrasi Midtrans Snap/Core API QRIS/VA (`coder:backend`) → `lib/payment/midtrans.ts`, `app/api/booking/checkout/route.ts`
+### ✅ [Done - Milestone 0 s/d 7: Foundation, Production Launch & Visual Upgrade]
+- Seluruh 31 tasks inti (Milestone 0 s/d Milestone 6) telah selesai 100% dan terverifikasi pada Final DoD Gate (`t_c6824d28`).
+- Seluruh 7 tasks Milestone 7 (Comprehensive UI/UX, Motion Choreography & Visual Craftsmanship) telah selesai 100% dan disahkan pada Quality Gate M7 (`t_a99d7a97`).
+  - ✓ `TSK-M7-01` (`t_af734230`): Perancangan Sistem Ikonografi Barbershop dengan Tabler Icons (`designer:visual`) [Prio 30] - **DONE**
+  - ✓ `TSK-M7-02` (`t_8dc8fd13`): Arsitektur Komponen Kreatif Uiverse Galaxy (`designer:interaction`) [Prio 29] - **DONE**
+  - ✓ `TSK-M7-03` (`t_69fd0e68`): Motion Choreography & Spring Physics Specs dengan Motion (`designer:interaction`) [Prio 28] - **DONE**
+  - ✓ `TSK-M7-04` (`t_ae96239d`): Audit Aksesibilitas Motion & Kontras Tabler Icons (WCAG 2.1 AA) (`designer:a11y`) [Prio 27] - **DONE**
+  - ✓ `TSK-M7-05` (`t_e6acff5b`): Implementasi Frontend: Tabler Icons, Galaxy Styling & Motion di Next.js (`coder:frontend`) [Prio 26] - **DONE**
+  - ✓ `TSK-M7-06` (`t_60f47da5`): Automated Motion Performance, 60-120 FPS & UX Regression Testing (`coder:qa`) [Prio 25] - **DONE**
+  - ✓ `TSK-M7-07` (`t_a99d7a97`): Quality Gate Review & Final Polish Sign-Off (M7) (`orchestrator:verifier`) [Prio 24] - **DONE**
 
-### ⏳ [Todo / Ready — Milestone 1: Design System & Wireframing]
-- `TSK-M1-01` (`t_762912ca`): Customer & Admin Persona Journey Mapping (`product:persona-story`) [Prio 89]
-- `TSK-M1-02` (`t_f35d654f`): Design System Token (Tailwind & Shadcn Tokens) (`designer:design-system`) [Prio 88]
-- `TSK-M1-03` (`t_3c1ae403`): Wireframe Landing Profile & Multi-step Booking Mobile (`designer:wireframe`) [Prio 87]
-- `TSK-M1-04` (`t_3aaea2e7`): Interaction UX Slot Hold & Payment Timer (`designer:interaction`) [Prio 86]
-- `TSK-M1-05` (`t_fb5da823`): Audit Aksesibilitas Mobile & Touch Targets (`designer:a11y`) [Prio 85]
+### ✅ [Done - Milestone 8: Full-Spectrum Hardening, Edge-Case Dogfooding & Zero-Bug Certification]
+- Seluruh 7 tasks Milestone 8 telah selesai 100% dan terverifikasi pada Quality Gate M8 (`t_f0d09bfe`).
+  - ✓ `TSK-M8-01` (`t_926fe2a0`): Exploratory Dogfooding & Bug Bashing (`coder:qa`) [Prio 20] - **DONE** (14 bugs dan celah logika form terpetakan di docs/qa/dogfooding-bug-report.md)
+  - ✓ `TSK-M8-02` (`t_18284bf4`): Automated Concurrency Stress & Load Simulation (`coder:qa`) [Prio 19] - **DONE** (50-100 req simultan, 0 double booking, pool latency terverifikasi)
+  - ✓ `TSK-M8-03` (`t_7fb4b74d`): OWASP Web Security Hardening & Payment Tampering Audit (`coder:security`) [Prio 18] - **DONE** (23/23 OWASP tests passed, nominal DP terkunci flat Rp 20.000, timingSafeEqual SHA-512 webhook, sliding-window rate limit RFC 6585, sanitasi SQLi, Stored XSS & CSV Formula Injection tervalidasi rapat)
+  - ✓ `TSK-M8-04` (`t_17beb4e9`): Backend Logic Remediation, Slot Integrity & Concurrency Patching (`coder:backend`) [Prio 17] - **DONE** (Normalisasi waktu ISO 8601 berzona WIB, sinkronisasi validasi nomor WhatsApp E.164, idempotensi checkout tanpa perpanjangan TTL hold, reconciler late settlement & rollback transaksi Midtrans migration 004, eliminasi memory leak pada rate limiter)
+  - ✓ `TSK-M8-05` (`t_6de61196`): Frontend Resilience, Form Error Handling & Core Web Vitals (`coder:frontend`) [Prio 16] - **DONE** (Debounce & double-click protection pada bottom bar, format ISO 8601 WIB pencegah NaN Date, sinkronisasi nomor HP 08xx & kebiasaan 8xxx auto-normalize, Step 3 real-time polling 20s & deteksi slot basi, beforeunload interceptor pada payment screen, timer interval lifecycle cleanup bebas kebocoran memori, fake boarding pass dihapus tuntas, sanitasi meta tag URL, LCP < 1.5s & CLS = 0)
+  - ✓ `TSK-M8-06` (`t_4de2effe`): Full-Suite Automated E2E Regression Re-Verification (`coder:qa`) [Prio 15] - **DONE** (31 test suites 100% PASS hijau bebas gagal/flaked, verifikasi alur booking end-to-end, pembatalan H-3 jam, toleransi keterlambatan 15 menit & no-show, konkurensi multi-user 50-100 req stampede zero double booking, zero-regression perbaikan M8 terverifikasi di tests/reports/full-regression-certification.md)
+  - ✓ `TSK-M8-07` (`t_f0d09bfe`): Quality Gate M8: Zero-Bug & Operational Reliability Sign-Off (`orchestrator:verifier`) [Prio 14] - **DONE** (0 open defects, Core Web Vitals LCP < 1.5s, 0 double-booking, sertifikasi kelaikan operasional disahkan di docs/reports/M8-zero-bug-quality-gate.md)
 
-### 📋 [Backlog — Milestone 2 s/d 6]
-- **Milestone 2 (Copywriting & Content)**:
-  - `TSK-M2-01` (`t_4debe009`): Conversion Copywriting Landing Page (`writer:copywriter`) [Prio 79]
-  - `TSK-M2-02` (`t_302549f9`): Brand Story 'Tentang Kami' & Craftsmanship (`writer:longform`) [Prio 78]
-  - `TSK-M2-03` (`t_9694c0bc`): Microcopy Booking, Error State & FAQ Aturan DP (`writer:editor`) [Prio 77]
-  - [x] `TSK-M2-04` (`t_93fe1057`): SOP Operasional Admin & Barber Dashboard (`writer:techdocs`) [SELESAI]
-- **Milestone 3 (Core Implementation & Schema)**:
-  - `TSK-M3-01` (`t_003055e6`): Setup Database Schema Supabase & Constraints (`coder:backend`) [Prio 69]
-  - `TSK-M3-02` (`t_67aafbc4`): Slicing Public Company Profile SEO-Ready (`coder:frontend`) [Prio 68]
-  - `TSK-M3-03` (`t_f3c0f67f`): API Slot Generation Engine Timezone Jakarta (`coder:backend`) [Prio 67]
-  - `TSK-M3-04` (`t_f5132d4b`): Multi-step Booking Form UI Mobile-First (`coder:frontend`) [Prio 66]
-- **Milestone 4 (DP Engine, Midtrans & Slot Locking)**:
-  - [x] `TSK-M4-01` (`t_536428af`): Integrasi Midtrans Snap/Core API QRIS/VA (`coder:backend`) [SELESAI]
-  - [x] `TSK-M4-02` (`t_9b3a09df`): Slot Temporary Locking & Auto-Expire Engine (`coder:backend`) [SELESAI]
-  - [x] `TSK-M4-03` (`t_e3e5bc81`): Webhook Payment Handler Idempotent & Verified (`coder:backend`) [SELESAI]
-  - [x] `TSK-M4-04` (`t_e1112ee4`): Payment Screen UI Countdown & Booking Code (`coder:frontend`) [SELESAI]
-  - [x] `TSK-M4-05` (`t_33a88ee7`): Race Condition & Security Audit API Booking (`coder:security`) [SELESAI]
-- **Milestone 5 (Admin Portal, WA Dispatcher & E2E QA)**:
-  - [x] `TSK-M5-01` (`t_936b17e9`): Dashboard Admin Kalender, Booking List & Quick Actions (`coder:frontend`) [SELESAI]
-  - [x] `TSK-M5-02` (`t_570dfd3e`): WhatsApp Notification Dispatcher Service (`coder:backend`) [SELESAI]
-  - [x] `TSK-M5-03` (`t_5bbad5f1`): Automated Concurrency & Booking E2E Test (`coder:qa`) [SELESAI]
-  - [x] `TSK-M5-04` (`t_e7aa4a95`): Deployment Runbook & Environment Audit (`writer:techdocs`) [SELESAI]
-- **Milestone 6 (Production Deploy & Final Quality Gate)**:
-  - [x] `TSK-M6-01` (`t_c84124f1`): Production Deploy, CI/CD & SSL Setup (`coder:devops`) [SELESAI]
-  - [x] `TSK-M6-02` (`t_fd8f07ea`): Conversion & No-Show Telemetry Tracking (`product:metrics`) [SELESAI]
-  - [x] `TSK-M6-03` (`t_c6824d28`): Final Definition of Done (DoD) Verification (`orchestrator:verifier`) [SELESAI]
+### ⏳ [In Progress / Todo - Milestone 9: Git Release & Remote Sync to dev]
+- ✓ `TSK-M9-01` (`t_54a51429`): Pre-Push Full-Suite Quality Gate & Production Build Audit (`coder:qa`) [Prio 10] - **DONE** (31/31 test suites passed 100%, npm run build 22/22 routes clean, 0 TypeScript errors, laporan di docs/reports/M9-01-pre-push-qa-audit.md)
+- ● `TSK-M9-02` (`t_09927b62`): Git Stage, Atomic Conventional Commit & Push to origin/dev (`coder:devops`) [Prio 9] - **READY / TODO**
+- ◻ `TSK-M9-03` (`t_1624300c`): Post-Push Remote Verification & Release Gate Sign-Off (`orchestrator:verifier`) [Prio 8] - **TODO**
 
 ---
 
@@ -125,6 +106,23 @@ Seluruh perencanaan dan unit kerja diturunkan dari parameter bisnis yang telah d
 | **M6-01** | `t_c84124f1` | Production Deploy, CI/CD & SSL Setup | `coder` | `coder:devops` | DevOps | 39 | `M5-03`, `M5-04` | GitHub Actions CI/CD & Live URL | ✅ Selesai: Repo `https://github.com/firasezraa/damez-barbershop` live, 3 GitHub Actions workflows lulus 100%, Vercel Crons & SSL HSTS/CSP terkonfigurasi, pencadangan harian Supabase AES-256 aktif. |
 | **M6-02** | `t_fd8f07ea` | Telemetri Konversi & No-Show Tracking | `product` | `product:metrics` | Analytics | 38 | `M6-01` | Dashboard Telemetri & Event Tracker | ✅ Selesai: Funnel konversi 4-tahap aktif, no-show rate 4.4% (< 10% target), 10/10 tests pass. |
 | **M6-03** | `t_c6824d28` | Final Definition of Done (DoD) Sign-off | `orchestrator` | `orchestrator:verifier` | Release Gate | 37 | `M6-01`, `M6-02` | `docs/reports/FINAL-MVP-VERIFICATION-REPORT.md` | ✅ Selesai: 8/8 poin DoD MVP IDEA.md terverifikasi 100% lulus mutlak. |
+| **M7-01** | `t_af734230` | Perancangan Ikonografi Tabler Barbershop | `designer` | `designer:visual` | Iconography | 30 | `M6-03` | `docs/design/tabler-iconography.md`, `components/ui/icons.ts` | 24x24 grid, 2px stroke, curated set 12+ ikon barbershop & booking. |
+| **M7-02** | `t_8dc8fd13` | Komponen Kreatif Uiverse Galaxy | `designer` | `designer:interaction` | UI Component | 29 | `M6-03` | `docs/design/galaxy-components-spec.md`, templates CSS | Shimmer amber glow button, tactile card hover, bespoke barber loader. |
+| **M7-03** | `t_69fd0e68` | Motion Choreography & Spring Physics | `designer` | `designer:interaction` | Motion Specs | 28 | `M7-01`, `M7-02` | `docs/design/motion-choreography.md`, `preview-enhanced.html` | Physics spring curves, exit/entry AnimatePresence, timer breathing pulse. |
+| **M7-04** | `t_ae96239d` | Audit Aksesibilitas Motion & Kontras | `designer` | `designer:a11y` | Accessibility | 27 | `M7-02`, `M7-03` | `docs/design/motion-a11y-audit.md` | 100% lulus WCAG 2.1 AA, prefers-reduced-motion fallback, aria attributes. |
+| **M7-05** | `t_e6acff5b` | Implementasi Frontend Next.js Motion | `coder` | `coder:frontend` | Frontend | 26 | `M7-01`, `M7-02`, `M7-03`, `M7-04` | Codebase Next.js App Router | Integrasi `@tabler/icons-react` & `motion/react`, zero-error console. |
+| **M7-06** | `t_60f47da5` | Automated 60-120 FPS & QA Testing | `coder` | `coder:qa` | QA Testing | 25 | `M7-05` | `tests/motion-performance-audit.md` | Frame rate stabil 60-120 FPS, CLS < 0.05, 100% tes fungsional hijau. |
+| **M7-07** | `t_a99d7a97` | Quality Gate Review & Polish Sign-Off | `orchestrator` | `orchestrator:verifier` | Release Gate | 24 | `M7-05`, `M7-06` | `docs/reports/M7-visual-upgrade-verification.md` | Audit menyeluruh M7 tervalidasi 100% lulus mutlak dan disahkan. |
+| **M8-01** | `t_926fe2a0` | Exploratory Dogfooding & Bug Bashing | `coder` | `coder:qa` | QA Dogfood | 20 | `M7-07` | `docs/qa/dogfooding-bug-report.md` | Chaos testing format WA cacat, multi-tab slot sama, checkout timeout. |
+| **M8-02** | `t_18284bf4` | Concurrency Stress & Load Simulation | `coder` | `coder:qa` | Stress Test | 19 | `M7-07` | `tests/concurrency-stress-test.ts`, report | ✅ Selesai: 50-100 req simultan, 0 double-booking, 0 database connection pool drops/leaks, 0 unhandled 500 error. |
+| **M8-03** | `t_7fb4b74d` | OWASP Web Security & Tampering Audit | `coder` | `coder:security` | Security | 18 | `M7-07` | `docs/security/penetration-test-report.md` | DP client-side tampering tertutup, webhook HMAC SHA-512 spoofing tertolak. |
+| **M8-04** | `t_17beb4e9` | Backend Logic & Slot Concurrency Fix | `coder` | `coder:backend` | Backend Fix | 17 | `M8-01`, `M8-02`, `M8-03` | Patched API & PostgreSQL functions | Optimasi query slot < 5ms, validasi E.164, atomisitas transaksi rollback. |
+| **M8-05** | `t_6de61196` | Frontend Resilience & LCP Optimization | `coder` | `coder:frontend` | Frontend Fix | 16 | `M8-01`, `M8-02`, `M8-03` | Patched booking components | Debounce double-click, LCP < 1.5s, CLS = 0, pembersihan timer memory leak. |
+| **M8-06** | `t_4de2effe` | Full Automated Regression Verification | `coder` | `coder:qa` | Regression | 15 | `M8-04`, `M8-05` | `tests/reports/full-regression-certification.md` | 100% test suites lulus hijau (0 failed, 0 flaked), zero regression. |
+| **M8-07** | `t_f0d09bfe` | Quality Gate M8: Zero-Bug Sign-Off | `orchestrator` | `orchestrator:verifier` | Release Gate | 14 | `M8-06` | `docs/reports/M8-zero-bug-quality-gate.md` | ✅ Selesai: 0 open critical/high defects, kelaikan operasional ditandatangani 100%, papan Kanban selesai 100%. |
+| **M9-01** | `t_54a51429` | Pre-Push QA Gate & Production Build | `coder` | `coder:qa` | QA Testing | 10 | `M8-07` | Log verifikasi build & test pass | ✅ Selesai: 100% 31 test suites lulus hijau, npm run build 22/22 routes sukses tanpa error, 0 TypeScript errors, dokumen audit di docs/reports/M9-01-pre-push-qa-audit.md. |
+| **M9-02** | `t_09927b62` | Git Stage, Commit & Push origin/dev | `coder` | `coder:devops` | DevOps | 9 | `M9-01` | Commit SHA remote branch dev | Atomic conventional commit, working tree clean, synced to origin/dev. |
+| **M9-03** | `t_1624300c` | Remote Sync Verification & Sign-Off | `orchestrator` | `orchestrator:verifier` | Release Gate | 8 | `M9-02` | `docs/reports/M9-git-push-dev-verification.md` | Remote dev branch up to date, zero uncommitted changes, board verified. |
 
 ---
 
@@ -241,4 +239,7 @@ Sesuai standar operasional AI Company Playbook, rilis akhir produk Damez Barbers
 - [x] **Gate M4 (Payment & Locking Engine)**: Integrasi Midtrans Snap QRIS/VA nominal Rp 20.000 aktif, temporary hold 15 menit auto-expire jalan, webhook signature SHA-512 teruji idempoten, audit anti race-condition lulus.
 - [x] **Gate M5 (Admin & E2E Validation)**: Dashboard admin dengan matriks kalender dan 1-klik aksi siap pakai, WhatsApp dispatcher otomatis jalan, 100% suite E2E concurrency test lulus hijau.
 - [x] **Gate M6 (Production Sign-off)**: Aplikasi tayang di custom domain HTTPS production, telemetri no-show aktif, dan seluruh 8 butir DoD MVP diuji langsung (`docs/reports/FINAL-MVP-VERIFICATION-REPORT.md`).
+- [x] **Gate M7 (Comprehensive Visual & Motion Upgrade)**: Set Tabler Icons terintegrasi, komponen Uiverse Galaxy berestetika vintage-modern, motion choreography 60-120 FPS tanpa layout shift (CLS < 0.05), serta audit kepatuhan WCAG 2.1 AA (`docs/reports/M7-visual-upgrade-verification.md`).
+- [x] **Gate M8 (Full-Spectrum Hardening & Zero-Bug Certification)**: 0 open defects, stress test 50-100 concurrent requests aman tanpa error, OWASP security audit lulus, Core Web Vitals LCP < 1.5s & CLS = 0, serta 100% automated regression suites hijau (`docs/reports/M8-zero-bug-quality-gate.md`).
+- [ ] **Gate M9 (Git Release & Remote Synchronization to dev)**: 100% test suites & Next.js production build lulus, seluruh perubahan M7-M8 ter-stage dan di-commit atomik, sinkronisasi aman ke remote GitHub branch `origin/dev`, dan working tree berstatus clean (`docs/reports/M9-git-push-dev-verification.md`).
 

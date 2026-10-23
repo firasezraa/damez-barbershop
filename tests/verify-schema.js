@@ -206,6 +206,35 @@ if (fs.existsSync(migration3Path)) {
   allTablesFound = false;
 }
 
+console.log('\n--- 9. Verifying Migration 004 (Slot Query Performance, Rollback & Reconcile) ---');
+const migration4Path = path.join(__dirname, '../supabase/migrations/004_slot_query_performance_and_rollback.sql');
+if (fs.existsSync(migration4Path)) {
+  const sql4 = fs.readFileSync(migration4Path, 'utf8');
+  if (sql4.includes('idx_bookings_date_status_barber')) {
+    console.log('PASS: Composite index idx_bookings_date_status_barber found in Migration 004');
+  } else {
+    console.error('FAIL: Composite index idx_bookings_date_status_barber missing in Migration 004');
+    allTablesFound = false;
+  }
+
+  if (sql4.includes('CREATE OR REPLACE FUNCTION public.fn_rollback_failed_payment_hold(')) {
+    console.log('PASS: Stored Procedure public.fn_rollback_failed_payment_hold() found in Migration 004');
+  } else {
+    console.error('FAIL: Stored Procedure public.fn_rollback_failed_payment_hold() missing in Migration 004');
+    allTablesFound = false;
+  }
+
+  if (sql4.includes('CREATE OR REPLACE FUNCTION public.fn_reconcile_late_settlement(')) {
+    console.log('PASS: Stored Procedure public.fn_reconcile_late_settlement() found in Migration 004');
+  } else {
+    console.error('FAIL: Stored Procedure public.fn_reconcile_late_settlement() missing in Migration 004');
+    allTablesFound = false;
+  }
+} else {
+  console.error('FAIL: Migration 004 file not found at', migration4Path);
+  allTablesFound = false;
+}
+
 if (!allTablesFound) {
   console.error('\nOVERALL STATUS: FAILED');
   process.exit(1);

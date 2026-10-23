@@ -2,18 +2,18 @@
 
 import * as React from "react";
 import {
-  Scissors,
-  User,
-  Calendar,
-  Clock,
-  MapPin,
-  Lock,
-  ShieldCheck,
-  AlertCircle,
-  HelpCircle,
-  Phone,
-  FileText,
-} from "lucide-react";
+  IconScissors,
+  IconUser,
+  IconCalendar,
+  IconClock,
+  IconMapPin,
+  IconLock,
+  IconShieldCheck,
+  IconAlertCircle,
+  IconHelpCircle,
+  IconPhone,
+  IconTicket,
+} from "@/components/ui/icons";
 import { BOOKING_SERVICES, BOOKING_BARBERS, FLAT_DOWN_PAYMENT_IDR } from "./constants";
 import { BookingCalculation, BookingFormData } from "./types";
 import { formatIndonesianDate, formatRupiah } from "./utils";
@@ -73,7 +73,7 @@ export function Step5Summary({
           className="rounded-2xl border border-destructive/50 bg-destructive/10 p-5 flex flex-col gap-3 shadow-lg"
         >
           <div className="flex items-center gap-2 text-destructive font-bold text-base">
-            <AlertCircle className="size-5 shrink-0" />
+            <IconAlertCircle size="sm" className="shrink-0" aria-hidden="true" />
             <span>Slot Baru Saja Terisi</span>
           </div>
           <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
@@ -119,7 +119,7 @@ export function Step5Summary({
           <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-3">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary">
-                <Scissors className="size-4" />
+                <IconScissors size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -146,7 +146,7 @@ export function Step5Summary({
           <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-3">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary">
-                <User className="size-4" />
+                <IconUser size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -175,7 +175,7 @@ export function Step5Summary({
           <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-3">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary">
-                <Calendar className="size-4" />
+                <IconCalendar size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -202,7 +202,7 @@ export function Step5Summary({
           <div className="flex items-start justify-between gap-3 border-b border-border/40 pb-3">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-primary">
-                <Phone className="size-4" />
+                <IconPhone size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -232,7 +232,7 @@ export function Step5Summary({
 
           {/* Location Shop Section */}
           <div className="flex items-start gap-3 pt-1 text-xs text-muted-foreground">
-            <MapPin className="size-4 text-primary shrink-0 mt-0.5" />
+            <IconMapPin size="sm" className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
             <span>
               Jl. Senopati Raya No. 42, Kebayoran Baru, Jakarta Selatan
             </span>
@@ -255,7 +255,7 @@ export function Step5Summary({
 
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-1.5 text-primary">
-            <Lock className="size-3.5" />
+            <IconLock size="micro" aria-hidden="true" />
             <span className="font-semibold">Uang Muka (DP Online via QRIS):</span>
           </div>
           <span className="font-mono font-bold text-primary">
@@ -282,7 +282,7 @@ export function Step5Summary({
 
       {/* 15-Minute Hold Commitment Notice */}
       <div className="flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/10 p-4 text-xs sm:text-sm text-foreground">
-        <ShieldCheck className="size-5 shrink-0 text-primary mt-0.5" />
+        <IconShieldCheck size="sm" className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
         <p className="leading-relaxed">
           Menekan tombol di bawah ini akan mengunci slot kursi Anda selama 15 menit agar tidak diambil pelanggan lain selagi Anda menyelesaikan pembayaran QRIS.
         </p>

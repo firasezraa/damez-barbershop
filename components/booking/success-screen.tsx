@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Loader2, AlertCircle, ArrowLeft } from "lucide-react";
+import { IconLoader2, IconAlertCircle, IconArrowLeft } from "@/components/ui/icons";
+import { GalaxyBarberPoleLoader } from "@/components/ui/galaxy-components";
 import { DigitalBoardingPass } from "./digital-boarding-pass";
 import { Button } from "@/components/ui/button";
 import type { PaymentBookingDetail } from "@/components/payment/types";
-import { BOOKING_BARBERS, BOOKING_SERVICES } from "./constants";
 
 interface SuccessScreenProps {
   bookingCode: string;
@@ -44,51 +44,16 @@ export function SuccessScreen({ bookingCode }: SuccessScreenProps) {
           }
         }
 
-        // Fallback to sample / draft details if API returned 404 in demo mode
-        const defaultBarber = BOOKING_BARBERS[0];
-        const defaultService = BOOKING_SERVICES[0];
-        const fallbackBooking: PaymentBookingDetail = {
-          id: bookingCode,
-          booking_code: bookingCode,
-          customer_name: "Pelanggan Terhormat",
-          customer_phone: "081234567890",
-          customer_email: null,
-          barber_id: defaultBarber.id,
-          barber: {
-            id: defaultBarber.id,
-            code: defaultBarber.code,
-            name: defaultBarber.name,
-            nickname: defaultBarber.nickname,
-            title: defaultBarber.title,
-            chair_number: defaultBarber.chairNumber,
-            avatar_url: defaultBarber.avatarUrl,
-          },
-          booking_date: new Date().toISOString().slice(0, 10),
-          start_time: "14:30",
-          end_time: "15:15",
-          service_duration_minutes: defaultService.durationMinutes,
-          services: [
-            {
-              id: defaultService.id,
-              name: defaultService.name,
-              duration_minutes: defaultService.durationMinutes,
-              price_idr: defaultService.price,
-            },
-          ],
-          total_price_idr: defaultService.price,
-          down_payment_idr: 20000,
-          remaining_balance_idr: Math.max(0, defaultService.price - 20000),
-          status: "confirmed",
-          hold_expires_at: null,
-          is_expired: false,
-          remaining_seconds: 0,
-          remaining_formatted: "00:00",
-          confirmed_at: new Date().toISOString(),
-          notes: null,
-        };
+        if (res.status === 404) {
+          if (isMounted) {
+            setErrorMessage("Tiket reservasi tidak ditemukan atau kode salah.");
+          }
+          return;
+        }
 
+        const errJson = await res.json().catch(() => null);
         if (isMounted) {
-          setBooking(fallbackBooking);
+          setErrorMessage(errJson?.error || `Gagal memuat tiket reservasi (HTTP ${res.status}).`);
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -112,8 +77,11 @@ export function SuccessScreen({ bookingCode }: SuccessScreenProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-3 text-muted-foreground p-4">
-        <Loader2 className="size-8 animate-spin text-primary" />
-        <span className="text-sm font-medium">Menerbitkan tiket digital boarding pass...</span>
+        <GalaxyBarberPoleLoader
+          mode="normal"
+          statusText="Menerbitkan Tiket Digital..."
+          subText="Memverifikasi kode booking Anda"
+        />
       </div>
     );
   }
@@ -122,7 +90,7 @@ export function SuccessScreen({ bookingCode }: SuccessScreenProps) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl border border-destructive/40 bg-surface p-6 text-center">
-          <AlertCircle className="mx-auto size-12 text-destructive mb-3" />
+          <IconAlertCircle size="xl" className="mx-auto text-destructive mb-3" aria-hidden="true" />
           <h2 className="text-lg font-bold text-foreground mb-1.5">
             Tiket Tidak Ditemukan
           </h2>
@@ -148,7 +116,7 @@ export function SuccessScreen({ bookingCode }: SuccessScreenProps) {
             href="/"
             className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="size-4" />
+            <IconArrowLeft size="micro" aria-hidden="true" />
             <span>Kembali ke Beranda</span>
           </Link>
 

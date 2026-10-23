@@ -128,6 +128,7 @@ export interface CreateBookingCheckoutParams {
   order_id?: string
   enabled_payments?: string[]
   finish_url?: string
+  expires_at?: string | null // Waktu kedaluwarsa awal hold dari database (mencegah penimbunan tak terbatas)
 }
 
 /**
@@ -325,8 +326,17 @@ export async function createBookingSnapTransaction(
   const orderId: string = params.order_id || generateOrderId(params.booking_code)
   const grossAmount: number = FLAT_DOWN_PAYMENT_AMOUNT_IDR
 
-  // Compute 15-minute hold expiration timestamp in ISO format
-  const expiresAt: string = new Date(Date.now() + DEFAULT_HOLD_TTL_MINUTES * 60 * 1000).toISOString()
+  // Gunakan waktu kedaluwarsa hold yang sudah ada jika disediakan, agar refresh tidak memperpanjang TTL (Anti-Hoarding)
+  let expiresAt: string
+  let remainingMinutes: number = DEFAULT_HOLD_TTL_MINUTES
+
+  if (params.expires_at) {
+    expiresAt = params.expires_at
+    const remainingMs = new Date(params.expires_at).getTime() - Date.now()
+    remainingMinutes = Math.max(1, Math.ceil(remainingMs / (60 * 1000)))
+  } else {
+    expiresAt = new Date(Date.now() + DEFAULT_HOLD_TTL_MINUTES * 60 * 1000).toISOString()
+  }
 
   // Clean customer phone number and strings
   const sanitizedName: string = params.customer_name.trim()
@@ -378,7 +388,7 @@ export async function createBookingSnapTransaction(
     },
     expiry: {
       unit: 'minute',
-      duration: DEFAULT_HOLD_TTL_MINUTES
+      duration: remainingMinutes
     },
     ...(params.finish_url ? { callbacks: { finish: params.finish_url } } : {})
   }

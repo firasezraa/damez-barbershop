@@ -150,9 +150,22 @@ export function computeSha512Hash(input: string): string {
 }
 
 /**
+ * Timing-safe string comparison helper using crypto.timingSafeEqual.
+ * Prevents side-channel timing attacks on cryptographic hashes.
+ */
+export function timingSafeEqualString(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false
+  const bufA = Buffer.from(a, 'utf8')
+  const bufB = Buffer.from(b, 'utf8')
+  if (bufA.length !== bufB.length) return false
+  return crypto.timingSafeEqual(bufA, bufB)
+}
+
+/**
  * Verifies Midtrans SHA-512 Signature Key:
  * Formula: SHA512(order_id + status_code + gross_amount + server_key)
  * Supports variations in gross_amount formatting (e.g. "20000.00" vs "20000").
+ * Hardened with constant-time comparison to prevent timing attacks.
  */
 export function verifyWebhookSignature(
   payload: MidtransWebhookPayload,
@@ -167,8 +180,12 @@ export function verifyWebhookSignature(
 
   const incomingSignature: string = payload.signature_key.trim().toLowerCase()
 
-  // Handle mock mode
+  // Handle mock mode: strictly forbidden in production!
   if (isMockMidtransMode(config) && !serverKeyOverride) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[Security Critical] Mock Midtrans signature accepted is strictly forbidden in production mode!')
+      return false
+    }
     if (incomingSignature === 'mock-signature' || incomingSignature === 'valid-mock-signature') {
       return true
     }
@@ -192,7 +209,7 @@ export function verifyWebhookSignature(
   for (const amountStr of uniqueCandidateAmounts) {
     const rawString: string = `${payload.order_id}${payload.status_code}${amountStr}${effectiveServerKey}`
     const calculatedHash: string = computeSha512Hash(rawString)
-    if (calculatedHash === incomingSignature) {
+    if (timingSafeEqualString(calculatedHash, incomingSignature)) {
       return true
     }
   }
@@ -497,11 +514,40 @@ export async function processMidtransWebhook(
     let notificationInserted: boolean = false
 
     if (targetPaymentStatus === 'settlement') {
+      // Security Guard: Verify gross_amount matches the authoritative Down Payment amount!
+      const expectedDpAmount = bookingRecord.down_payment_idr || FLAT_DOWN_PAYMENT_AMOUNT_IDR
+      if (Math.round(grossAmountNum) !== expectedDpAmount) {
+        console.warn(`[Security Alert] Webhook gross_amount tampering detected for order_id=${orderId}! Received: ${grossAmountNum}, Expected DP: ${expectedDpAmount}`)
+        return {
+          success: false,
+          statusCode: 400,
+          message: `Gross amount mismatch: expected Down Payment of Rp ${expectedDpAmount}, received Rp ${grossAmountNum}.`,
+          error: 'PAYMENT_AMOUNT_MISMATCH',
+          orderId
+        }
+      }
+
       // Calculate remaining balance with exact constraint protection
       remainingBalance = Math.max(0, bookingRecord.total_price_idr - grossAmountNum)
 
-      // Atomically update booking if currently in pending_payment
-      if (bookingRecord.status === 'pending_payment') {
+      // Late Settlement Reconciler: Periksa apakah slot masih kosong jika booking sempat berstatus expired
+      let isSlotStillFree: boolean = true
+      if (bookingRecord.status === 'expired') {
+        const { data: conflicts } = await supabase
+          .from('bookings')
+          .select('id, status, hold_expires_at')
+          .eq('barber_id', bookingRecord.barber_id)
+          .eq('booking_date', bookingRecord.booking_date)
+          .neq('id', targetBookingId)
+          .in('status', ['confirmed', 'in_progress', 'pending_payment'])
+
+        if (conflicts && conflicts.length > 0) {
+          isSlotStillFree = false
+        }
+      }
+
+      // Atomically update booking if currently in pending_payment or expired with slot still available
+      if (bookingRecord.status === 'pending_payment' || (bookingRecord.status === 'expired' && isSlotStillFree)) {
         const { error: bookingUpdateError } = await supabase
           .from('bookings')
           .update({
@@ -510,10 +556,11 @@ export async function processMidtransWebhook(
             down_payment_idr: Math.round(grossAmountNum),
             remaining_balance_idr: remainingBalance,
             hold_expires_at: null,
+            cancelled_at: null,
+            cancellation_reason: null,
             updated_at: currentTimeIso
           })
           .eq('id', targetBookingId)
-          .eq('status', 'pending_payment')
 
         if (bookingUpdateError) {
           return {
@@ -524,6 +571,26 @@ export async function processMidtransWebhook(
           }
         }
         updatedBookingStatus = 'confirmed'
+
+        // Sinkronisasi status di inMemoryHoldsStore
+        if (inMemoryHoldsStore.has(targetBookingId)) {
+          const hold = inMemoryHoldsStore.get(targetBookingId)!
+          hold.status = 'confirmed'
+          hold.down_payment_idr = Math.round(grossAmountNum)
+          hold.remaining_balance_idr = remainingBalance
+          inMemoryHoldsStore.set(targetBookingId, hold)
+        }
+      } else if (bookingRecord.status === 'expired' && !isSlotStillFree) {
+        // Late settlement saat kursi sudah dipesan orang lain -> tandai refund
+        updatedBookingStatus = 'cancelled'
+        await supabase
+          .from('bookings')
+          .update({
+            status: 'cancelled',
+            cancellation_reason: 'Late settlement: slot was re-booked by another customer. Flagged for refund.',
+            updated_at: currentTimeIso
+          })
+          .eq('id', targetBookingId)
       } else {
         updatedBookingStatus = bookingRecord.status
       }
@@ -891,16 +958,60 @@ export async function processMidtransWebhook(
   let notificationInserted: boolean = false
 
   if (targetPaymentStatus === 'settlement') {
+    // Security Guard: Verify gross_amount matches the authoritative Down Payment amount!
+    const expectedDpAmount = mockBookingRecord.down_payment_idr || FLAT_DOWN_PAYMENT_AMOUNT_IDR
+    if (Math.round(grossAmountNum) !== expectedDpAmount) {
+      console.warn(`[Security Alert] Webhook gross_amount tampering detected for order_id=${orderId}! Received: ${grossAmountNum}, Expected DP: ${expectedDpAmount}`)
+      return {
+        success: false,
+        statusCode: 400,
+        message: `Gross amount mismatch: expected Down Payment of Rp ${expectedDpAmount}, received Rp ${grossAmountNum}.`,
+        error: 'PAYMENT_AMOUNT_MISMATCH',
+        orderId
+      }
+    }
+
     remainingBalance = Math.max(0, mockBookingRecord.total_price_idr - grossAmountNum)
 
-    if (mockBookingRecord.status === 'pending_payment') {
+    // Late Settlement Reconciler: Periksa apakah slot masih kosong jika booking sempat berstatus expired
+    let isMockSlotFree: boolean = true
+    if (mockBookingRecord.status === 'expired') {
+      for (const [_, b] of store.bookings) {
+        if (b.id !== targetBookingId && b.barber_id === mockBookingRecord.barber_id && b.booking_date === mockBookingRecord.booking_date) {
+          if (b.status === 'confirmed' || b.status === 'in_progress') {
+            isMockSlotFree = false
+            break
+          }
+        }
+      }
+    }
+
+    if (mockBookingRecord.status === 'pending_payment' || (mockBookingRecord.status === 'expired' && isMockSlotFree)) {
       mockBookingRecord.status = 'confirmed'
       mockBookingRecord.confirmed_at = currentTimeIso
       mockBookingRecord.down_payment_idr = Math.round(grossAmountNum)
       mockBookingRecord.remaining_balance_idr = remainingBalance
       mockBookingRecord.hold_expires_at = null
+      mockBookingRecord.cancelled_at = null
+      mockBookingRecord.cancellation_reason = null
       mockBookingRecord.updated_at = currentTimeIso
       updatedBookingStatus = 'confirmed'
+
+      // Sinkronisasi status di inMemoryHoldsStore
+      if (inMemoryHoldsStore.has(targetBookingId)) {
+        const hold = inMemoryHoldsStore.get(targetBookingId)!
+        hold.status = 'confirmed'
+        hold.down_payment_idr = Math.round(grossAmountNum)
+        hold.remaining_balance_idr = remainingBalance
+        inMemoryHoldsStore.set(targetBookingId, hold)
+      }
+    } else if (mockBookingRecord.status === 'expired' && !isMockSlotFree) {
+      updatedBookingStatus = 'cancelled'
+      mockBookingRecord.status = 'cancelled'
+      mockBookingRecord.cancellation_reason = 'Late settlement: slot was re-booked by another customer. Flagged for refund.'
+      mockBookingRecord.updated_at = currentTimeIso
+    } else {
+      updatedBookingStatus = mockBookingRecord.status
     }
 
     // Upsert payment into mock store

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Calendar, ArrowRight } from "lucide-react";
+import { IconCalendar, IconArrowRight } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 
 export function StickyBottomBar() {
@@ -29,7 +29,7 @@ export function StickyBottomBar() {
             className="h-[52px] min-h-[52px] px-5 py-2 text-sm font-bold tracking-wider uppercase gap-2 shadow-lg"
           >
             <span>BOOKING SEKARANG</span>
-            <ArrowRight className="size-4" />
+            <IconArrowRight size="micro" aria-hidden="true" />
           </Button>
         </a>
       </div>

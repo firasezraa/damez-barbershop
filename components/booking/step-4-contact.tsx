@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { User, Phone, MessageSquare, ShieldCheck, Check } from "lucide-react";
+import {
+  IconUser,
+  IconPhone,
+  IconMessage,
+  IconShieldCheck,
+  IconCheck,
+} from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { validateIndonesianPhone } from "./utils";
@@ -71,7 +77,7 @@ export function Step4Contact({
               error={nameTouched && !isNameValid}
               className="pl-11"
             />
-            <User className="absolute left-3.5 top-3.5 size-5 text-muted-foreground pointer-events-none" />
+            <IconUser size="sm" className="absolute left-3.5 top-3.5 text-muted-foreground pointer-events-none" aria-hidden="true" />
           </div>
           <p className="text-xs text-muted-foreground">
             Gunakan nama panggilan atau nama lengkap yang mudah dikenali saat tiba di kasir.
@@ -98,11 +104,16 @@ export function Step4Contact({
               placeholder="Contoh: 081234567890"
               value={customerPhone}
               onChange={(e) => onUpdatePhone(e.target.value)}
-              onBlur={() => setPhoneTouched(true)}
+              onBlur={() => {
+                setPhoneTouched(true);
+                if (phoneValidation.isValid && phoneValidation.normalized && phoneValidation.normalized !== customerPhone) {
+                  onUpdatePhone(phoneValidation.normalized);
+                }
+              }}
               error={phoneTouched && !phoneValidation.isValid}
               className="pl-11 font-mono"
             />
-            <Phone className="absolute left-3.5 top-3.5 size-5 text-muted-foreground pointer-events-none" />
+            <IconPhone size="sm" className="absolute left-3.5 top-3.5 text-muted-foreground pointer-events-none" aria-hidden="true" />
           </div>
           <p className="text-xs text-muted-foreground">
             Pastikan nomor terhubung dengan aplikasi WhatsApp untuk menerima tiket dan peta rute.
@@ -174,12 +185,12 @@ export function Step4Contact({
                 : "border-border bg-surface-elevated text-transparent"
             )}
           >
-            <Check className="size-3.5 stroke-[3]" />
+            <IconCheck size="micro" stroke={3} aria-hidden="true" />
           </div>
 
           <div className="flex flex-col gap-1 text-xs text-muted-foreground leading-relaxed">
             <span className="font-semibold text-foreground flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-primary" />
+              <IconShieldCheck size="micro" className="text-primary" aria-hidden="true" />
               Persetujuan Pelindungan Data Pribadi (UU PDP No. 27/2022)
             </span>
             <p>

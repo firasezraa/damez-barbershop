@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { ArrowLeft, Scissors } from "lucide-react";
+import { motion } from "motion/react";
+import { IconArrowLeft, IconScissors } from "@/components/ui/icons";
 import { BookingStep } from "./types";
 import { STEP_METADATA } from "./constants";
+import { SPRING_TOKENS } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface BookingHeaderProps {
@@ -32,17 +34,17 @@ export function BookingHeader({
                 type="button"
                 onClick={onBack}
                 aria-label="Kembali ke langkah sebelumnya"
-                className="flex size-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-border bg-surface text-foreground transition-all hover:border-primary/50 hover:bg-surface-elevated active:scale-95"
+                className="flex size-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border border-border bg-surface text-foreground transition-all hover:border-primary/50 hover:bg-surface-elevated active:scale-95"
               >
-                <ArrowLeft className="size-5" />
+                <IconArrowLeft size="sm" aria-hidden="true" />
               </button>
             ) : (
               <a
                 href="/"
                 aria-label="Kembali ke Beranda"
-                className="flex size-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-border bg-surface text-primary transition-all hover:border-primary/50 hover:bg-surface-elevated active:scale-95"
+                className="flex size-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border border-border bg-surface text-primary transition-all hover:border-primary/50 hover:bg-surface-elevated active:scale-95"
               >
-                <Scissors className="size-5" />
+                <IconScissors size="sm" aria-hidden="true" />
               </a>
             )}
 
@@ -77,23 +79,30 @@ export function BookingHeader({
                 disabled={!isNavigable}
                 onClick={() => onStepClick && isNavigable && onStepClick(meta.step as BookingStep)}
                 className={cn(
-                  "group flex flex-col gap-1 text-left transition-all",
+                  "group relative flex flex-col gap-1 text-left transition-all p-1 rounded-lg",
                   isNavigable ? "cursor-pointer" : "cursor-default opacity-60"
                 )}
                 aria-current={isCurrent ? "step" : undefined}
                 aria-label={`Langkah ${meta.step}: ${meta.label}`}
               >
+                {isCurrent && (
+                  <motion.div
+                    layoutId="active-step-indicator"
+                    className="absolute inset-0 rounded-lg bg-primary/10 border border-primary/30 pointer-events-none"
+                    transition={SPRING_TOKENS.layout}
+                  />
+                )}
                 <div
                   className={cn(
-                    "h-1.5 w-full rounded-full transition-all duration-300",
+                    "relative z-10 h-1.5 w-full rounded-full transition-all duration-300",
                     isCompleted && "bg-primary",
-                    isCurrent && "bg-primary animate-pulse",
+                    isCurrent && "bg-primary",
                     !isCompleted && !isCurrent && "bg-surface-elevated"
                   )}
                 />
                 <span
                   className={cn(
-                    "hidden text-[10px] font-medium tracking-tight sm:inline-block truncate transition-colors",
+                    "relative z-10 hidden text-[10px] font-medium tracking-tight sm:inline-block truncate transition-colors",
                     isCurrent && "font-bold text-primary",
                     isCompleted && "text-muted-foreground",
                     !isCompleted && !isCurrent && "text-muted-foreground/50"

@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { QrCode, RefreshCw, CheckCircle2, ShieldCheck, Smartphone, Sparkles } from "lucide-react";
+import {
+  IconQrcode,
+  IconRefresh,
+  IconCircleCheck,
+  IconShieldCheck,
+  IconDeviceMobile,
+  IconSparkles,
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -48,7 +55,7 @@ export function QrisDisplay({
       <div className="flex w-full items-center justify-between border-b border-border pb-3.5">
         <div className="flex items-center gap-2">
           <div className="flex size-7 items-center justify-center rounded-lg bg-primary/20 text-primary">
-            <QrCode className="size-4" />
+            <IconQrcode size="sm" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-wider text-foreground">
@@ -170,7 +177,7 @@ export function QrisDisplay({
       {/* Instructions */}
       <div className="mt-4 w-full rounded-xl bg-surface-elevated p-3 border border-border text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5 font-semibold text-foreground mb-1.5">
-          <Smartphone className="size-3.5 text-primary" />
+          <IconDeviceMobile size="micro" className="text-primary" aria-hidden="true" />
           <span>Cara Pembayaran QRIS:</span>
         </div>
         <ol className="list-decimal pl-4 space-y-1 text-[11px] leading-relaxed">
@@ -190,9 +197,11 @@ export function QrisDisplay({
             onClick={() => onCheckStatus()}
             disabled={isChecking}
           >
-            <RefreshCw
+            <IconRefresh
               data-icon="inline-start"
-              className={cn("size-3.5", isChecking && "animate-spin")}
+              size="micro"
+              className={cn(isChecking && "animate-spin")}
+              aria-hidden="true"
             />
             {isChecking ? "Memeriksa Status..." : "Cek Status Pembayaran"}
           </Button>
@@ -207,7 +216,7 @@ export function QrisDisplay({
             onClick={handleSimulate}
             disabled={isSimulating}
           >
-            <Sparkles data-icon="inline-start" className="size-3" />
+            <IconSparkles data-icon="inline-start" size="micro" aria-hidden="true" />
             {isSimulating ? "Memproses Simulasi..." : "Simulasikan Pembayaran Berhasil (Dev Demo)"}
           </Button>
         )}
@@ -215,7 +224,7 @@ export function QrisDisplay({
 
       {/* Security Guarantee Note */}
       <div className="mt-3.5 flex items-center gap-1.5 text-[10px] text-muted-foreground">
-        <ShieldCheck className="size-3.5 text-emerald-500" />
+        <IconShieldCheck size="micro" className="text-emerald-500" aria-hidden="true" />
         <span>Terenkripsi SHA-512 & Garansi Kursi 100% Siap</span>
       </div>
     </div>

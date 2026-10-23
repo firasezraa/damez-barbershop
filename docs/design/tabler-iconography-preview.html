@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damez Barbershop — Tabler Iconography System Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #D97706;
+      --color-primary-hover: #F59E0B;
+      --color-primary-foreground: #121212;
+      --color-secondary: #784C25;
+      --color-background: #121212;
+      --color-surface: #1A1A1A;
+      --color-surface-elevated: #242424;
+      --color-surface-hover: #2C2C2C;
+      --color-text-primary: #F5F5F0;
+      --color-text-muted: #A8A29E;
+      --color-border: #2E2E2E;
+      --color-border-accent: #D97706;
+      --color-status-confirmed: #064E3B;
+      --color-status-confirmed-text: #34D399;
+      --color-status-pending: #451A03;
+      --color-status-pending-text: #FBBF24;
+      --color-status-noshow: #450A0A;
+      --color-status-noshow-text: #F87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-background);
+      color: var(--color-text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+
+    .font-cinzel {
+      font-family: 'Cinzel', serif;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--color-border);
+      background: linear-gradient(180deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 20px 0;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .badge-spec {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(217, 119, 6, 0.12);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      color: var(--color-primary);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* SECTION STYLES */
+    section {
+      padding: 48px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+    }
+
+    .section-desc {
+      color: var(--color-text-muted);
+      font-size: 0.95rem;
+      max-width: 720px;
+    }
+
+    /* ICON GRID */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .icon-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .icon-card:hover {
+      background: var(--color-surface-hover);
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -10px rgba(217, 119, 6, 0.15);
+    }
+
+    .icon-preview-box {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: var(--color-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .icon-card:hover .icon-preview-box {
+      transform: scale(1.08);
+      background: rgba(217, 119, 6, 0.15);
+    }
+
+    .icon-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--color-text-primary);
+    }
+
+    .icon-unicode {
+      font-size: 0.75rem;
+      color: var(--color-primary);
+      margin-bottom: 12px;
+    }
+
+    .icon-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .icon-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 12px;
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    /* SCALE DEMO */
+    .scale-matrix {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-end;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .scale-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 140px;
+    }
+
+    .scale-box {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      padding: 16px;
+    }
+
+    .scale-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .scale-spec {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    /* STATES MATRIX */
+    .states-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .state-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .state-trigger-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    /* SERVICES MATRIX */
+    .services-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-surface);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+    }
+
+    .services-table th, .services-table td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .services-table th {
+      background: var(--color-surface-elevated);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+    }
+
+    .services-table tr:hover td {
+      background: var(--color-surface-hover);
+    }
+
+    .service-icon-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(217, 119, 6, 0.1);
+      border: 1px solid rgba(217, 119, 6, 0.25);
+      border-radius: 8px;
+      color: var(--color-primary);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* ROTATING ANIMATION */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-content">
+      <div>
+        <div class="badge-spec">Design Token Spec v3.46.0 • WCAG 2.1 AA</div>
+        <h1 class="font-cinzel" style="font-size: 1.6rem; font-weight: 700; margin-top: 6px; letter-spacing: 0.02em;">
+          Damez Barbershop — Tabler Iconography System
+        </h1>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <span class="font-mono" style="font-size: 0.85rem; color: var(--color-text-muted);">Grid: 24x24 px</span>
+        <span style="color: var(--color-border);">|</span>
+        <span class="font-mono" style="font-size: 0.85rem; color: var(--color-text-muted);">Stroke: 2.0 px</span>
+        <span style="color: var(--color-border);">|</span>
+        <span class="font-mono" style="font-size: 0.85rem; color: var(--color-primary);">Round Caps</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. CANONICAL 10 BARBERSHOP ICONS -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title font-cinzel">1. Kurasi 10 Ikon Kanonikal Barbershop</h2>
+        <p class="section-desc">
+          Set ikon resmi yang dikurasi khusus untuk melayani seluruh domain pangkas rambut, alur reservasi, dan transaksi Damez Barbershop tanpa distorsi visual.
+        </p>
+      </div>
+
+      <div class="icon-grid">
+
+        <!-- 1. IconScissors -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconScissors</h3>
+          <div class="icon-unicode font-mono">U+EB1B • Category: Design / Barber</div>
+          <p class="icon-desc">Layanan pangkas rambut klasik, teknik scissor-over-comb, dan kategori servis haircut utama.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 2. IconRazor -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 3h10v4h-10l0 -4" />
+              <path d="M12 7v4" />
+              <path d="M12 11a2 2 0 0 1 2 2v6a2 2 0 1 1 -4 0v-6a2 2 0 0 1 2 -2" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconRazor</h3>
+          <div class="icon-unicode font-mono">U+F4B5 • Category: Grooming / Shave</div>
+          <p class="icon-desc">Cukur silet higienis sekali pakai, perapian kumis/jenggot presisi, dan hot towel shave.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 3. IconWash -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.486 8.965c.168 .02 .34 .033 .514 .035c.79 .009 1.539 -.178 2 -.5c.461 -.32 1.21 -.507 2 -.5c.79 -.007 1.539 .18 2 .5c.461 .322 1.21 .509 2 .5c.79 .009 1.539 -.178 2 -.5c.461 -.32 1.21 -.507 2 -.5c.79 -.007 1.539 .18 2 .5c.461 .322 1.21 .509 2 .5c.17 0 .339 -.014 .503 -.034" />
+              <path d="M3 6l1.721 10.329a2 2 0 0 0 1.973 1.671h10.612a2 2 0 0 0 1.973 -1.671l1.721 -10.329" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconWash</h3>
+          <div class="icon-unicode font-mono">U+F311 • Category: Treatment / Wash</div>
+          <p class="icon-desc">Cuci rambut 2x, keramas bersih anti-residu minyak, dan fasilitas sanitasi rambut higienis.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 4. IconSparkles -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconSparkles</h3>
+          <div class="icon-unicode font-mono">U+F6D7 • Category: Spa / Signature</div>
+          <p class="icon-desc">Creambath relaksasi, terapi pijat akupresur kepala, dan paket kombo terlengkap Signature.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 5. IconCalendarEvent -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" />
+              <path d="M16 3l0 4" />
+              <path d="M8 3l0 4" />
+              <path d="M4 11l16 0" />
+              <path d="M8 15h2v2h-2l0 -2" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconCalendarEvent</h3>
+          <div class="icon-unicode font-mono">U+EA52 • Category: Booking / Schedule</div>
+          <p class="icon-desc">Pemilihan tanggal reservasi aktif pada jendela waktu 7 hari ke depan (Asia/Jakarta).</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-text-primary);">#F5F5F0</span>
+          </div>
+        </div>
+
+        <!-- 6. IconClock -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+              <path d="M12 7v5l3 3" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconClock</h3>
+          <div class="icon-unicode font-mono">U+EA70 • Category: Time / Duration</div>
+          <p class="icon-desc">Durasi layanan servis, pemilihan jam slot kosong, dan countdown timer hold 15 menit.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>sm (20px)</strong></span>
+            <span class="font-mono" style="color: var(--color-text-muted);">#A8A29E</span>
+          </div>
+        </div>
+
+        <!-- 7. IconQrcode -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" />
+              <path d="M7 17l0 .01" />
+              <path d="M14 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" />
+              <path d="M7 7l0 .01" />
+              <path d="M4 15a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -4" />
+              <path d="M17 7l0 .01" />
+              <path d="M14 14l3 0" />
+              <path d="M20 14l0 .01" />
+              <path d="M14 14l0 3" />
+              <path d="M14 20l3 0" />
+              <path d="M17 17l3 0" />
+              <path d="M20 17l0 3" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconQrcode</h3>
+          <div class="icon-unicode font-mono">U+EB11 • Category: Payment / QRIS</div>
+          <p class="icon-desc">Metode pembayaran QRIS instan untuk pembayaran Down Payment Flat Rp 20.000.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>lg (32px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 8. IconCreditCard -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -8" />
+              <path d="M3 10l18 0" />
+              <path d="M7 15l.01 0" />
+              <path d="M11 15l2 0" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconCreditCard</h3>
+          <div class="icon-unicode font-mono">U+EA84 • Category: Payment / Card</div>
+          <p class="icon-desc">Gateway pembayaran kartu debit, kredit, dan Midtrans Snap modal popup.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-text-primary);">#F5F5F0</span>
+          </div>
+        </div>
+
+        <!-- 9. IconCheck -->
+        <div class="icon-card">
+          <div class="icon-preview-box" style="color: var(--color-status-confirmed-text);">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12l5 5l10 -10" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconCheck</h3>
+          <div class="icon-unicode font-mono">U+EA5E • Category: Status / Feedback</div>
+          <p class="icon-desc">Indikator booking terkonfirmasi, verifikasi input form sukses, dan centang seleksi.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>sm (20px)</strong></span>
+            <span class="font-mono" style="color: var(--color-status-confirmed-text);">#34D399</span>
+          </div>
+        </div>
+
+        <!-- 10. IconMapPin -->
+        <div class="icon-card">
+          <div class="icon-preview-box">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+              <path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconMapPin</h3>
+          <div class="icon-unicode font-mono">U+EAE8 • Category: Location / Studio</div>
+          <p class="icon-desc">Penunjuk lokasi studio Senopati di header, footer, dan tiket digital boarding pass.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: var(--color-primary);">#D97706</span>
+          </div>
+        </div>
+
+        <!-- 11. IconBrandWhatsapp -->
+        <div class="icon-card">
+          <div class="icon-preview-box" style="color: #25D366;">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9" />
+              <path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1" />
+            </svg>
+          </div>
+          <h3 class="icon-name">IconBrandWhatsapp</h3>
+          <div class="icon-unicode font-mono">U+EC74 • Category: Communication</div>
+          <p class="icon-desc">Saluran customer service resmi, konfirmasi pembayaran instan, dan reminder H-2/H-30m.</p>
+          <div class="icon-meta-row">
+            <span>Ukuran: <strong>md (24px)</strong></span>
+            <span class="font-mono" style="color: #25D366;">#25D366</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. TOKEN SIZING SCALE -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title font-cinzel">2. Skala Token Ukuran & Ketebalan Stroke</h2>
+        <p class="section-desc">
+          Optical adjustment terstandarisasi untuk menjamin garis tetap tajam tanpa distorsi visual pada layar mobile maupun desktop.
+        </p>
+      </div>
+
+      <div class="scale-matrix">
+
+        <!-- micro: 16px -->
+        <div class="scale-item">
+          <div class="scale-box" style="width: 52px; height: 52px;">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <span class="scale-label">micro (16px)</span>
+          <span class="scale-spec font-mono">Stroke: 1.75px</span>
+          <span class="scale-spec" style="font-size: 0.7rem;">Chips & Badges</span>
+        </div>
+
+        <!-- sm: 20px -->
+        <div class="scale-item">
+          <div class="scale-box" style="width: 60px; height: 60px;">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <span class="scale-label">sm (20px)</span>
+          <span class="scale-spec font-mono">Stroke: 2.0px</span>
+          <span class="scale-spec" style="font-size: 0.7rem;">Input & Tombol</span>
+        </div>
+
+        <!-- md: 24px (Base) -->
+        <div class="scale-item">
+          <div class="scale-box" style="width: 72px; height: 72px; border-color: var(--color-primary); background: rgba(217, 119, 6, 0.08);">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <span class="scale-label" style="color: var(--color-primary);">md (24px) • BASE</span>
+          <span class="scale-spec font-mono">Stroke: 2.0px</span>
+          <span class="scale-spec" style="font-size: 0.7rem;">Navigasi & Kartu</span>
+        </div>
+
+        <!-- lg: 32px -->
+        <div class="scale-item">
+          <div class="scale-box" style="width: 84px; height: 84px;">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <span class="scale-label">lg (32px)</span>
+          <span class="scale-spec font-mono">Stroke: 1.5px</span>
+          <span class="scale-spec" style="font-size: 0.7rem;">Modal & Feature</span>
+        </div>
+
+        <!-- xl: 48px -->
+        <div class="scale-item">
+          <div class="scale-box" style="width: 104px; height: 104px;">
+            <svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+              <path d="M8.6 8.6l10.4 10.4" />
+              <path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <span class="scale-label">xl (48px)</span>
+          <span class="scale-spec font-mono">Stroke: 1.5px</span>
+          <span class="scale-spec" style="font-size: 0.7rem;">Boarding Pass Hero</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. COMPONENT STATES MATRIX -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title font-cinzel">3. Matriks Status Komponen (Component States)</h2>
+        <p class="section-desc">
+          Perubahan visual saat ikon berada di dalam elemen interaktif (hover, active, focus, disabled, loading).
+        </p>
+      </div>
+
+      <div class="states-grid">
+
+        <!-- Default -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-elevated); color: var(--color-text-primary); border: 1px solid var(--color-border);">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.6 8.6l10.4 10.4" /><path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem;">Default</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Skala 1.0x, border subtil</span>
+        </div>
+
+        <!-- Hover -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-hover); color: var(--color-primary-hover); border: 1px solid var(--color-primary); transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.6 8.6l10.4 10.4" /><path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem; color: var(--color-primary);">Hover</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Translate -2px, glow amber</span>
+        </div>
+
+        <!-- Active/Pressed -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-elevated); color: var(--color-primary); border: 1px solid var(--color-primary); transform: scale(0.95);">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.6 8.6l10.4 10.4" /><path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem;">Active / Pressed</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Skala 0.95x, tactile click</span>
+        </div>
+
+        <!-- Focus-Visible -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-elevated); color: var(--color-primary); outline: 2px solid var(--color-primary); outline-offset: 2px;">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.6 8.6l10.4 10.4" /><path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem;">Focus-Visible</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Amber ring 2px (A11y)</span>
+        </div>
+
+        <!-- Disabled -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-elevated); color: var(--color-text-muted); opacity: 0.4; cursor: not-allowed;">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.6 8.6l10.4 10.4" /><path d="M8.6 15.4l10.4 -10.4" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem; color: var(--color-text-muted);">Disabled</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">Opacity 40%, no pointer</span>
+        </div>
+
+        <!-- Loading -->
+        <div class="state-card">
+          <div class="state-trigger-box" style="background: var(--color-surface-elevated); color: var(--color-primary);">
+            <svg aria-hidden="true" class="spin" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a9 9 0 1 0 9 9" />
+            </svg>
+          </div>
+          <strong style="font-size: 0.9rem; color: var(--color-primary);">Loading</strong>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted);">IconLoader2 spinning</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. SERVICES CATALOG MAPPING -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title font-cinzel">4. Pemetaan Katalog Layanan Resmi (SRV-01 s/d SRV-08)</h2>
+        <p class="section-desc">
+          Setiap paket layanan memiliki ikon Tabler yang merefleksikan karakteristik unik pengerjaannya secara visual.
+        </p>
+      </div>
+
+      <table class="services-table">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Layanan</th>
+            <th>Kategori</th>
+            <th>Ikon Tabler</th>
+            <th>Durasi & Harga</th>
+            <th>Fungsi Visual</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-01</td>
+            <td><strong>Gentlemen Classic Haircut</strong></td>
+            <td><span class="scale-spec">haircut</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.6 8.6l10.4 10.4"/><path d="M8.6 15.4l10.4 -10.4"/></svg>
+                IconScissors
+              </span>
+            </td>
+            <td>45 Menit • Rp 50.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Scissor-over-comb klasik</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-02</td>
+            <td><strong>Premium Fade & Taper Cut</strong></td>
+            <td><span class="scale-spec">haircut</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.6 8.6l10.4 10.4"/><path d="M8.6 15.4l10.4 -10.4"/></svg>
+                IconScissors
+              </span>
+            </td>
+            <td>50 Menit • Rp 65.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Gradasi fade tajam & line-up</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-03</td>
+            <td><strong>Junior Gentleman Cut</strong></td>
+            <td><span class="scale-spec">haircut</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.6 8.6l10.4 10.4"/><path d="M8.6 15.4l10.4 -10.4"/></svg>
+                IconScissors
+              </span>
+            </td>
+            <td>35 Menit • Rp 40.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Ramah anak usia 3-12 tahun</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-04</td>
+            <td><strong>Classic Beard Sculpt & Hot Towel</strong></td>
+            <td><span class="scale-spec">grooming</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v4h-10l0 -4"/><path d="M12 7v4"/><path d="M12 11a2 2 0 0 1 2 2v6a2 2 0 1 1 -4 0v-6a2 2 0 0 1 2 -2"/></svg>
+                IconRazor
+              </span>
+            </td>
+            <td>35 Menit • Rp 45.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Cukur silet higienis & handuk hangat</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-05</td>
+            <td><strong>Beard Sculpting & Detailing</strong></td>
+            <td><span class="scale-spec">grooming</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v4h-10l0 -4"/><path d="M12 7v4"/><path d="M12 11a2 2 0 0 1 2 2v6a2 2 0 1 1 -4 0v-6a2 2 0 0 1 2 -2"/></svg>
+                IconRazor
+              </span>
+            </td>
+            <td>25 Menit • Rp 30.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Detailing kontur jenggot cepat</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-06</td>
+            <td><strong>Scalp Therapy Treatment</strong></td>
+            <td><span class="scale-spec">treatment</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.486 8.965c.168 .02 .34 .033 .514 .035c.79 .009 1.539 -.178 2 -.5c.461 -.32 1.21 -.507 2 -.5c.79 -.007 1.539 .18 2 .5c.461 .322 1.21 .509 2 .5c.79 .009 1.539 -.178 2 -.5c.461 -.32 1.21 -.507 2 -.5c.79 -.007 1.539 .18 2 .5c.461 .322 1.21 .509 2 .5c.17 0 .339 -.014 .503 -.034"/><path d="M3 6l1.721 10.329a2 2 0 0 0 1.973 1.671h10.612a2 2 0 0 0 1.973 -1.671l1.721 -10.329"/></svg>
+                IconWash
+              </span>
+            </td>
+            <td>40 Menit • Rp 60.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Cuci rambut bersih & pijat kulit kepala</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-07</td>
+            <td><strong>Quick Express Clean Cut</strong></td>
+            <td><span class="scale-spec">haircut</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/><path d="M8.6 8.6l10.4 10.4"/><path d="M8.6 15.4l10.4 -10.4"/></svg>
+                IconScissors
+              </span>
+            </td>
+            <td>30 Menit • Rp 35.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Perapian cepat untuk jadwal padat</td>
+          </tr>
+          <tr>
+            <td class="font-mono" style="color: var(--color-primary);">SRV-08</td>
+            <td><strong>Damez Signature Full Grooming</strong></td>
+            <td><span class="scale-spec">combo</span></td>
+            <td>
+              <span class="service-icon-pill">
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6"/></svg>
+                IconSparkles
+              </span>
+            </td>
+            <td>60 Menit • Rp 95.000</td>
+            <td style="color: var(--color-text-muted); font-size: 0.85rem;">Paket kombo mewah all-in-one</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+</body>
+</html>

@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Scissors, VolumeX, ShieldCheck, Sparkles, MapPin } from "lucide-react";
+import {
+  IconScissors,
+  IconVolumeOff,
+  IconShieldCheck,
+  IconSparkles,
+  IconMapPin,
+} from "@/components/ui/icons";
 
 export function BrandStory() {
   return (
@@ -9,7 +15,7 @@ export function BrandStory() {
           {/* Left Column: Brand Story Narrative */}
           <div className="flex flex-col gap-6 lg:col-span-6">
             <div className="inline-flex items-center gap-2 text-xs font-bold text-primary tracking-widest uppercase">
-              <MapPin className="size-4" />
+              <IconMapPin size="micro" aria-hidden="true" />
               <span>Senopati Raya, Jakarta Selatan</span>
             </div>
 
@@ -29,7 +35,7 @@ export function BrandStory() {
             {/* Quiet Cut Special Callout */}
             <div className="rounded-xl border border-secondary/40 bg-secondary/10 p-4 sm:p-5 flex items-start gap-4">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-white shadow-sm">
-                <VolumeX className="size-5" />
+                <IconVolumeOff size="sm" aria-hidden="true" />
               </div>
               <div className="flex flex-col gap-1">
                 <h3 className="text-sm font-bold text-foreground">
@@ -48,7 +54,7 @@ export function BrandStory() {
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md hover:border-primary/50 transition-colors">
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
-                  <Scissors className="size-5" />
+                  <IconScissors size="sm" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">
                   Presisi Pangkas Anatomis
@@ -63,7 +69,7 @@ export function BrandStory() {
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md hover:border-primary/50 transition-colors">
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex size-11 items-center justify-center rounded-xl bg-secondary/20 border border-secondary/40 text-[#D97706]">
-                  <Sparkles className="size-5" />
+                  <IconSparkles size="sm" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">
                   Ruang Santai yang Tenang
@@ -78,7 +84,7 @@ export function BrandStory() {
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md hover:border-primary/50 transition-colors">
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
-                  <ShieldCheck className="size-5" />
+                  <IconShieldCheck size="sm" aria-hidden="true" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">
                   Higienitas Tanpa Kompromi

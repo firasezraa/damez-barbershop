@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damez Barbershop — Master Motion Choreography & Spring Physics Showcase</title>
+
+  <!-- Google Fonts: Cinzel (Display), Plus Jakarta Sans (UI), JetBrains Mono (Codes & Timer) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#121212',
+            surface: {
+              DEFAULT: '#1A1A1A',
+              elevated: '#242424',
+              hover: '#2C2C2C',
+            },
+            primary: {
+              DEFAULT: '#D97706',
+              hover: '#F59E0B',
+              foreground: '#121212',
+            },
+            secondary: {
+              DEFAULT: '#784C25',
+              hover: '#8C582B',
+              foreground: '#FFFFFF',
+            },
+            muted: {
+              DEFAULT: '#262626',
+              foreground: '#A8A29E',
+              subtle: '#78716C',
+            },
+            border: {
+              DEFAULT: '#2E2E2E',
+              accent: '#D97706',
+            },
+            cream: '#F5F5F0',
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            amber: '0 0 25px rgba(217, 119, 6, 0.25)',
+            glow: '0 0 35px rgba(217, 119, 6, 0.40)',
+            ticket: '0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 30px rgba(217, 119, 6, 0.15)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Hardware-accelerated GPU layers */
+    .gpu-layer {
+      transform: translateZ(0);
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+    }
+
+    /* Hero Stagger Item Base State (Default 100% visible) */
+    .hero-stagger-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-out, filter 0.3s ease-out;
+    }
+
+    /* Shimmer Sweep Animation for Hero Button */
+    @keyframes shimmer-sweep {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-shimmer-sweep {
+      animation: shimmer-sweep 3.5s linear infinite;
+    }
+
+    /* Barcode Laser Scan Sweep */
+    @keyframes laser-sweep {
+      0% { transform: translateX(-120%); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateX(260%); opacity: 0; }
+    }
+    .animate-laser-scan {
+      animation: laser-sweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Micro-pulse Keyframes for Critical Phase Heartbeat */
+    @keyframes heartbeat-pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.4)); }
+      15% { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(239, 68, 68, 0.8)); }
+      30% { transform: scale(0.99); filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.5)); }
+      45% { transform: scale(1.05); filter: drop-shadow(0 0 35px rgba(239, 68, 68, 0.9)); }
+      60% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.4)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.4)); }
+    }
+
+    /* Ambient Breathing Keyframes */
+    @keyframes breathing-calm {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(217, 119, 6, 0.25)); }
+      50% { transform: scale(1.025); filter: drop-shadow(0 0 28px rgba(217, 119, 6, 0.55)); }
+    }
+    @keyframes breathing-warning {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.35)); }
+      50% { transform: scale(1.035); filter: drop-shadow(0 0 38px rgba(245, 158, 11, 0.70)); }
+    }
+
+    .pulse-calm { animation: breathing-calm 3.2s ease-in-out infinite; }
+    .pulse-warning { animation: breathing-warning 1.8s ease-in-out infinite; }
+    .pulse-critical { animation: heartbeat-pulse 0.85s ease-in-out infinite; }
+
+    /* Notched Ticket Cuts */
+    .ticket-edge-left, .ticket-edge-right {
+      position: absolute;
+      top: 50%;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background-color: #121212;
+      border: 2px solid #2E2E2E;
+      transform: translateY(-50%);
+      z-index: 20;
+    }
+    .ticket-edge-left { left: -14px; }
+    .ticket-edge-right { right: -14px; }
+
+    .step-btn {
+      min-height: 48px;
+    }
+
+    /* Reduced Motion Overrides */
+    body.reduced-motion *,
+    body.reduced-motion *::before,
+    body.reduced-motion *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  </style>
+</head>
+<body class="bg-background text-cream font-sans antialiased min-h-screen pb-28 selection:bg-primary selection:text-background">
+
+  <!-- TOP STICKY LAB BAR & TELEMETRY -->
+  <header class="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md px-4 py-3">
+    <div class="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="flex size-9 items-center justify-center rounded-xl bg-primary/20 text-primary border border-primary/40 font-mono font-bold text-sm">
+          M7
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display text-sm font-bold tracking-wider text-cream uppercase">
+            Damez Barbershop — Motion Lab
+          </span>
+          <span class="text-[11px] font-mono text-muted-foreground">
+            Hardware-Accelerated Spring Physics & Choreography Engine
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Control Toolbar -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs">
+        <!-- Live FPS Monitor -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-elevated border border-border font-mono">
+          <span class="size-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span id="fps-display" class="font-bold text-emerald-400">60 FPS</span>
+          <span class="text-muted-foreground text-[10px]">Zero Jank</span>
+        </div>
+
+        <!-- Reduced Motion Toggle Button -->
+        <button
+          type="button"
+          id="btn-reduced-motion"
+          onclick="toggleReducedMotion()"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface-elevated hover:bg-surface-hover transition-colors font-medium text-muted-foreground hover:text-cream"
+          aria-pressed="false"
+        >
+          <span class="size-2 rounded-full bg-muted-foreground" id="reduced-dot"></span>
+          <span>Reduced Motion: <b id="reduced-status">OFF</b></span>
+        </button>
+
+        <!-- Speed Multiplier -->
+        <div class="flex items-center rounded-lg border border-border bg-surface-elevated p-0.5">
+          <button type="button" onclick="setSpeed(0.5)" id="speed-05" class="px-2 py-1 rounded-md text-[11px] font-mono hover:text-primary transition-colors">0.5x</button>
+          <button type="button" onclick="setSpeed(1.0)" id="speed-10" class="px-2 py-1 rounded-md text-[11px] font-mono bg-primary text-background font-bold transition-colors">1.0x</button>
+          <button type="button" onclick="setSpeed(2.0)" id="speed-20" class="px-2 py-1 rounded-md text-[11px] font-mono hover:text-primary transition-colors">2.0x</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 flex flex-col gap-16 overflow-x-hidden">
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: STAGGERED FADE-UP HERO ENTRANCE CHOREOGRAPHY -->
+    <!-- ========================================================================= -->
+    <section id="hero-section" class="relative rounded-3xl border border-border bg-surface/60 p-6 sm:p-12 overflow-hidden shadow-2xl">
+      <!-- Ambient Wash -->
+      <div id="hero-ambient" class="pointer-events-none absolute inset-x-0 -top-32 h-96 bg-gradient-to-b from-primary/20 via-primary/5 to-transparent blur-3xl opacity-100 transition-opacity duration-1000"></div>
+
+      <!-- Section Title & Replay Button -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-8 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-mono font-bold uppercase tracking-wider">
+            Sistem 1
+          </span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-cream">
+            Staggered Fade-Up Hero Entrance
+          </h2>
+        </div>
+        <button
+          type="button"
+          onclick="replayHeroEntrance()"
+          class="flex items-center gap-2 px-5 py-2.5 min-h-[48px] rounded-xl border border-primary/50 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs uppercase tracking-wider transition-all active:scale-95"
+        >
+          <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          <span>Replay Choreography</span>
+        </button>
+      </div>
+
+      <!-- Hero Cinematic Center Container -->
+      <div class="pt-10 flex flex-col items-center text-center max-w-4xl mx-auto">
+        
+        <!-- Element 1: Eyebrow Badge (Stagger Index 0) -->
+        <div id="hero-el-0" class="hero-stagger-item gpu-layer inline-flex items-center gap-2.5 rounded-full border border-border bg-surface-elevated/90 px-4 py-1.5 shadow-sm mb-6">
+          <div class="flex items-center text-primary" aria-hidden="true">
+            <svg aria-hidden="true" class="size-3.5 fill-primary text-primary" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" class="size-3.5 fill-primary text-primary" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" class="size-3.5 fill-primary text-primary" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" class="size-3.5 fill-primary text-primary" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" class="size-3.5 fill-primary text-primary" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <span class="text-xs font-bold text-cream font-mono">4.9 / 5.0</span>
+          <span class="text-xs text-muted-foreground font-sans">320+ Ulasan Terverifikasi Google Maps</span>
+        </div>
+
+        <!-- Element 2: Headline H1 (Stagger Index 1) -->
+        <h1 id="hero-el-1" class="hero-stagger-item gpu-layer font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-cream leading-[1.12] mb-6 max-w-5xl">
+          Tampil Rapi <br class="hidden sm:inline" />
+          <span class="text-primary underline decoration-primary/40 decoration-4 underline-offset-8">Tanpa Mengantre</span>
+        </h1>
+
+        <!-- Element 3: Subheadline Paragraph (Stagger Index 2) -->
+        <p id="hero-el-2" class="hero-stagger-item gpu-layer text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mb-8">
+          Pengalaman pangkas rambut presisi dan perawatan pria modern di Senopati. Tentukan jadwal secara pasti, kunci slot via QRIS, dan langsung duduk di kursi barber tanpa membuang waktu tunggu.
+        </p>
+
+        <!-- Element 4: Dual CTAs (Stagger Index 3) -->
+        <div id="hero-el-3" class="hero-stagger-item gpu-layer flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-10">
+          <!-- Shimmer Sweep CTA Button -->
+          <a href="#wizard-section" class="w-full sm:w-auto">
+            <button
+              type="button"
+              class="group relative inline-flex items-center justify-center p-[2px] rounded-2xl overflow-hidden font-sans font-bold text-sm sm:text-base w-full sm:w-auto transition-transform active:scale-95 shadow-xl shadow-primary/20"
+            >
+              <span class="animate-shimmer-sweep absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#784c25_0%,#d97706_25%,#f59e0b_50%,#d97706_75%,#784c25_100%)] opacity-90 group-hover:opacity-100 pointer-events-none"></span>
+              <span class="relative z-10 flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] bg-primary text-background font-extrabold tracking-wide transition-colors group-hover:bg-primary-hover">
+                <span>Pilih Jadwal Sekarang</span>
+                <svg aria-hidden="true" class="size-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </button>
+          </a>
+
+          <!-- Secondary Tactile Button -->
+          <a href="#wizard-section" class="w-full sm:w-auto">
+            <button
+              type="button"
+              class="px-7 py-3.5 rounded-2xl border border-border hover:border-primary/50 bg-surface-elevated hover:bg-surface-hover text-cream font-bold text-sm sm:text-base transition-all active:scale-95 w-full sm:w-auto"
+            >
+              Katalog Layanan & Tarif
+            </button>
+          </a>
+        </div>
+
+        <!-- Element 5: Trust Pillars Matrix (Stagger Index 4) -->
+        <div id="hero-el-4" class="hero-stagger-item gpu-layer grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl pt-4">
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-elevated/70 border border-border text-left">
+            <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary border border-primary/30">
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-cream">Jaminan Kursi Pasti</span>
+              <span class="text-[11px] text-muted-foreground">Bebas antrean fisik</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-elevated/70 border border-border text-left">
+            <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary border border-primary/30">
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-cream">Presisi Waktu 15m</span>
+              <span class="text-[11px] text-muted-foreground">Kunci slot real-time</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-surface-elevated/70 border border-border text-left">
+            <div class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary border border-primary/30">
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-cream">Boarding Pass Digital</span>
+              <span class="text-[11px] text-muted-foreground">Check-in instan kasir</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: DIRECTIONAL SLIDE BOOKING WIZARD & SHARED LAYOUT ID -->
+    <!-- ========================================================================= -->
+    <section id="wizard-section" class="relative rounded-3xl border border-border bg-surface/60 p-6 sm:p-10 shadow-2xl flex flex-col gap-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-mono font-bold uppercase tracking-wider">
+            Sistem 2
+          </span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-cream">
+            Directional Slide Wizard & LayoutId Pill
+          </h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted-foreground">Simulasi Transisi:</span>
+          <span id="nav-direction-indicator" class="px-2.5 py-1 rounded-md bg-surface-elevated border border-border font-mono text-xs font-bold text-primary">
+            Forward (+1)
+          </span>
+        </div>
+      </div>
+
+      <!-- Step Indicator Bar with Shared Layout Pill -->
+      <div class="relative w-full max-w-3xl mx-auto rounded-2xl bg-surface-elevated/90 border border-border p-1.5 flex items-center justify-between gap-1 overflow-x-auto">
+        <!-- Step 1 Button -->
+        <button type="button" onclick="goToStep(1)" id="step-btn-1" class="step-btn relative flex-1 min-w-[70px] min-h-[48px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center text-center z-10 text-primary">
+          <span class="step-label">1. Layanan</span>
+        </button>
+        <!-- Step 2 Button -->
+        <button type="button" onclick="goToStep(2)" id="step-btn-2" class="step-btn relative flex-1 min-w-[70px] min-h-[48px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center text-center z-10 text-muted-foreground">
+          <span class="step-label">2. Barber</span>
+        </button>
+        <!-- Step 3 Button -->
+        <button type="button" onclick="goToStep(3)" id="step-btn-3" class="step-btn relative flex-1 min-w-[70px] min-h-[48px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center text-center z-10 text-muted-foreground">
+          <span class="step-label">3. Jadwal</span>
+        </button>
+        <!-- Step 4 Button -->
+        <button type="button" onclick="goToStep(4)" id="step-btn-4" class="step-btn relative flex-1 min-w-[70px] min-h-[48px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center text-center z-10 text-muted-foreground">
+          <span class="step-label">4. Kontak</span>
+        </button>
+        <!-- Step 5 Button -->
+        <button type="button" onclick="goToStep(5)" id="step-btn-5" class="step-btn relative flex-1 min-w-[70px] min-h-[48px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-center text-center z-10 text-muted-foreground">
+          <span class="step-label">5. Ringkasan</span>
+        </button>
+
+        <!-- The Shared Layout Pill Indicator (Animated via Spring Physics) -->
+        <div id="shared-layout-pill" class="absolute inset-y-1.5 rounded-xl bg-primary/20 border border-primary/60 shadow-sm pointer-events-none transition-all duration-300 ease-out z-0"></div>
+      </div>
+
+      <!-- Animated Step Content Viewport Container -->
+      <div class="relative w-full max-w-3xl mx-auto min-h-[380px] overflow-hidden rounded-2xl border border-border bg-surface-elevated/40 p-6 flex items-center justify-center">
+        
+        <!-- STEP 1 VIEW -->
+        <div id="view-step-1" class="wizard-step-view w-full flex flex-col gap-5 gpu-layer">
+          <div class="flex justify-between items-center">
+            <h3 class="font-display text-lg font-bold text-cream">Pilih Paket Layanan</h3>
+            <span class="text-xs text-primary font-mono font-semibold">Maksimal 2 Layanan</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div onclick="toggleSelection(this)" class="selectable-card cursor-pointer p-4 rounded-xl border-2 border-primary bg-primary/10 transition-all flex flex-col gap-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-cream text-sm">Gentlemen Classic Haircut</span>
+                <span class="text-xs font-mono font-bold text-primary">Rp 90.000</span>
+              </div>
+              <p class="text-xs text-muted-foreground">Cuci rambut, potong presisi, hot towel, dan pomade styling (45 Menit).</p>
+            </div>
+            <div onclick="toggleSelection(this)" class="selectable-card cursor-pointer p-4 rounded-xl border border-border bg-surface-elevated hover:border-border-accent transition-all flex flex-col gap-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-cream text-sm">Beard Sculpting & Trim</span>
+                <span class="text-xs font-mono font-bold text-cream">Rp 65.000</span>
+              </div>
+              <p class="text-xs text-muted-foreground">Pembentukan janggut rapi dengan silet Solingen dan minyak cedarwood (35 Menit).</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 VIEW -->
+        <div id="view-step-2" class="wizard-step-view w-full flex flex-col gap-5 hidden gpu-layer">
+          <div class="flex justify-between items-center">
+            <h3 class="font-display text-lg font-bold text-cream">Pilih Master Barber</h3>
+            <span class="text-xs text-muted-foreground font-mono">3 Kursi Tersedia</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div onclick="selectSingle(this, '.barber-card')" class="barber-card selectable-card cursor-pointer p-3.5 rounded-xl border-2 border-primary bg-primary/10 transition-all text-center flex flex-col items-center gap-2">
+              <div class="size-12 rounded-full bg-secondary text-cream font-bold flex items-center justify-center font-display border border-primary/40">RP</div>
+              <span class="font-bold text-sm text-cream">Rian Pratama</span>
+              <span class="text-[11px] text-primary font-mono">Kursi 01 • Classic Fade</span>
+            </div>
+            <div onclick="selectSingle(this, '.barber-card')" class="barber-card selectable-card cursor-pointer p-3.5 rounded-xl border border-border bg-surface-elevated hover:border-primary/50 transition-all text-center flex flex-col items-center gap-2">
+              <div class="size-12 rounded-full bg-surface-hover text-cream font-bold flex items-center justify-center font-display border border-border">DS</div>
+              <span class="font-bold text-sm text-cream">Dimas Santoso</span>
+              <span class="text-[11px] text-muted-foreground font-mono">Kursi 02 • Beard Art</span>
+            </div>
+            <div onclick="selectSingle(this, '.barber-card')" class="barber-card selectable-card cursor-pointer p-3.5 rounded-xl border border-border bg-surface-elevated hover:border-primary/50 transition-all text-center flex flex-col items-center gap-2">
+              <div class="size-12 rounded-full bg-surface-hover text-cream font-bold flex items-center justify-center font-display border border-border">KA</div>
+              <span class="font-bold text-sm text-cream">Kevin Adithya</span>
+              <span class="text-[11px] text-muted-foreground font-mono">Kursi 03 • Modern Texture</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 VIEW -->
+        <div id="view-step-3" class="wizard-step-view w-full flex flex-col gap-5 hidden gpu-layer">
+          <div class="flex justify-between items-center">
+            <h3 class="font-display text-lg font-bold text-cream">Tentukan Waktu Kedatangan</h3>
+            <span class="text-xs text-muted-foreground font-mono">WIB (GMT+7)</span>
+          </div>
+          <!-- Date Chips -->
+          <div class="flex gap-2 overflow-x-auto pb-2">
+            <button type="button" class="px-4 py-2.5 rounded-xl bg-primary text-background font-bold text-xs shrink-0 font-mono">SAB, 24 OKT</button>
+            <button type="button" class="px-4 py-2.5 rounded-xl bg-surface-elevated border border-border text-cream text-xs shrink-0 font-mono">MIN, 25 OKT</button>
+            <button type="button" class="px-4 py-2.5 rounded-xl bg-surface-elevated border border-border text-cream text-xs shrink-0 font-mono">SEN, 26 OKT</button>
+            <button type="button" class="px-4 py-2.5 rounded-xl bg-surface-elevated border border-border text-cream text-xs shrink-0 font-mono">SEL, 27 OKT</button>
+          </div>
+          <!-- Time Slots Grid -->
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-2">
+            <button type="button" class="p-2.5 rounded-xl border border-border bg-surface-hover/30 text-muted-foreground line-through text-xs font-mono">10:00</button>
+            <button type="button" class="p-2.5 rounded-xl border-2 border-primary bg-primary/10 text-primary font-bold text-xs font-mono">11:00</button>
+            <button type="button" class="p-2.5 rounded-xl border border-border bg-surface-elevated hover:border-primary/50 text-cream text-xs font-mono">13:00</button>
+            <button type="button" class="p-2.5 rounded-xl border border-border bg-surface-elevated hover:border-primary/50 text-cream text-xs font-mono">14:30</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 VIEW -->
+        <div id="view-step-4" class="wizard-step-view w-full flex flex-col gap-4 hidden gpu-layer">
+          <h3 class="font-display text-lg font-bold text-cream">Informasi Kontak & Tiket</h3>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-muted-foreground uppercase tracking-wider">Nama Lengkap</label>
+            <input type="text" value="Budi Santoso" class="w-full px-4 py-2.5 rounded-xl bg-surface-elevated border border-border text-cream text-sm focus:border-primary focus:outline-none" />
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-bold text-muted-foreground uppercase tracking-wider">Nomor WhatsApp (Aktif)</label>
+            <input type="text" value="081234567890" class="w-full px-4 py-2.5 rounded-xl bg-surface-elevated border border-border text-cream text-sm font-mono focus:border-primary focus:outline-none" />
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <input type="checkbox" checked id="consent-check" class="size-4 accent-primary rounded" />
+            <label for="consent-check" class="text-xs text-muted-foreground">Menyetujui notifikasi tiket digital otomatis via WhatsApp (UU PDP No. 27/2022)</label>
+          </div>
+        </div>
+
+        <!-- STEP 5 VIEW -->
+        <div id="view-step-5" class="wizard-step-view w-full flex flex-col gap-5 hidden gpu-layer">
+          <h3 class="font-display text-lg font-bold text-cream">Ringkasan & Kunci Kursi</h3>
+          <div class="p-4 rounded-xl border border-border bg-surface-elevated flex flex-col gap-2.5 text-xs">
+            <div class="flex justify-between"><span class="text-muted-foreground">Layanan:</span><span class="font-bold text-cream">Gentlemen Classic Haircut</span></div>
+            <div class="flex justify-between"><span class="text-muted-foreground">Master Barber:</span><span class="font-bold text-cream">Rian Pratama (Kursi 01)</span></div>
+            <div class="flex justify-between"><span class="text-muted-foreground">Waktu:</span><span class="font-bold text-cream">Sabtu, 24 Okt 2026 • 11:00 WIB</span></div>
+            <div class="flex justify-between border-t border-border pt-2"><span class="text-muted-foreground">Total Nota Kasir:</span><span class="font-mono text-cream font-bold">Rp 90.000</span></div>
+            <div class="flex justify-between"><span class="text-primary font-bold">Uang Muka (DP Flat):</span><span class="font-mono text-primary font-extrabold text-sm">Rp 20.000</span></div>
+          </div>
+          <p class="text-[11px] text-muted-foreground">Klik 'Kunci Kursi' akan mengamankan slot selama 15 menit dan menampilkan barcode QRIS pembayaran DP.</p>
+        </div>
+
+      </div>
+
+      <!-- Ergonomic Bottom Navigation Controls -->
+      <div class="flex items-center justify-between gap-4 max-w-3xl mx-auto w-full pt-2">
+        <button
+          type="button"
+          id="btn-nav-back"
+          onclick="stepBack()"
+          class="min-h-[48px] px-6 py-3 rounded-xl border border-border hover:border-primary/40 bg-surface-elevated text-cream font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-30 disabled:pointer-events-none active:scale-95"
+          disabled
+        >
+          &larr; Kembali
+        </button>
+
+        <div class="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+          <span id="current-step-num" class="font-bold text-primary">1</span>
+          <span>/</span>
+          <span>5</span>
+        </div>
+
+        <button
+          type="button"
+          id="btn-nav-next"
+          onclick="stepNext()"
+          class="min-h-[48px] px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover text-background font-bold text-xs uppercase tracking-wider transition-all active:scale-95 shadow-md shadow-primary/20"
+        >
+          Lanjut &rarr;
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: BREATHING GLOW PULSE TIMER (15-MINUTE SLOT HOLD) -->
+    <!-- ========================================================================= -->
+    <section id="timer-section" class="relative rounded-3xl border border-border bg-surface/60 p-6 sm:p-10 shadow-2xl flex flex-col gap-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-mono font-bold uppercase tracking-wider">
+            Sistem 3
+          </span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-cream">
+            Breathing Glow Radial Pulse Timer (15-Menit Hold)
+          </h2>
+        </div>
+        <div class="flex items-center gap-2 font-mono text-xs">
+          <span class="text-muted-foreground">Fase Aktif:</span>
+          <span id="timer-phase-badge" class="px-2.5 py-1 rounded-md bg-primary/20 border border-primary/50 text-primary font-bold uppercase">
+            Calm (15:00 - 05:00)
+          </span>
+        </div>
+      </div>
+
+      <!-- Timer Simulator Interactive Canvas -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-4xl mx-auto w-full">
+        
+        <!-- Left: The Breathing Radial Timer Indicator -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center p-6">
+          <div id="radial-timer-container" class="relative flex items-center justify-center size-52 sm:size-60 rounded-full border border-border bg-surface-elevated pulse-calm transition-all duration-700">
+            <!-- SVG Progress Ring -->
+            <svg aria-hidden="true" class="size-full -rotate-90" viewBox="0 0 100 100">
+              <!-- Background Ring Track -->
+              <circle cx="50" cy="50" r="42" class="stroke-surface-hover" stroke-width="6" fill="none" />
+              <!-- Animated Progress Dash -->
+              <circle
+                id="radial-progress-circle"
+                cx="50"
+                cy="50"
+                r="42"
+                class="stroke-primary transition-all duration-300"
+                stroke-width="6"
+                stroke-dasharray="263.89"
+                stroke-dashoffset="0"
+                stroke-linecap="round"
+                fill="none"
+              />
+            </svg>
+
+            <!-- Digital Display Center -->
+            <div class="absolute flex flex-col items-center text-center">
+              <span id="digital-countdown" class="font-mono text-3xl sm:text-4xl font-extrabold tracking-tight text-cream">
+                14:45
+              </span>
+              <span id="countdown-sublabel" class="text-[11px] uppercase font-bold tracking-wider text-muted-foreground mt-1">
+                Kunci Slot Aktif
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Phase State Switcher & Physics Inspector -->
+        <div class="lg:col-span-7 flex flex-col gap-4 bg-surface-elevated/60 p-6 rounded-2xl border border-border">
+          <h3 class="font-display text-base font-bold text-cream">Simulasi Fase Tekanan Waktu</h3>
+          <p class="text-xs text-muted-foreground leading-relaxed">
+            Sistem gerak mengadaptasi denyut visual secara real-time berdasarkan sisa waktu penahanan slot 15 menit. Uji perbedaan frekuensi dan pendar cahaya di bawah ini:
+          </p>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-2">
+            <button
+              type="button"
+              onclick="setTimerPhase('calm', 885)"
+              class="p-3 rounded-xl border border-primary/50 bg-primary/10 hover:bg-primary/20 text-left transition-all active:scale-95"
+            >
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-primary font-mono">14:45 (Calm)</span>
+                <span class="size-2 rounded-full bg-primary"></span>
+              </div>
+              <span class="text-[11px] text-muted-foreground">Denyut lambat 3.2s, pendar amber santai</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="setTimerPhase('warning', 255)"
+              class="p-3 rounded-xl border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 text-left transition-all active:scale-95"
+            >
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-amber-400 font-mono">04:15 (Warning)</span>
+                <span class="size-2 rounded-full bg-amber-400"></span>
+              </div>
+              <span class="text-[11px] text-muted-foreground">Denyut dipercepat 1.8s, aura hangat</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="setTimerPhase('critical', 70)"
+              class="p-3 rounded-xl border border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-left transition-all active:scale-95"
+            >
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-red-400 font-mono">01:10 (Critical)</span>
+                <span class="size-2 rounded-full bg-red-500 animate-ping"></span>
+              </div>
+              <span class="text-[11px] text-muted-foreground">Heartbeat 0.85s ganda, lampu darurat</span>
+            </button>
+
+            <button
+              type="button"
+              onclick="setTimerPhase('expired', 0)"
+              class="p-3 rounded-xl border border-destructive/50 bg-destructive/10 hover:bg-destructive/20 text-left transition-all active:scale-95"
+            >
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-destructive font-mono">00:00 (Expired)</span>
+                <span class="size-2 rounded-full bg-destructive"></span>
+              </div>
+              <span class="text-[11px] text-muted-foreground">Slot dirilis, watermark kedaluwarsa</span>
+            </button>
+          </div>
+
+          <!-- Play / Pause Controls -->
+          <div class="flex items-center gap-3 pt-3 border-t border-border">
+            <button
+              type="button"
+              id="btn-timer-toggle"
+              onclick="toggleTimerRunning()"
+              class="px-4 py-2 rounded-xl bg-surface-elevated border border-border hover:border-primary/50 text-cream font-mono font-bold text-xs transition-colors"
+            >
+              Pause Timer
+            </button>
+            <button
+              type="button"
+              onclick="resetTimer()"
+              class="px-4 py-2 rounded-xl bg-surface-elevated border border-border hover:border-primary/50 text-muted-foreground hover:text-cream font-mono text-xs transition-colors"
+            >
+              Reset ke 15:00
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 4: SPRING BOUNCE CONFIRMATION BOARDING PASS TICKET -->
+    <!-- ========================================================================= -->
+    <section id="ticket-section" class="relative rounded-3xl border border-border bg-surface/60 p-6 sm:p-10 shadow-2xl flex flex-col gap-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-1 rounded-full bg-primary/20 text-primary text-xs font-mono font-bold uppercase tracking-wider">
+            Sistem 4
+          </span>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-cream">
+            Spring Bounce Boarding Pass Confirmation
+          </h2>
+        </div>
+        <button
+          type="button"
+          onclick="triggerBoardingPassDrop()"
+          class="flex items-center gap-2 px-5 py-2.5 min-h-[48px] rounded-xl bg-primary hover:bg-primary-hover text-background font-bold text-xs uppercase tracking-wider transition-all active:scale-95 shadow-md shadow-primary/20"
+        >
+          <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Simulate QRIS Settlement</span>
+        </button>
+      </div>
+
+      <!-- Ticket Canvas Area -->
+      <div class="relative w-full max-w-xl mx-auto flex flex-col items-center gap-6 py-4">
+        
+        <!-- Success Burst Announcement -->
+        <div id="ticket-announcement" class="flex flex-col items-center text-center transition-all duration-500">
+          <div id="check-icon-pop" class="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-3 shadow-lg shadow-emerald-950/40">
+            <svg aria-hidden="true" class="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-bold font-display text-cream">
+            Reservasi Berhasil Dikonfirmasi
+          </h3>
+          <p class="text-xs sm:text-sm text-muted-foreground mt-1 max-w-md">
+            Uang Muka (DP) Rp 20.000 Lunas. Tiket boarding pass resmi siap ditunjukkan kepada kasir.
+          </p>
+        </div>
+
+        <!-- THE PHYSICAL BOARDING PASS CARD (Animated Drop & Bounce) -->
+        <div
+          id="boarding-pass-card"
+          class="gpu-layer relative w-full overflow-hidden rounded-3xl border-2 border-primary/50 bg-surface shadow-ticket transition-all"
+          style="perspective: 1000px;"
+        >
+          <!-- Side Notches -->
+          <div class="ticket-edge-left"></div>
+          <div class="ticket-edge-right"></div>
+
+          <!-- Card Header Banner -->
+          <div class="px-6 py-4 bg-gradient-to-r from-surface-elevated via-surface to-surface-elevated border-b border-border flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex size-9 items-center justify-center rounded-xl bg-primary/20 text-primary border border-primary/40">
+                <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-xs font-black tracking-widest text-primary font-display uppercase">DAMEZ BARBERSHOP</span>
+                <span class="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">OFFICIAL BOARDING PASS</span>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold font-mono">
+              CONFIRMED
+            </span>
+          </div>
+
+          <!-- Code & Barcode Laser Shimmer Area -->
+          <div class="px-6 py-5 bg-surface-elevated/40 border-b border-dashed border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground font-mono">KODE RESERVASI RESMI</span>
+              <span class="font-mono text-2xl sm:text-3xl font-extrabold tracking-wider text-primary">
+                DMZ-20261024-042
+              </span>
+            </div>
+
+            <!-- Animated Barcode Visual with Laser Scan -->
+            <div class="relative w-40 h-10 bg-background/80 rounded-lg border border-border p-1.5 flex items-center justify-around overflow-hidden">
+              <!-- Barcode Lines Simulation -->
+              <div class="w-1 h-full bg-cream"></div>
+              <div class="w-2 h-full bg-cream"></div>
+              <div class="w-0.5 h-full bg-cream"></div>
+              <div class="w-1.5 h-full bg-cream"></div>
+              <div class="w-1 h-full bg-cream"></div>
+              <div class="w-3 h-full bg-cream"></div>
+              <div class="w-1 h-full bg-cream"></div>
+              <div class="w-2 h-full bg-cream"></div>
+              <!-- Laser Shimmer Sweep Bar -->
+              <div class="animate-laser-scan absolute inset-y-0 w-8 bg-gradient-to-r from-transparent via-primary/50 to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+
+          <!-- Perforation Tear Line (Animated Reveal) -->
+          <div id="perforation-line" class="relative w-full border-b-2 border-dashed border-border my-0 origin-center transition-transform duration-500"></div>
+
+          <!-- Ticket Details Grid -->
+          <div class="p-6 grid grid-cols-2 gap-4 text-xs">
+            <div class="flex flex-col">
+              <span class="text-muted-foreground uppercase text-[10px] font-bold">Pelanggan</span>
+              <span class="font-bold text-cream text-sm">Budi Santoso</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-muted-foreground uppercase text-[10px] font-bold">Master Barber</span>
+              <span class="font-bold text-primary text-sm">Rian Pratama (Kursi 01)</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-muted-foreground uppercase text-[10px] font-bold">Jadwal Sesi</span>
+              <span class="font-bold text-cream">Sabtu, 24 Okt • 11:00 WIB</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-muted-foreground uppercase text-[10px] font-bold">Sisa Pelunasan Kasir</span>
+              <span class="font-mono font-bold text-cream text-sm">Rp 70.000</span>
+            </div>
+          </div>
+
+          <!-- Card Actions Footer -->
+          <div class="px-6 py-4 bg-surface-elevated/70 border-t border-border flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onclick="copyTicketCode(this)"
+              class="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl border border-border bg-surface hover:bg-surface-hover text-xs font-medium text-cream transition-colors active:scale-95"
+            >
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Salin Kode</span>
+            </button>
+            <a
+              href="https://wa.me/6281234567890"
+              target="_blank"
+              class="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30 text-xs font-bold font-mono transition-colors active:scale-95"
+            >
+              <span>Buka WhatsApp</span>
+              <svg aria-hidden="true" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 5: PHYSICS PARAMETER INSPECTOR & REDUCED MOTION AUDIT -->
+    <!-- ========================================================================= -->
+    <section class="rounded-3xl border border-border bg-surface/40 p-6 sm:p-8 flex flex-col gap-6">
+      <div class="flex items-center gap-2.5 pb-4 border-b border-border/80">
+        <span class="px-2.5 py-1 rounded-full bg-secondary/30 text-cream text-xs font-mono font-bold uppercase tracking-wider">
+          Audit & QA
+        </span>
+        <h2 class="font-display text-lg sm:text-xl font-bold text-cream">
+          Motion Physics Tokens & WCAG 2.1 AA Compliance Verification
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="p-4 rounded-xl bg-surface-elevated border border-border flex flex-col gap-1.5">
+          <span class="text-primary font-bold">motion.spring.snappy</span>
+          <span class="text-muted-foreground">stiffness: 500, damping: 30, mass: 0.6</span>
+          <span class="text-[11px] text-cream">Digunakan: Buttons, switches, micro-clicks</span>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-elevated border border-border flex flex-col gap-1.5">
+          <span class="text-primary font-bold">motion.spring.wizard</span>
+          <span class="text-muted-foreground">stiffness: 320, damping: 32, mass: 0.9</span>
+          <span class="text-[11px] text-cream">Digunakan: Step slide directional AnimatePresence</span>
+        </div>
+        <div class="p-4 rounded-xl bg-surface-elevated border border-border flex flex-col gap-1.5">
+          <span class="text-primary font-bold">motion.spring.bounce</span>
+          <span class="text-muted-foreground">stiffness: 380, damping: 18, mass: 1.1, bounce: 0.38</span>
+          <span class="text-[11px] text-cream">Digunakan: Boarding pass landing drop thump</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2 pt-2 text-xs text-muted-foreground">
+        <p>• <b>WCAG 2.2.2 Pause, Stop, Hide:</b> Seluruh animasi kontinu dapat dijeda via kontrol toolbar atau dinonaktifkan otomatis saat Reduced Motion diaktifkan.</p>
+        <p>• <b>WCAG 2.3.1 Three Flashes:</b> Frekuensi kedipan fase kritis timer dibatasi maksimal 1.25 Hz (aman di bawah ambang batas 3.0 Hz).</p>
+        <p>• <b>GPU Compositing:</b> Hanya menganimasikan `transform` dan `opacity` untuk menjamin 60/120fps tanpa layout shift (CLS = 0).</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT SIMULATION ENGINE -->
+  <script>
+    // --- 1. STATE MANAGEMENT ---
+    let currentStep = 1;
+    let isReducedMotion = false;
+    let speedMultiplier = 1.0;
+    let timerRunning = true;
+    let timerSeconds = 885; // 14:45
+    let timerInterval = null;
+    let currentPhase = 'calm';
+
+    // --- 2. LIVE FPS MONITOR ---
+    let lastFrameTime = performance.now();
+    let frameCount = 0;
+    let lastFpsUpdate = performance.now();
+    const fpsDisplay = document.getElementById('fps-display');
+    if (fpsDisplay) fpsDisplay.textContent = '60 FPS';
+
+    function updateFpsLoop(now) {
+      frameCount++;
+      if (now - lastFpsUpdate >= 500) {
+        const calculatedFps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+        const fps = calculatedFps > 0 ? calculatedFps : 60;
+        if (fpsDisplay) fpsDisplay.textContent = fps + ' FPS';
+        frameCount = 0;
+        lastFpsUpdate = now;
+      }
+      requestAnimationFrame(updateFpsLoop);
+    }
+    requestAnimationFrame(updateFpsLoop);
+
+    // --- 3. REDUCED MOTION CONTROLS ---
+    function toggleReducedMotion() {
+      isReducedMotion = !isReducedMotion;
+      const body = document.body;
+      const statusText = document.getElementById('reduced-status');
+      const dot = document.getElementById('reduced-dot');
+      const btn = document.getElementById('btn-reduced-motion');
+
+      if (isReducedMotion) {
+        body.classList.add('reduced-motion');
+        statusText.textContent = 'ON';
+        dot.className = 'size-2 rounded-full bg-emerald-400';
+        btn.setAttribute('aria-pressed', 'true');
+      } else {
+        body.classList.remove('reduced-motion');
+        statusText.textContent = 'OFF';
+        dot.className = 'size-2 rounded-full bg-muted-foreground';
+        btn.setAttribute('aria-pressed', 'false');
+      }
+    }
+
+    // --- 4. SPEED MULTIPLIER CONTROLS ---
+    function setSpeed(mult) {
+      speedMultiplier = mult;
+      ['05', '10', '20'].forEach(s => {
+        const btn = document.getElementById('speed-' + s);
+        btn.className = 'px-2 py-1 rounded-md text-[11px] font-mono hover:text-primary transition-colors';
+      });
+      const activeId = mult === 0.5 ? 'speed-05' : mult === 1.0 ? 'speed-10' : 'speed-20';
+      const activeBtn = document.getElementById(activeId);
+      activeBtn.className = 'px-2 py-1 rounded-md text-[11px] font-mono bg-primary text-background font-bold transition-colors';
+    }
+
+    // --- 5. SYSTEM 1: HERO ENTRANCE CHOREOGRAPHY ---
+    function replayHeroEntrance() {
+      const ambient = document.getElementById('hero-ambient');
+      const items = [
+        document.getElementById('hero-el-0'),
+        document.getElementById('hero-el-1'),
+        document.getElementById('hero-el-2'),
+        document.getElementById('hero-el-3'),
+        document.getElementById('hero-el-4'),
+      ];
+
+      if (isReducedMotion) {
+        items.forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+
+      // Reset to hidden initial state
+      ambient.style.opacity = '0';
+      items.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(32px) scale(0.98)';
+        el.style.filter = 'blur(4px)';
+        el.style.transition = 'none';
+      });
+
+      // Trigger stagger reveal
+      setTimeout(() => {
+        ambient.style.transition = `opacity ${600 / speedMultiplier}ms ease-out`;
+        ambient.style.opacity = '1';
+
+        items.forEach((el, idx) => {
+          const delay = (idx * 80) / speedMultiplier;
+          setTimeout(() => {
+            el.style.transition = `transform ${350 / speedMultiplier}ms cubic-bezier(0.16, 1, 0.3, 1), opacity ${300 / speedMultiplier}ms ease-out, filter ${300 / speedMultiplier}ms ease-out`;
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0) scale(1)';
+            el.style.filter = 'blur(0px)';
+          }, delay);
+        });
+      }, 50);
+    }
+
+    // --- 6. SYSTEM 2: DIRECTIONAL SLIDE WIZARD & LAYOUT ID ---
+    function updatePillPosition() {
+      const activeBtn = document.getElementById('step-btn-' + currentStep);
+      const pill = document.getElementById('shared-layout-pill');
+      if (activeBtn && pill) {
+        pill.style.left = activeBtn.offsetLeft + 'px';
+        pill.style.width = activeBtn.offsetWidth + 'px';
+      }
+
+      // Update button colors
+      for (let i = 1; i <= 5; i++) {
+        const btn = document.getElementById('step-btn-' + i);
+        if (i === currentStep) {
+          btn.className = 'step-btn relative flex-1 min-w-[70px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors text-center z-10 text-primary';
+        } else {
+          btn.className = 'step-btn relative flex-1 min-w-[70px] py-2.5 px-2 rounded-xl text-xs font-bold transition-colors text-center z-10 text-muted-foreground';
+        }
+      }
+
+      // Update Bottom Bar info
+      document.getElementById('current-step-num').textContent = currentStep;
+      document.getElementById('btn-nav-back').disabled = currentStep === 1;
+      const nextBtn = document.getElementById('btn-nav-next');
+      nextBtn.textContent = currentStep === 5 ? 'Kunci Kursi' : 'Lanjut →';
+    }
+
+    function goToStep(nextStep) {
+      if (nextStep === currentStep) return;
+      const direction = nextStep > currentStep ? 1 : -1;
+      document.getElementById('nav-direction-indicator').textContent = direction > 0 ? 'Forward (+1)' : 'Backward (-1)';
+      
+      const currentView = document.getElementById('view-step-' + currentStep);
+      const nextView = document.getElementById('view-step-' + nextStep);
+
+      if (isReducedMotion) {
+        currentView.classList.add('hidden');
+        nextView.classList.remove('hidden');
+        currentStep = nextStep;
+        updatePillPosition();
+        return;
+      }
+
+      // Slide Out current view
+      currentView.style.transition = `transform ${250 / speedMultiplier}ms cubic-bezier(0.16, 1, 0.3, 1), opacity ${200 / speedMultiplier}ms ease-out`;
+      currentView.style.transform = `translateX(${direction > 0 ? '-100%' : '100%'})`;
+      currentView.style.opacity = '0';
+
+      setTimeout(() => {
+        currentView.classList.add('hidden');
+        currentView.style.transform = 'none';
+
+        // Prepare next view
+        nextView.classList.remove('hidden');
+        nextView.style.opacity = '0';
+        nextView.style.transform = `translateX(${direction > 0 ? '100%' : '-100%'})`;
+        nextView.style.transition = 'none';
+
+        requestAnimationFrame(() => {
+          nextView.style.transition = `transform ${350 / speedMultiplier}ms cubic-bezier(0.16, 1, 0.3, 1), opacity ${250 / speedMultiplier}ms ease-out`;
+          nextView.style.opacity = '1';
+          nextView.style.transform = 'translateX(0)';
+        });
+
+        currentStep = nextStep;
+        updatePillPosition();
+      }, 200 / speedMultiplier);
+    }
+
+    function stepNext() {
+      if (currentStep < 5) goToStep(currentStep + 1);
+      else triggerBoardingPassDrop();
+    }
+    function stepBack() {
+      if (currentStep > 1) goToStep(currentStep - 1);
+    }
+
+    function toggleSelection(card) {
+      card.classList.toggle('border-primary');
+      card.classList.toggle('bg-primary/10');
+      card.classList.toggle('border-border');
+      card.classList.toggle('bg-surface-elevated');
+    }
+
+    function selectSingle(card, selector) {
+      document.querySelectorAll(selector).forEach(c => {
+        c.className = 'barber-card selectable-card cursor-pointer p-3.5 rounded-xl border border-border bg-surface-elevated hover:border-primary/50 transition-all text-center flex flex-col items-center gap-2';
+      });
+      card.className = 'barber-card selectable-card cursor-pointer p-3.5 rounded-xl border-2 border-primary bg-primary/10 transition-all text-center flex flex-col items-center gap-2';
+    }
+
+    // --- 7. SYSTEM 3: BREATHING GLOW TIMER ---
+    function formatMMSS(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function setTimerPhase(phase, seconds) {
+      currentPhase = phase;
+      timerSeconds = seconds;
+      const container = document.getElementById('radial-timer-container');
+      const circle = document.getElementById('radial-progress-circle');
+      const badge = document.getElementById('timer-phase-badge');
+      const sublabel = document.getElementById('countdown-sublabel');
+
+      // Clear pulse classes
+      container.classList.remove('pulse-calm', 'pulse-warning', 'pulse-critical');
+
+      if (phase === 'calm') {
+        container.classList.add('pulse-calm');
+        circle.className = 'stroke-primary transition-all duration-300';
+        badge.className = 'px-2.5 py-1 rounded-md bg-primary/20 border border-primary/50 text-primary font-bold uppercase';
+        badge.textContent = 'Calm (15:00 - 05:00)';
+        sublabel.textContent = 'Kunci Slot Aktif';
+      } else if (phase === 'warning') {
+        container.classList.add('pulse-warning');
+        circle.className = 'stroke-amber-400 transition-all duration-300';
+        badge.className = 'px-2.5 py-1 rounded-md bg-amber-500/20 border border-amber-500/50 text-amber-400 font-bold uppercase';
+        badge.textContent = 'Warning (05:00 - 02:00)';
+        sublabel.textContent = 'Segera Selesaikan DP';
+      } else if (phase === 'critical') {
+        container.classList.add('pulse-critical');
+        circle.className = 'stroke-red-500 transition-all duration-300';
+        badge.className = 'px-2.5 py-1 rounded-md bg-red-500/20 border border-red-500/50 text-red-400 font-bold uppercase animate-pulse';
+        badge.textContent = 'Critical (02:00 - 00:00)';
+        sublabel.textContent = 'Batas Waktu Menipis!';
+      } else if (phase === 'expired') {
+        circle.className = 'stroke-destructive transition-all duration-300';
+        badge.className = 'px-2.5 py-1 rounded-md bg-destructive/20 border border-destructive/50 text-destructive font-bold uppercase';
+        badge.textContent = 'Expired (00:00)';
+        sublabel.textContent = 'Slot Telah Dirilis';
+      }
+
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      document.getElementById('digital-countdown').textContent = formatMMSS(timerSeconds);
+      const circle = document.getElementById('radial-progress-circle');
+      const maxDash = 263.89; // 2 * pi * 42
+      const offset = maxDash * (1 - (timerSeconds / 900));
+      circle.style.strokeDashoffset = offset;
+    }
+
+    function toggleTimerRunning() {
+      timerRunning = !timerRunning;
+      document.getElementById('btn-timer-toggle').textContent = timerRunning ? 'Pause Timer' : 'Resume Timer';
+    }
+
+    function resetTimer() {
+      setTimerPhase('calm', 900);
+      timerRunning = true;
+      document.getElementById('btn-timer-toggle').textContent = 'Pause Timer';
+    }
+
+    // Interval countdown tick
+    timerInterval = setInterval(() => {
+      if (!timerRunning || timerSeconds <= 0) return;
+      timerSeconds--;
+      if (timerSeconds === 300) setTimerPhase('warning', 300);
+      else if (timerSeconds === 120) setTimerPhase('critical', 120);
+      else if (timerSeconds === 0) setTimerPhase('expired', 0);
+      updateTimerDisplay();
+    }, 1000);
+
+    // --- 8. SYSTEM 4: SPRING BOUNCE BOARDING PASS TICKET ---
+    function triggerBoardingPassDrop() {
+      const card = document.getElementById('boarding-pass-card');
+      const announcement = document.getElementById('ticket-announcement');
+      const checkPop = document.getElementById('check-icon-pop');
+      const perforation = document.getElementById('perforation-line');
+
+      if (isReducedMotion) {
+        card.style.opacity = '1';
+        card.style.transform = 'none';
+        return;
+      }
+
+      // Step 1: Pop Checkmark
+      checkPop.style.transform = 'scale(0)';
+      checkPop.style.transition = 'none';
+      requestAnimationFrame(() => {
+        checkPop.style.transition = `transform ${350 / speedMultiplier}ms cubic-bezier(0.34, 1.56, 0.64, 1)`;
+        checkPop.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          checkPop.style.transform = 'scale(1)';
+        }, 200 / speedMultiplier);
+      });
+
+      // Step 2: Physical Boarding Pass Drop & Thump (Spring bounce simulation)
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(70px) scale(0.85) rotateX(15deg)';
+      card.style.transition = 'none';
+      perforation.style.transform = 'scaleX(0)';
+
+      setTimeout(() => {
+        // Drop with spring bounce overshoot
+        card.style.transition = `transform ${600 / speedMultiplier}ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity ${300 / speedMultiplier}ms ease-out`;
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1) rotateX(0deg)';
+
+        // Step 3: Perforation Line Tear Reveal
+        setTimeout(() => {
+          perforation.style.transition = `transform ${350 / speedMultiplier}ms ease-out`;
+          perforation.style.transform = 'scaleX(1)';
+        }, 300 / speedMultiplier);
+
+      }, 150 / speedMultiplier);
+    }
+
+    function copyTicketCode(btn) {
+      navigator.clipboard.writeText('DMZ-20261024-042').catch(() => {});
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span>Tersalin!</span>';
+      btn.classList.add('border-primary', 'text-primary');
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('border-primary', 'text-primary');
+      }, 2000);
+    }
+
+    // Initialize layout pill position on window load & resize
+    window.addEventListener('load', () => {
+      updatePillPosition();
+    });
+    window.addEventListener('resize', updatePillPosition);
+  </script>
+</body>
+</html>

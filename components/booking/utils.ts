@@ -180,9 +180,19 @@ export function formatIndonesianDate(dateStr: string): string {
 export function validateIndonesianPhone(phone: string): {
   isValid: boolean;
   normalized: string;
+  e164?: string;
   errorMessage?: string;
 } {
-  const cleaned = phone.replace(/[\s\-\(\)\.]/g, "");
+  if (!phone || typeof phone !== "string") {
+    return {
+      isValid: false,
+      normalized: "",
+      errorMessage: "Nomor WhatsApp aktif wajib diisi.",
+    };
+  }
+
+  // Bersihkan zero-width space dan pemisah umum (spasi, tanda hubung, kurung, titik, underscore, slash)
+  const cleaned = phone.trim().replace(/[\u200B-\u200D\uFEFF\s\-\(\)\._\/]/g, "");
 
   if (!cleaned) {
     return {
@@ -192,13 +202,26 @@ export function validateIndonesianPhone(phone: string): {
     };
   }
 
+  // Normalisasi prefix internasional atau kebiasaan tanpa awalan 0 (+62, 62, atau 8xxx)
   let normalized = cleaned;
   if (normalized.startsWith("+62")) {
     normalized = "0" + normalized.slice(3);
   } else if (normalized.startsWith("62")) {
     normalized = "0" + normalized.slice(2);
+  } else if (normalized.startsWith("8")) {
+    normalized = "0" + normalized;
   }
 
+  // Validasi ketat: hanya boleh berisi digit angka
+  if (!/^\d+$/.test(normalized)) {
+    return {
+      isValid: false,
+      normalized,
+      errorMessage: "Nomor WhatsApp hanya boleh berisi digit angka tanpa huruf atau simbol.",
+    };
+  }
+
+  // Nomor seluler Indonesia wajib diawali 08
   if (!normalized.startsWith("08")) {
     return {
       isValid: false,
@@ -207,16 +230,27 @@ export function validateIndonesianPhone(phone: string): {
     };
   }
 
-  if (normalized.length < 10 || normalized.length > 13) {
+  // Cek prefix non-seluler atau bebas pulsa (contoh: 0800 / 0804 toll-free)
+  if (!/^08[1-9]/.test(normalized)) {
     return {
       isValid: false,
       normalized,
-      errorMessage: "Nomor WhatsApp harus terdiri dari 10 hingga 13 digit angka.",
+      errorMessage: "Nomor bebas pulsa atau korporat (080x) tidak didukung untuk WhatsApp.",
+    };
+  }
+
+  // Panjang nomor ponsel seluler Indonesia umumnya 10 sampai 14 digit
+  if (normalized.length < 10 || normalized.length > 14) {
+    return {
+      isValid: false,
+      normalized,
+      errorMessage: "Nomor WhatsApp harus terdiri dari 10 hingga 14 digit angka.",
     };
   }
 
   return {
     isValid: true,
     normalized,
+    e164: "+62" + normalized.slice(1),
   };
 }

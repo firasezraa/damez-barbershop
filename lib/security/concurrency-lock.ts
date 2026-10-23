@@ -74,6 +74,13 @@ export const slotMutex = new AsyncSlotMutex()
  * Helper untuk membuat kunci slot yang seragam
  */
 export function buildSlotLockKey(barberId: string, bookingDate: string, startTime: string): string {
-  const normalizedTime = new Date(startTime).toISOString()
+  let normalizedTime: string
+  if (startTime.includes('T') || startTime.includes('-')) {
+    const d = new Date(startTime)
+    normalizedTime = isNaN(d.getTime()) ? startTime : d.toISOString()
+  } else {
+    const cleanTime = startTime.trim().slice(0, 5)
+    normalizedTime = `${bookingDate}T${cleanTime}:00+07:00`
+  }
   return `slot:${barberId}:${bookingDate}:${normalizedTime}`
 }

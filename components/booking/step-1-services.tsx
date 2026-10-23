@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Check, Clock, Sparkles, AlertCircle, ShieldCheck } from "lucide-react";
+import {
+  IconCheck,
+  IconClock,
+  IconSparkles,
+  IconAlertCircle,
+  IconShieldCheck,
+  getServiceIcon,
+} from "@/components/ui/icons";
 import { BOOKING_SERVICES, MAX_SERVICES_SELECTABLE } from "./constants";
 import { BookingService } from "./types";
 import { formatRupiah } from "./utils";
@@ -55,7 +62,7 @@ export function Step1Services({
 
       {/* Sanitation Guarantee Callout */}
       <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-xs sm:text-sm text-muted-foreground">
-        <ShieldCheck className="size-5 shrink-0 text-primary mt-0.5" />
+        <IconShieldCheck size="sm" className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
         <p>
           <strong className="text-foreground font-semibold">Jeda Sterilisasi:</strong> Setiap sesi sudah termasuk jeda sanitasi alat 10 menit sebelum tamu berikutnya duduk.
         </p>
@@ -67,7 +74,7 @@ export function Step1Services({
           role="alert"
           className="flex items-start gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive"
         >
-          <AlertCircle className="size-5 shrink-0 mt-0.5" />
+          <IconAlertCircle size="sm" className="shrink-0 mt-0.5" aria-hidden="true" />
           <p>{warningMessage}</p>
         </div>
       )}
@@ -127,7 +134,7 @@ export function Step1Services({
                       : "border-border bg-surface-elevated text-transparent group-hover:border-primary/60"
                   )}
                 >
-                  <Check className="size-4 stroke-[3]" />
+                  <IconCheck size="micro" stroke={3} aria-hidden="true" />
                 </div>
               </div>
 
@@ -139,7 +146,7 @@ export function Step1Services({
               {/* Bottom Row: Duration & Price */}
               <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="size-3.5 text-primary" />
+                  <IconClock size="micro" className="text-primary" aria-hidden="true" />
                   <span>{service.durationMinutes} Menit</span>
                 </div>
                 <div className="flex items-baseline gap-1">

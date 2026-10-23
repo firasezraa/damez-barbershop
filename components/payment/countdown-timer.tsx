@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Clock, AlertTriangle } from "lucide-react";
+import { motion } from "motion/react";
+import { IconClock, IconAlertTriangle } from "@/components/ui/icons";
+import { pulseTransitions } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 interface CountdownTimerProps {
@@ -34,24 +36,39 @@ export function CountdownTimer({
   });
 
   const hasExpiredRef = React.useRef(false);
+  const onExpireRef = React.useRef(onExpire);
+  onExpireRef.current = onExpire;
 
   React.useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
     const updateCountdown = () => {
       const diff = Math.max(0, Math.floor((targetTimeMs - Date.now()) / 1000));
       setSecondsLeft(diff);
 
-      if (diff <= 0 && !hasExpiredRef.current) {
-        hasExpiredRef.current = true;
-        if (onExpire) {
-          onExpire();
+      if (diff <= 0) {
+        if (!hasExpiredRef.current) {
+          hasExpiredRef.current = true;
+          if (onExpireRef.current) {
+            onExpireRef.current();
+          }
+        }
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
         }
       }
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, [targetTimeMs, onExpire]);
+    intervalId = setInterval(updateCountdown, 1000);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [targetTimeMs]);
 
   // Format menit dan detik
   const minutes = Math.floor(secondsLeft / 60);
@@ -67,11 +84,13 @@ export function CountdownTimer({
 
   const isWarning = secondsLeft > 0 && secondsLeft <= 180; // 3 menit terakhir
   const isExpired = secondsLeft === 0;
+  const phase = secondsLeft > 300 ? "calm" : secondsLeft > 120 ? "warning" : "critical";
 
   return (
-    <div
+    <motion.div
       role="timer"
       aria-live="polite"
+      animate={!isExpired ? pulseTransitions[phase] : undefined}
       className={cn(
         "w-full rounded-2xl border p-4 transition-all duration-300",
         isExpired
@@ -95,9 +114,9 @@ export function CountdownTimer({
             )}
           >
             {isWarning || isExpired ? (
-              <AlertTriangle className="size-5" />
+              <IconAlertTriangle size="sm" aria-hidden="true" />
             ) : (
-              <Clock className="size-5" />
+              <IconClock size="sm" aria-hidden="true" />
             )}
           </div>
           <div className="flex flex-col">
@@ -148,6 +167,6 @@ export function CountdownTimer({
           style={{ width: `${progressPercent}%` }}
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

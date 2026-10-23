@@ -1,5 +1,10 @@
 import * as React from "react";
-import { ShieldCheck, CalendarClock, AlertCircle, HelpCircle } from "lucide-react";
+import {
+  IconShieldCheck,
+  IconCalendarTime,
+  IconAlertCircle,
+  IconHelpCircle,
+} from "@/components/ui/icons";
 import {
   Accordion,
   AccordionItem,
@@ -31,7 +36,7 @@ export function FaqSection() {
           <Card className="border-border/80 bg-surface">
             <CardHeader className="pb-2">
               <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary mb-2">
-                <ShieldCheck className="size-5" />
+                <IconShieldCheck size="sm" aria-hidden="true" />
               </div>
               <CardTitle className="text-base font-bold">
                 1. Uang Muka Flat Rp 20.000
@@ -48,7 +53,7 @@ export function FaqSection() {
           <Card className="border-border/80 bg-surface">
             <CardHeader className="pb-2">
               <div className="flex size-11 items-center justify-center rounded-xl bg-secondary/20 border border-secondary/40 text-[#D97706] mb-2">
-                <CalendarClock className="size-5" />
+                <IconCalendarTime size="sm" aria-hidden="true" />
               </div>
               <CardTitle className="text-base font-bold">
                 2. Reschedule Bebas H-3 Jam
@@ -65,7 +70,7 @@ export function FaqSection() {
           <Card className="border-border/80 bg-surface">
             <CardHeader className="pb-2">
               <div className="flex size-11 items-center justify-center rounded-xl bg-destructive/15 border border-destructive/30 text-destructive mb-2">
-                <AlertCircle className="size-5" />
+                <IconAlertCircle size="sm" aria-hidden="true" />
               </div>
               <CardTitle className="text-base font-bold">
                 3. Toleransi Telat 15 Menit
@@ -82,7 +87,7 @@ export function FaqSection() {
         {/* FAQ Accordion */}
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-6 justify-center sm:justify-start">
-            <HelpCircle className="size-5 text-primary" />
+            <IconHelpCircle size="sm" className="text-primary" aria-hidden="true" />
             <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground">
               Tanya Jawab Penting (FAQ)
             </h3>

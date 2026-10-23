@@ -12,6 +12,11 @@ import {
 } from '../../../../lib/admin/service.ts';
 import { getJakartaDateString } from '../../../../lib/utils/timezone.ts';
 import type { AdminBookingFilters, QuickWalkInParams } from '../../../../lib/admin/types.ts';
+import {
+  sanitizeCustomerName,
+  sanitizeBookingNotes,
+  validateAndNormalizeIndonesianPhone
+} from '../../../../lib/security/bot-protection.ts';
 
 export async function GET(request: Request) {
   try {
@@ -59,9 +64,24 @@ export async function POST(request: Request) {
       );
     }
 
+    const rawName = body.customer_name || 'Tamu Walk-In';
+    const nameCheck = sanitizeCustomerName(rawName);
+    const sanitizedName = nameCheck.isValid ? nameCheck.sanitizedName : 'Tamu Walk-In';
+
+    let normalizedPhone: string | undefined = undefined;
+    if (body.customer_phone && String(body.customer_phone).trim() !== '') {
+      const phoneCheck = validateAndNormalizeIndonesianPhone(String(body.customer_phone));
+      if (phoneCheck.isValid) {
+        normalizedPhone = phoneCheck.normalizedPhone;
+      }
+    }
+
+    const notesCheck = sanitizeBookingNotes(body.notes);
+    const sanitizedNotes = notesCheck.sanitizedNotes || undefined;
+
     const walkInParams: QuickWalkInParams = {
-      customer_name: body.customer_name || 'Tamu Walk-In',
-      customer_phone: body.customer_phone,
+      customer_name: sanitizedName,
+      customer_phone: normalizedPhone,
       barber_id: body.barber_id,
       service_ids: Array.isArray(body.service_ids) && body.service_ids.length > 0
         ? body.service_ids
@@ -69,7 +89,7 @@ export async function POST(request: Request) {
       start_time: body.start_time,
       booking_date: body.booking_date || getJakartaDateString(),
       action_mode: body.action_mode === 'queue_wait' ? 'queue_wait' : 'start_now',
-      notes: body.notes
+      notes: sanitizedNotes
     };
 
     const result = await createAdminWalkIn(walkInParams);

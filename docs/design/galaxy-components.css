@@ -1,0 +1,454 @@
+/**
+ * DAMEZ BARBERSHOP - GALAXY CREATIVE UI COMPONENTS
+ * Production-Hardened CSS Stylesheet
+ * Vintage Masculine Theme (Charcoal, Amber Glow, Leather Bronze, Warm Cream)
+ */
+
+:root {
+  --galaxy-bg: #121212;
+  --galaxy-surface: #1A1A1A;
+  --galaxy-surface-elevated: #242424;
+  --galaxy-surface-hover: #2C2C2C;
+  --galaxy-border: #2E2E2E;
+  
+  --galaxy-primary: #D97706;          /* Vintage Amber 600 */
+  --galaxy-primary-hover: #F59E0B;    /* Warm Amber Glow 500 */
+  --galaxy-primary-foreground: #121212; /* Charcoal Text for High Contrast */
+  --galaxy-secondary: #784C25;        /* Aged Cognac Leather */
+  --galaxy-secondary-hover: #8C582B;  /* Polished Leather */
+  
+  --galaxy-text-cream: #F5F5F0;       /* Clean Warm Cream */
+  --galaxy-text-muted: #A8A29E;       /* Warm Stone Grey */
+  
+  --galaxy-barber-red: #B91C1C;       /* Vintage Crimson */
+  --galaxy-barber-white: #F5F5F0;     /* Cream Linen */
+  --galaxy-barber-blue: #1E3A8A;      /* Classic Royal Indigo */
+  --galaxy-barber-brass: #D4AF37;     /* Polished Brass Finial */
+
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   1. SHIMMER BORDER GRADIENT SWEEP CTA BUTTON
+   ========================================================================== */
+
+@keyframes galaxySpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.galaxy-shimmer-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.galaxy-shimmer-spin {
+  position: absolute;
+  inset: -1000%;
+  background: conic-gradient(
+    from 90deg at 50% 50%,
+    #784c25 0%,
+    #d97706 25%,
+    #f59e0b 50%,
+    #d97706 75%,
+    #784c25 100%
+  );
+  animation: galaxySpin 5s linear infinite;
+  will-change: transform;
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.galaxy-shimmer-btn:hover .galaxy-shimmer-spin {
+  animation-duration: 2.2s;
+  opacity: 1;
+}
+
+.galaxy-shimmer-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px -4px rgba(217, 119, 6, 0.45), 0 8px 24px -6px rgba(0, 0, 0, 0.8);
+}
+
+.galaxy-shimmer-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 12px -2px rgba(217, 119, 6, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.galaxy-shimmer-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--galaxy-bg), 0 0 0 4px var(--galaxy-primary-hover);
+}
+
+.galaxy-shimmer-btn:disabled,
+.galaxy-shimmer-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  filter: grayscale(80%);
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.galaxy-shimmer-btn:disabled .galaxy-shimmer-spin,
+.galaxy-shimmer-btn[aria-disabled="true"] .galaxy-shimmer-spin {
+  animation: none;
+}
+
+.galaxy-shimmer-core {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 14px 28px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #222222 0%, #141414 100%);
+  color: var(--galaxy-text-cream);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.galaxy-shimmer-btn:hover .galaxy-shimmer-core {
+  color: #FDE68A;
+  background: linear-gradient(180deg, #262626 0%, #171717 100%);
+}
+
+/* ==========================================================================
+   2. TACTILE LIFT-HOVER CARD (SERVICES & BARBER)
+   ========================================================================== */
+
+.galaxy-tactile-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  border-radius: 16px;
+  background-color: var(--galaxy-surface);
+  border: 1px solid var(--galaxy-border);
+  overflow: hidden;
+  transition: transform 0.3s var(--ease-spring), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.galaxy-card-chamfer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0), transparent);
+  transition: background 0.4s ease;
+  pointer-events: none;
+}
+
+.galaxy-card-spotlight {
+  position: absolute;
+  inset: -1px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top right, rgba(217, 119, 6, 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.galaxy-tactile-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(217, 119, 6, 0.5);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(217, 119, 6, 0.2);
+}
+
+.galaxy-tactile-card:hover .galaxy-card-chamfer {
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.8), transparent);
+}
+
+.galaxy-tactile-card:hover .galaxy-card-spotlight {
+  opacity: 1;
+}
+
+.galaxy-tactile-card:active {
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.8);
+}
+
+.galaxy-tactile-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--galaxy-bg), 0 0 0 4px var(--galaxy-primary-hover);
+}
+
+/* Selected State */
+.galaxy-tactile-card[aria-checked="true"],
+.galaxy-tactile-card.is-selected {
+  border-color: var(--galaxy-primary);
+  background-color: #1F1912;
+  box-shadow: 0 0 24px -4px rgba(217, 119, 6, 0.35), 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+.galaxy-tactile-card[aria-checked="true"] .galaxy-card-chamfer,
+.galaxy-tactile-card.is-selected .galaxy-card-chamfer {
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.4), rgba(245, 158, 11, 1), rgba(217, 119, 6, 0.4));
+}
+
+.galaxy-tactile-card[aria-checked="true"] .galaxy-card-spotlight,
+.galaxy-tactile-card.is-selected .galaxy-card-spotlight {
+  opacity: 1;
+  background: radial-gradient(circle at top right, rgba(217, 119, 6, 0.2), transparent 75%);
+}
+
+.galaxy-tactile-card:disabled,
+.galaxy-tactile-card[aria-disabled="true"],
+.galaxy-tactile-card.is-disabled {
+  opacity: 0.45;
+  filter: grayscale(90%);
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   3. ANIMATED SLOT SELECTION PILL BADGE
+   ========================================================================== */
+
+@keyframes galaxyRadarPing {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.galaxy-slot-pill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  min-width: 72px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--galaxy-border);
+  background-color: var(--galaxy-surface);
+  color: var(--galaxy-text-cream);
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s var(--ease-spring);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+.galaxy-slot-pill:hover {
+  border-color: rgba(217, 119, 6, 0.6);
+  background-color: var(--galaxy-surface-elevated);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.galaxy-slot-pill:active {
+  transform: scale(0.95);
+}
+
+.galaxy-slot-pill:focus-visible {
+  box-shadow: 0 0 0 2px var(--galaxy-bg), 0 0 0 4px var(--galaxy-primary-hover);
+}
+
+/* Selected state */
+.galaxy-slot-pill[aria-pressed="true"],
+.galaxy-slot-pill.is-selected {
+  background-color: var(--galaxy-primary);
+  border-color: var(--galaxy-primary-hover);
+  color: var(--galaxy-primary-foreground);
+  box-shadow: 0 0 18px -2px rgba(217, 119, 6, 0.5), 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.03);
+}
+
+.galaxy-slot-pill[aria-pressed="true"] .galaxy-slot-dot,
+.galaxy-slot-pill.is-selected .galaxy-slot-dot {
+  display: none;
+}
+
+.galaxy-slot-pill[aria-pressed="true"] .galaxy-slot-subtext,
+.galaxy-slot-pill.is-selected .galaxy-slot-subtext {
+  color: var(--galaxy-primary-foreground);
+  opacity: 0.85;
+}
+
+/* Radar dot inside pill */
+.galaxy-slot-radar {
+  position: relative;
+  display: inline-flex;
+  width: 7px;
+  height: 7px;
+}
+
+.galaxy-slot-radar-ping {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: #34D399;
+  opacity: 0.75;
+  animation: galaxyRadarPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.galaxy-slot-radar-core {
+  position: relative;
+  display: inline-flex;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background-color: #10B981;
+}
+
+/* Hold state (locked 15m) */
+.galaxy-slot-pill.is-held {
+  border-color: rgba(217, 119, 6, 0.4);
+  background-color: #271A0E;
+  color: #FBBF24;
+}
+
+.galaxy-slot-pill.is-held .galaxy-slot-radar-ping {
+  background-color: #F59E0B;
+}
+
+.galaxy-slot-pill.is-held .galaxy-slot-radar-core {
+  background-color: #D97706;
+}
+
+/* Disabled/Booked state */
+.galaxy-slot-pill:disabled,
+.galaxy-slot-pill[aria-disabled="true"],
+.galaxy-slot-pill.is-disabled {
+  border-color: #242424;
+  background-color: #161616;
+  color: #555555;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   4. BESPOKE VINTAGE BARBER-POLE & AMBIENT PULSE LOADER
+   ========================================================================== */
+
+@keyframes barberSpin {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 72px;
+  }
+}
+
+@keyframes concentricPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.galaxy-barber-cylinder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--galaxy-barber-red) 0px,
+    var(--galaxy-barber-red) 12px,
+    var(--galaxy-barber-white) 12px,
+    var(--galaxy-barber-white) 24px,
+    var(--galaxy-barber-blue) 24px,
+    var(--galaxy-barber-blue) 36px,
+    var(--galaxy-primary) 36px,
+    var(--galaxy-primary) 48px
+  );
+  background-size: 100% 72px;
+  animation: barberSpin 2.2s linear infinite;
+  will-change: background-position;
+}
+
+.galaxy-barber-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(0, 0, 0, 0.1) 60%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+}
+
+.galaxy-concentric-ring-1 {
+  animation: concentricPulse 2.6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+.galaxy-concentric-ring-2 {
+  animation: concentricPulse 2.6s cubic-bezier(0.2, 0.8, 0.2, 1) 1.3s infinite;
+}
+
+/* Urgency State (< 3 min remaining) */
+.galaxy-barber-loader.is-urgent .galaxy-barber-cylinder {
+  animation-duration: 1.1s;
+}
+
+.galaxy-barber-loader.is-urgent .galaxy-concentric-ring-1,
+.galaxy-barber-loader.is-urgent .galaxy-concentric-ring-2 {
+  border-color: rgba(239, 68, 68, 0.4);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* ==========================================================================
+   REDUCED MOTION FALLBACKS (WCAG 2.1 AA)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .galaxy-shimmer-spin,
+  .galaxy-barber-cylinder,
+  .galaxy-slot-radar-ping,
+  .galaxy-concentric-ring-1,
+  .galaxy-concentric-ring-2 {
+    animation: none !important;
+  }
+
+  .galaxy-shimmer-spin {
+    transform: rotate(45deg);
+  }
+
+  .galaxy-shimmer-btn,
+  .galaxy-tactile-card,
+  .galaxy-slot-pill {
+    transition: none !important;
+  }
+}

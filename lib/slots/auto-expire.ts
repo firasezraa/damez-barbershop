@@ -156,6 +156,21 @@ export function getRemainingHoldTime(
   }
 }
 
+function parseTimeToEpoch(val: string | Date): number {
+  if (val instanceof Date) return val.getTime()
+  if (typeof val === 'string') {
+    if (val.includes('T') || val.includes('-')) {
+      const d = new Date(val)
+      if (!isNaN(d.getTime())) return d.getTime()
+    }
+    const match = val.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
+    if (match) {
+      return new Date(`2000-01-01T${match[1].padStart(2, '0')}:${match[2]}:${match[3] || '00'}+07:00`).getTime()
+    }
+  }
+  return new Date(val).getTime()
+}
+
 /**
  * Memeriksa apakah interval waktu [startA, endA) tumpang tindih dengan [startB, endB).
  */
@@ -165,10 +180,10 @@ function areTimeRangesOverlapping(
   startB: string | Date,
   endB: string | Date
 ): boolean {
-  const aStart: number = new Date(startA).getTime()
-  const aEnd: number = new Date(endA).getTime()
-  const bStart: number = new Date(startB).getTime()
-  const bEnd: number = new Date(endB).getTime()
+  const aStart: number = parseTimeToEpoch(startA)
+  const aEnd: number = parseTimeToEpoch(endA)
+  const bStart: number = parseTimeToEpoch(startB)
+  const bEnd: number = parseTimeToEpoch(endB)
 
   return aStart < bEnd && aEnd > bStart
 }
@@ -206,8 +221,26 @@ export async function createTemporarySlotHold(
     }
   }
 
-  const startTimeDate = new Date(startTime)
-  const endTimeDate = new Date(endTime)
+  // Normalisasi string waktu (mendukung baik format raw "15:30" maupun full ISO berzona waktu)
+  let normalizedStartTime = startTime
+  let normalizedEndTime = endTime
+
+  if (!startTime.includes('T') && !startTime.includes('-')) {
+    const match = startTime.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
+    if (match) {
+      normalizedStartTime = `${bookingDate}T${match[1].padStart(2, '0')}:${match[2]}:${match[3] || '00'}+07:00`
+    }
+  }
+
+  if (!endTime.includes('T') && !endTime.includes('-')) {
+    const match = endTime.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
+    if (match) {
+      normalizedEndTime = `${bookingDate}T${match[1].padStart(2, '0')}:${match[2]}:${match[3] || '00'}+07:00`
+    }
+  }
+
+  const startTimeDate = new Date(normalizedStartTime)
+  const endTimeDate = new Date(normalizedEndTime)
   if (isNaN(startTimeDate.getTime()) || isNaN(endTimeDate.getTime()) || endTimeDate <= startTimeDate) {
     return {
       success: false,
@@ -216,7 +249,7 @@ export async function createTemporarySlotHold(
     }
   }
 
-  const slotLockKey = buildSlotLockKey(barberId, bookingDate, startTime)
+  const slotLockKey = buildSlotLockKey(barberId, bookingDate, normalizedStartTime)
   return await slotMutex.withLock(slotLockKey, async () => {
     const client = customSupabaseClient !== undefined ? customSupabaseClient : getSupabaseClient()
     const { expiresAtIso } = calculateHoldExpiry(now)
@@ -234,8 +267,8 @@ export async function createTemporarySlotHold(
           p_customer_email: customerEmail,
           p_barber_id: barberId,
           p_booking_date: bookingDate,
-          p_start_time: startTime,
-          p_end_time: endTime,
+          p_start_time: normalizedStartTime,
+          p_end_time: normalizedEndTime,
           p_service_duration_minutes: serviceDurationMinutes,
           p_service_ids: serviceIds,
           p_total_price_idr: totalPriceIdr,
@@ -255,8 +288,8 @@ export async function createTemporarySlotHold(
             customer_email: customerEmail,
             barber_id: barberId,
             booking_date: bookingDate,
-            start_time: startTime,
-            end_time: endTime,
+            start_time: normalizedStartTime,
+            end_time: normalizedEndTime,
             service_duration_minutes: serviceDurationMinutes,
             buffer_minutes: bufferMinutes,
             total_price_idr: totalPriceIdr,
@@ -381,7 +414,7 @@ export async function createTemporarySlotHold(
       existing.status === 'in_progress' ||
       (existing.status === 'pending_payment' && !isHoldExpired(existing.hold_expires_at, now))
     ) {
-      if (areTimeRangesOverlapping(startTime, endTime, existing.start_time, existing.end_time)) {
+      if (areTimeRangesOverlapping(normalizedStartTime, normalizedEndTime, existing.start_time, existing.end_time)) {
         return {
           success: false,
           error: 'Slot pada jam dan barber ini sedang ditahan pemesan lain atau sudah terisi.',
@@ -404,8 +437,8 @@ export async function createTemporarySlotHold(
     customer_email: customerEmail,
     barber_id: barberId,
     booking_date: bookingDate,
-    start_time: startTime,
-    end_time: endTime,
+    start_time: normalizedStartTime,
+    end_time: normalizedEndTime,
     service_duration_minutes: serviceDurationMinutes,
     buffer_minutes: bufferMinutes,
     total_price_idr: totalPriceIdr,

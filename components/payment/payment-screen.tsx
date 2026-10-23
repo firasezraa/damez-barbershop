@@ -4,14 +4,15 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ShieldCheck,
-  ArrowLeft,
-  AlertCircle,
-  Loader2,
-  Calendar,
-  CheckCircle2,
-  Lock,
-} from "lucide-react";
+  IconShieldCheck,
+  IconArrowLeft,
+  IconAlertCircle,
+  IconLoader2,
+  IconCalendar,
+  IconCircleCheck,
+  IconLock,
+} from "@/components/ui/icons";
+import { GalaxyBarberPoleLoader } from "@/components/ui/galaxy-components";
 import { CountdownTimer } from "./countdown-timer";
 import { QrisDisplay } from "./qris-display";
 import { SnapButton } from "./snap-button";
@@ -213,6 +214,22 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
     return () => clearInterval(interval);
   }, [booking, isExpired, router]);
 
+  // 4. Intercept accidental navigation / refresh when payment is pending (BUG-M801-08)
+  React.useEffect(() => {
+    if (!booking || booking.status !== "pending_payment" || isExpired) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Sesi pembayaran DP sedang aktif. Meninggalkan halaman ini dapat membatalkan atau menyulitkan konfirmasi reservasi Anda.";
+      return e.returnValue;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [booking, isExpired]);
+
   // Manual Check Status Button
   const handleManualCheckStatus = async () => {
     if (!booking) return;
@@ -271,8 +288,11 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-3 text-muted-foreground p-4">
-        <Loader2 className="size-8 animate-spin text-primary" />
-        <span className="text-sm font-medium">Menyiapkan gerbang pembayaran...</span>
+        <GalaxyBarberPoleLoader
+          mode="normal"
+          statusText="Menyiapkan Gerbang Pembayaran..."
+          subText="Menghubungkan ke sistem reservasi"
+        />
       </div>
     );
   }
@@ -281,18 +301,31 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl border border-destructive/40 bg-surface p-6 text-center">
-          <AlertCircle className="mx-auto size-12 text-destructive mb-3" />
+          <IconAlertCircle size="xl" className="mx-auto text-destructive mb-3" aria-hidden="true" />
           <h2 className="text-lg font-bold text-foreground mb-1.5">
             Reservasi Tidak Ditemukan
           </h2>
           <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
             {errorMessage}
           </p>
-          <Link href="/book">
-            <Button variant="primary" className="w-full">
-              Mulai Reservasi Baru
+          <div className="flex flex-col gap-2.5">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setErrorMessage(null);
+                setIsLoading(true);
+                fetchBookingDetails();
+              }}
+            >
+              Coba Muat Ulang
             </Button>
-          </Link>
+            <Link href="/book">
+              <Button variant="primary" className="w-full">
+                Mulai Reservasi Baru
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -307,12 +340,12 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
             href="/book"
             className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="size-4" />
+            <IconArrowLeft size="micro" aria-hidden="true" />
             <span>Kembali ke Jadwal</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-primary" />
+            <IconShieldCheck size="micro" className="text-primary" aria-hidden="true" />
             <span className="text-xs font-bold tracking-wide uppercase text-foreground">
               Pembayaran Aman
             </span>
@@ -344,7 +377,7 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
         {/* Expired State Notice */}
         {isExpired ? (
           <div className="rounded-2xl border border-destructive/50 bg-destructive/10 p-6 text-center shadow-lg mb-8">
-            <AlertCircle className="mx-auto size-12 text-destructive mb-3" />
+            <IconAlertCircle size="xl" className="mx-auto text-destructive mb-3" aria-hidden="true" />
             <h3 className="text-base font-bold text-destructive mb-1.5">
               Waktu Pembayaran Telah Habis (15 Menit)
             </h3>
@@ -383,7 +416,7 @@ export function PaymentScreen({ initialCode, initialId }: PaymentScreenProps) {
               {/* Midtrans Snap Popup Trigger */}
               <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
-                  <Lock className="size-4 text-primary" />
+                  <IconLock size="micro" className="text-primary" aria-hidden="true" />
                   <span className="text-xs font-bold text-foreground uppercase tracking-wider">
                     Pilihan Metode Lain
                   </span>

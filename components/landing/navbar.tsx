@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Scissors, Menu, X, Clock, Calendar } from "lucide-react";
+import {
+  IconScissors,
+  IconMenu2,
+  IconX,
+  IconClock,
+  IconCalendar,
+} from "@/components/ui/icons";
 import { LiveStatusBadge } from "./live-status-badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -45,7 +51,7 @@ export function Navbar() {
             className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
           >
             <div className="flex size-11 items-center justify-center rounded-xl bg-surface border border-primary/40 group-hover:border-primary transition-colors shadow-sm">
-              <Scissors className="size-5 text-primary rotate-45 group-hover:scale-110 transition-transform" />
+              <IconScissors size="sm" className="text-primary rotate-45 group-hover:scale-110 transition-transform" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span className="font-display text-lg sm:text-xl font-bold tracking-wider text-foreground group-hover:text-primary transition-colors">
@@ -80,7 +86,7 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <a href="#layanan">
             <Button variant="primary" size="default" className="gap-2 font-semibold shadow-md">
-              <Calendar className="size-4" />
+              <IconCalendar size="micro" aria-hidden="true" />
               <span>Booking Jadwal</span>
             </Button>
           </a>
@@ -96,7 +102,7 @@ export function Navbar() {
             aria-label="Buka Menu Navigasi"
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+            {mobileMenuOpen ? <IconX size="md" aria-hidden="true" /> : <IconMenu2 size="md" aria-hidden="true" />}
           </button>
         </div>
       </div>
@@ -127,7 +133,7 @@ export function Navbar() {
                 className="w-full"
               >
                 <Button variant="primary" size="lg" className="w-full gap-2">
-                  <Calendar className="size-5" />
+                  <IconCalendar size="sm" aria-hidden="true" />
                   <span>Booking Jadwal Sekarang</span>
                 </Button>
               </a>

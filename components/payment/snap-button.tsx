@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { CreditCard, ExternalLink, Loader2, AlertCircle } from "lucide-react";
+import {
+  IconCreditCard,
+  IconExternalLink,
+  IconLoader2,
+  IconAlertCircle,
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MidtransSnapResult } from "./types";
@@ -149,12 +154,12 @@ export function SnapButton({
       >
         {isOpeningPopup ? (
           <>
-            <Loader2 data-icon="inline-start" className="size-5 animate-spin" />
+            <IconLoader2 data-icon="inline-start" size="sm" className="animate-spin" aria-hidden="true" />
             Membuka Pembayaran Midtrans...
           </>
         ) : (
           <>
-            <CreditCard data-icon="inline-start" className="size-5" />
+            <IconCreditCard data-icon="inline-start" size="sm" aria-hidden="true" />
             Bayar DP Rp 20.000 via Snap
           </>
         )}
@@ -169,13 +174,13 @@ export function SnapButton({
           className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground hover:text-primary transition-colors py-1"
         >
           <span>Buka di tab baru jika popup tidak muncul</span>
-          <ExternalLink className="size-3" />
+          <IconExternalLink size="micro" aria-hidden="true" />
         </a>
       )}
 
       {scriptError && (
         <div className="flex items-center gap-1.5 rounded-lg bg-destructive/10 p-2 text-xs text-destructive border border-destructive/30">
-          <AlertCircle className="size-3.5 shrink-0" />
+          <IconAlertCircle size="micro" className="shrink-0" aria-hidden="true" />
           <span>{scriptError} Gunakan scan QRIS di atas untuk pembayaran langsung.</span>
         </div>
       )}

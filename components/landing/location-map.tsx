@@ -1,15 +1,17 @@
 import * as React from "react";
 import {
-  MapPin,
-  Clock,
-  Car,
-  Train,
-  Wifi,
-  Phone,
-  Mail,
-  ExternalLink,
-  Navigation,
-} from "lucide-react";
+  IconMapPin,
+  IconClock,
+  IconPhone,
+  IconMail,
+  IconExternalLink,
+} from "@/components/ui/icons";
+import {
+  IconCar,
+  IconTrain,
+  IconWifi,
+  IconNavigation,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 
 export function LocationMap() {
@@ -35,7 +37,7 @@ export function LocationMap() {
             {/* Address Card */}
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md">
               <div className="flex items-center gap-3 mb-3 text-primary">
-                <MapPin className="size-5" />
+                <IconMapPin size="sm" aria-hidden="true" />
                 <h3 className="font-display text-lg font-bold text-foreground">
                   Alamat Resmi
                 </h3>
@@ -59,9 +61,9 @@ export function LocationMap() {
                   className="w-full inline-block"
                 >
                   <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
-                    <Navigation className="size-3.5 text-primary" />
+                    <IconNavigation size={14} className="text-primary" aria-hidden="true" />
                     <span>Buka Peta Rute di Google Maps</span>
-                    <ExternalLink className="size-3.5 text-muted-foreground ml-auto" />
+                    <IconExternalLink size="micro" className="text-muted-foreground ml-auto" aria-hidden="true" />
                   </Button>
                 </a>
               </div>
@@ -70,7 +72,7 @@ export function LocationMap() {
             {/* Operating Hours Card */}
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md">
               <div className="flex items-center gap-3 mb-3 text-primary">
-                <Clock className="size-5" />
+                <IconClock size="sm" aria-hidden="true" />
                 <h3 className="font-display text-lg font-bold text-foreground">
                   Jam Operasional
                 </h3>
@@ -90,7 +92,7 @@ export function LocationMap() {
             {/* Parking & Transit Card */}
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-md flex flex-col gap-4 text-xs">
               <div className="flex items-start gap-3">
-                <Car className="size-4 text-primary shrink-0 mt-0.5" />
+                <IconCar size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                 <div>
                   <span className="font-semibold text-foreground block">Area Parkir Mandiri:</span>
                   <span className="text-muted-foreground">
@@ -100,7 +102,7 @@ export function LocationMap() {
               </div>
 
               <div className="flex items-start gap-3">
-                <Train className="size-4 text-primary shrink-0 mt-0.5" />
+                <IconTrain size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                 <div>
                   <span className="font-semibold text-foreground block">Transportasi Publik MRT:</span>
                   <span className="text-muted-foreground">
@@ -110,7 +112,7 @@ export function LocationMap() {
               </div>
 
               <div className="flex items-start gap-3">
-                <Wifi className="size-4 text-primary shrink-0 mt-0.5" />
+                <IconWifi size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
                 <div>
                   <span className="font-semibold text-foreground block">Fasilitas Ruang:</span>
                   <span className="text-muted-foreground">
@@ -128,7 +130,7 @@ export function LocationMap() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2.5 rounded-xl border border-border bg-surface p-3.5 hover:border-primary/50 transition-colors"
               >
-                <Phone className="size-4 text-primary" />
+                <IconPhone size="micro" className="text-primary" aria-hidden="true" />
                 <div>
                   <span className="text-muted-foreground block text-[10px]">WhatsApp Resmi</span>
                   <span className="font-mono font-bold text-foreground">+62 812-3456-7890</span>
@@ -138,7 +140,7 @@ export function LocationMap() {
                 href="mailto:booking@damezbarber.com"
                 className="flex items-center gap-2.5 rounded-xl border border-border bg-surface p-3.5 hover:border-primary/50 transition-colors"
               >
-                <Mail className="size-4 text-primary" />
+                <IconMail size="micro" className="text-primary" aria-hidden="true" />
                 <div>
                   <span className="text-muted-foreground block text-[10px]">Surel Pertanyaan</span>
                   <span className="font-bold text-foreground truncate">booking@damezbarber.com</span>
