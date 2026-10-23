@@ -11,7 +11,7 @@
 
 > **Sistem manajemen reservasi pangkas rambut terintegrasi untuk Damez Barbershop**. Dirancang khusus untuk memotong drama antrean fisik ruang tunggu, mengeliminasi risiko pembatalan sepihak (*no-show*) melalui Down Payment (DP) flat Rp 20.000 via QRIS, menjamin ketiadaan jadwal bentrok (*zero double booking*) berkat constraint PostgreSQL GiST, serta mengirimkan tiket reservasi WhatsApp instan dalam waktu kurang dari 5 detik.
 >
-> 🌐 **Live Production URL**: [https://damezbarber.com](https://damezbarber.com)  
+> 🌐 **Live Production URL**: -
 > 📦 **GitHub Repository**: [https://github.com/firasezraa/damez-barbershop](https://github.com/firasezraa/damez-barbershop)  
 > 🔒 **SSL & Custom Domain**: TLS 1.3 / HSTS 2-Tahun / CSP Hardened (`docs/DOMAIN-SSL-SETUP.md`)
 
