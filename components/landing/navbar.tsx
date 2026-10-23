@@ -129,12 +129,6 @@ export function Navbar() {
 
         {/* Kolom 3 (Kanan): Header Actions & Live Status (Desktop ~260px) */}
         <div className="hidden lg:flex items-center justify-end gap-3 shrink-0 lg:w-[260px]">
-          <div className="hidden xl:block">
-            <LiveStatusBadge showDescription />
-          </div>
-          <div className="xl:hidden">
-            <LiveStatusBadge />
-          </div>
           <a href="#layanan">
             <Button
               variant="primary"
