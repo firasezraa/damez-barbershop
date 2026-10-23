@@ -7,7 +7,6 @@
 [![Midtrans](https://img.shields.io/badge/Payment-Midtrans%20Snap%20QRIS-0085FF.svg)](https://midtrans.com/)
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-Multi--Gateway%20%3C5s%20SLA-25D366.svg)](https://fonnte.com/)
 [![Tests](https://img.shields.io/badge/Tests-19%2F19%20Passing%20(100%25)-success.svg)](./tests/)
-[![Production URL](https://img.shields.io/badge/Live%20URL-https%3A%2F%2Fdamezbarber.com-gold.svg)](https://damezbarber.com)
 
 > **Sistem manajemen reservasi pangkas rambut terintegrasi untuk Damez Barbershop**. Dirancang khusus untuk memotong drama antrean fisik ruang tunggu, mengeliminasi risiko pembatalan sepihak (*no-show*) melalui Down Payment (DP) flat Rp 20.000 via QRIS, menjamin ketiadaan jadwal bentrok (*zero double booking*) berkat constraint PostgreSQL GiST, serta mengirimkan tiket reservasi WhatsApp instan dalam waktu kurang dari 5 detik.
 >
