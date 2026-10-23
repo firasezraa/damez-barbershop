@@ -17,6 +17,13 @@ import {
 } from '../../../../lib/slots/auto-expire.ts'
 import { BOOKING_BARBERS, BOOKING_SERVICES } from '../../../../components/booking/constants.ts'
 import type { Database } from '../../../../types/database.types.ts'
+import {
+  globalRateLimiter,
+  BOOKING_CODE_RATE_LIMIT_CONFIG,
+  extractClientIp,
+  createRateLimitResponse
+} from '../../../../lib/security/rate-limit.ts'
+import { isValidSafeIdentifier } from '../../../../lib/security/bot-protection.ts'
 
 type BookingRow = Database['public']['Tables']['bookings']['Row']
 
@@ -97,6 +104,16 @@ export async function GET(
   { params }: { params: Promise<{ code: string }> }
 ): Promise<Response> {
   try {
+    // Anti-Enumeration & Scraping Protection: Rate Limit per IP
+    const clientIp = extractClientIp(request)
+    const ipRateLimit = globalRateLimiter.check(clientIp, BOOKING_CODE_RATE_LIMIT_CONFIG)
+    if (!ipRateLimit.isAllowed) {
+      return createRateLimitResponse(
+        ipRateLimit,
+        'Terlalu banyak permintaan pengecekan booking dari alamat IP ini. Silakan coba lagi nanti.'
+      )
+    }
+
     const { code } = await params
     const identifier = (code || '').trim()
 
@@ -110,8 +127,20 @@ export async function GET(
       )
     }
 
+    // Input Validation: Mencegah SQL Injection & Format Manipulation
+    if (!isValidSafeIdentifier(identifier)) {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Format parameter kode booking atau ID tidak valid.'
+        },
+        400
+      )
+    }
+
     const supabase = getSupabaseClient()
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier)
+    const normalizedIdentifier = isUuid ? identifier : identifier.toUpperCase()
 
     let foundBooking: BookingRow | SlotHoldRecord | null = null
     let fetchedServices: Array<{ id: string; name: string; duration_minutes: number; price_idr: number }> = []
@@ -132,7 +161,7 @@ export async function GET(
 
         const { data, error } = await (isUuid
           ? query.eq('id', identifier)
-          : query.eq('booking_code', identifier)
+          : query.eq('booking_code', normalizedIdentifier)
         ).maybeSingle()
 
         if (!error && data) {
@@ -159,10 +188,10 @@ export async function GET(
       }
     }
 
-    // 2. Cek di In-Memory Store jika belum ditemukan
+    // 2. Cek di In-Memory Store jika belum ditemukan (Case-Insensitive matching)
     if (!foundBooking) {
       for (const [_, record] of inMemoryHoldsStore.entries()) {
-        if (record.id === identifier || record.booking_code === identifier) {
+        if (record.id === identifier || record.booking_code.toUpperCase() === normalizedIdentifier) {
           foundBooking = record
           break
         }
@@ -267,6 +296,17 @@ export async function POST(
   { params }: { params: Promise<{ code: string }> }
 ): Promise<Response> {
   try {
+    // CRITICAL SECURITY GUARD: Block simulated payment bypass in production environment!
+    if (process.env.NODE_ENV === 'production') {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Simulasi pembayaran dinonaktifkan di lingkungan produksi. Konfirmasi pembayaran hanya melalui Webhook Midtrans resmi.'
+        },
+        403
+      )
+    }
+
     const { code } = await params
     const identifier = (code || '').trim()
 
@@ -283,6 +323,7 @@ export async function POST(
     const nowIso = new Date().toISOString()
     const supabase = getSupabaseClient()
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier)
+    const normalizedIdentifier = isUuid ? identifier : identifier.toUpperCase()
 
     // Update in Supabase if connected
     if (supabase) {
@@ -296,7 +337,7 @@ export async function POST(
 
       const { data, error } = await (isUuid
         ? query.eq('id', identifier)
-        : query.eq('booking_code', identifier)
+        : query.eq('booking_code', normalizedIdentifier)
       ).select().maybeSingle()
 
       if (!error && data) {
@@ -347,7 +388,7 @@ export async function POST(
 
     // Update in inMemoryHoldsStore
     for (const [id, record] of inMemoryHoldsStore.entries()) {
-      if (record.id === identifier || record.booking_code === identifier) {
+      if (record.id === identifier || record.booking_code.toUpperCase() === normalizedIdentifier) {
         const updatedRecord: SlotHoldRecord = {
           ...record,
           status: 'confirmed',

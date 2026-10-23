@@ -8,9 +8,17 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { code } = await params;
+  const sanitizedCode = (code || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
+  const titleText = sanitizedCode
+    ? `Tiket Digital Boarding Pass ${sanitizedCode} | Damez Barbershop`
+    : "Tiket Digital Boarding Pass | Damez Barbershop";
+  const descText = sanitizedCode
+    ? `Tiket reservasi resmi kursi potong rambut Damez Barbershop Senopati kode ${sanitizedCode}. Siap ditunjukkan ke kasir.`
+    : "Tiket reservasi resmi kursi potong rambut Damez Barbershop Senopati. Siap ditunjukkan ke kasir.";
+
   return {
-    title: `Tiket Digital Boarding Pass ${code} | Damez Barbershop`,
-    description: `Tiket reservasi resmi kursi potong rambut Damez Barbershop Senopati kode ${code}. Siap ditunjukkan ke kasir.`,
+    title: titleText,
+    description: descText,
     robots: {
       index: false,
       follow: false,

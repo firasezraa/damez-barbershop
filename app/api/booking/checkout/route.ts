@@ -13,8 +13,11 @@ import {
   type BookingCheckoutResult
 } from '../../../../lib/payment/midtrans.ts'
 import { getSupabaseClient } from '../../../../lib/supabase/client.ts'
-import { isHoldExpired } from '../../../../lib/slots/auto-expire.ts'
+import { isHoldExpired, inMemoryHoldsStore } from '../../../../lib/slots/auto-expire.ts'
 import type { Database } from '../../../../types/database.types.ts'
+
+// In-Memory cache sesi checkout aktif untuk idempotensi transaksi (mencegah duplikasi order_id Midtrans)
+const inMemoryCheckoutSessions = new Map<string, BookingCheckoutResult>()
 import {
   globalRateLimiter,
   CHECKOUT_RATE_LIMIT_CONFIG,
@@ -155,11 +158,31 @@ export async function POST(request: Request): Promise<Response> {
     const bookingId: string = body.booking_id.trim()
     const supabase = getSupabaseClient()
 
+    // 1. IDEMPOTENCY GUARD (In-Memory Session): Jika sudah ada sesi aktif yang belum kedaluwarsa, kembalikan token yang sama
+    const existingCachedSession = inMemoryCheckoutSessions.get(bookingId)
+    if (existingCachedSession) {
+      const isNotExpired = new Date(existingCachedSession.expires_at).getTime() > Date.now()
+      if (isNotExpired) {
+        return jsonResponse(
+          {
+            success: true,
+            message: `Snap token sesi aktif dikembalikan (Idempoten). Nominal DP Rp ${FLAT_DOWN_PAYMENT_AMOUNT_IDR.toLocaleString('id-ID')}.`,
+            data: existingCachedSession
+          },
+          200,
+          ipRateLimit.headers
+        )
+      } else {
+        inMemoryCheckoutSessions.delete(bookingId)
+      }
+    }
+
     let bookingCode: string = `DMZ-${Date.now().toString(36).toUpperCase()}`
     let customerName: string = (body.customer_name || 'Damez Customer').trim()
     let customerPhone: string = (body.customer_phone || '081234567890').trim()
     let customerEmail: string | null = body.customer_email ? body.customer_email.trim() : null
     let serviceName: string | undefined = body.service_name
+    let authoritativeExpiresAt: string | null = null
 
     // If Supabase database connection is configured, fetch booking details & validate state
     if (supabase) {
@@ -253,14 +276,83 @@ export async function POST(request: Request): Promise<Response> {
         )
       }
 
+      // Check existing pending payment in Supabase payments table (Database-level Idempotency)
+      const { data: existingPayment } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('booking_id', bookingId)
+        .eq('transaction_status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (existingPayment && existingPayment.snap_token) {
+        const isNotExpired = !existingPayment.expires_at || new Date(existingPayment.expires_at).getTime() > Date.now()
+        if (isNotExpired) {
+          const cachedResult: BookingCheckoutResult = {
+            token: existingPayment.snap_token,
+            redirect_url: existingPayment.snap_redirect_url || '',
+            order_id: existingPayment.order_id,
+            gross_amount: Number(existingPayment.gross_amount) || FLAT_DOWN_PAYMENT_AMOUNT_IDR,
+            booking_id: bookingId,
+            booking_code: bookingRecord.booking_code,
+            customer_name: bookingRecord.customer_name || customerName,
+            customer_phone: bookingRecord.customer_phone || customerPhone,
+            customer_email: bookingRecord.customer_email || customerEmail,
+            expires_at: existingPayment.expires_at || bookingRecord.hold_expires_at || new Date().toISOString()
+          }
+          inMemoryCheckoutSessions.set(bookingId, cachedResult)
+          return jsonResponse(
+            {
+              success: true,
+              message: `Snap token sesi aktif dikembalikan (Idempoten). Nominal DP Rp ${FLAT_DOWN_PAYMENT_AMOUNT_IDR.toLocaleString('id-ID')}.`,
+              data: cachedResult
+            },
+            200,
+            ipRateLimit.headers
+          )
+        }
+      }
+
       // Populate verified metadata from database
       bookingCode = bookingRecord.booking_code
       customerName = bookingRecord.customer_name || customerName
       customerPhone = bookingRecord.customer_phone || customerPhone
       customerEmail = bookingRecord.customer_email || customerEmail
+      authoritativeExpiresAt = bookingRecord.hold_expires_at
+    } else if (inMemoryHoldsStore.has(bookingId)) {
+      // In-Memory store fallback
+      const hold = inMemoryHoldsStore.get(bookingId)!
+      if (hold.status === 'confirmed' || hold.status === 'in_progress' || (hold as any).status === 'completed') {
+        return jsonResponse(
+          {
+            success: false,
+            error: `Booking "${hold.booking_code}" is already ${hold.status}. No down payment required.`
+          },
+          409
+        )
+      }
+
+      if (hold.status === 'expired' || isHoldExpired(hold.hold_expires_at)) {
+        hold.status = 'expired'
+        inMemoryHoldsStore.set(bookingId, hold)
+        return jsonResponse(
+          {
+            success: false,
+            error: `Booking "${hold.booking_code}" hold has expired (> 15 minutes). Slot has been released.`
+          },
+          410
+        )
+      }
+
+      bookingCode = hold.booking_code
+      customerName = hold.customer_name || customerName
+      customerPhone = hold.customer_phone || customerPhone
+      customerEmail = hold.customer_email || customerEmail
+      authoritativeExpiresAt = hold.hold_expires_at
     }
 
-    // Generate Snap token via Midtrans integration service
+    // Generate Snap token via Midtrans integration service (Using authoritative hold expiration)
     const checkoutResult: BookingCheckoutResult = await createBookingSnapTransaction({
       booking_id: bookingId,
       booking_code: bookingCode,
@@ -268,10 +360,11 @@ export async function POST(request: Request): Promise<Response> {
       customer_phone: customerPhone,
       customer_email: customerEmail,
       service_name: serviceName,
-      finish_url: body.finish_url
+      finish_url: body.finish_url,
+      expires_at: authoritativeExpiresAt
     })
 
-    // If Supabase is available, persist the payment record and update booking hold expiration
+    // If Supabase is available, persist the payment record
     if (supabase) {
       const { error: paymentInsertError } = await supabase.from('payments').insert({
         booking_id: bookingId,
@@ -288,20 +381,12 @@ export async function POST(request: Request): Promise<Response> {
       if (paymentInsertError) {
         console.error(`[Checkout API] Failed to record payment in database: ${paymentInsertError.message}`)
       }
-
-      // Update hold expiration time in bookings
-      const { error: bookingUpdateError } = await supabase
-        .from('bookings')
-        .update({
-          hold_expires_at: checkoutResult.expires_at,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', bookingId)
-
-      if (bookingUpdateError) {
-        console.error(`[Checkout API] Failed to update booking hold expiration: ${bookingUpdateError.message}`)
-      }
+      // Note: We deliberately do NOT update hold_expires_at in bookings here!
+      // This prevents the infinite hoarding attack (BUG-M801-05).
     }
+
+    // Cache checkout session for idempotency
+    inMemoryCheckoutSessions.set(bookingId, checkoutResult)
 
     return jsonResponse(
       {

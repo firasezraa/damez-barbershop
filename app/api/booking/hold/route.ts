@@ -24,6 +24,9 @@ import {
   detectSpamBot,
   validateAndNormalizeIndonesianPhone,
   sanitizeCustomerName,
+  sanitizeBookingNotes,
+  validateCustomerEmail,
+  isValidSafeIdentifier,
   checkActiveHoldsLimit
 } from '../../../../lib/security/bot-protection.ts'
 import {
@@ -190,6 +193,44 @@ export async function POST(request: Request): Promise<Response> {
       )
     }
 
+    // 3.1 IDENTIFIER & DATE FORMAT VALIDATION (SQLi / Traversal Defense)
+    if (!isValidSafeIdentifier(String(barber_id))) {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Format barber_id tidak valid.'
+        },
+        400,
+        ipRateLimit.headers
+      )
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(booking_date))) {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Format booking_date tidak valid. Gunakan format YYYY-MM-DD.'
+        },
+        400,
+        ipRateLimit.headers
+      )
+    }
+
+    if (Array.isArray(service_ids)) {
+      for (const sId of service_ids) {
+        if (typeof sId !== 'string' || !isValidSafeIdentifier(sId)) {
+          return jsonResponse(
+            {
+              success: false,
+              error: 'Format service_id tidak valid.'
+            },
+            400,
+            ipRateLimit.headers
+          )
+        }
+      }
+    }
+
     // 4. PHONE NUMBER FORMAT VALIDATION & NORMALIZATION (Strict Indonesian Mobile)
     const phoneCheck = validateAndNormalizeIndonesianPhone(String(customer_phone))
     if (!phoneCheck.isValid) {
@@ -226,7 +267,7 @@ export async function POST(request: Request): Promise<Response> {
       )
     }
 
-    // 7. CUSTOMER NAME SANITIZATION
+    // 7. CUSTOMER NAME SANITIZATION (Stored XSS & SQLi Defense)
     const nameCheck = sanitizeCustomerName(String(customer_name))
     if (!nameCheck.isValid) {
       return jsonResponse(
@@ -240,6 +281,34 @@ export async function POST(request: Request): Promise<Response> {
     }
     const sanitizedCustomerName = nameCheck.sanitizedName
 
+    // 7.1 CUSTOMER EMAIL VALIDATION (Optional, Strict Regex)
+    const emailCheck = validateCustomerEmail(customer_email)
+    if (!emailCheck.isValid) {
+      return jsonResponse(
+        {
+          success: false,
+          error: emailCheck.error || 'Format alamat email tidak valid.'
+        },
+        400,
+        ipRateLimit.headers
+      )
+    }
+    const sanitizedCustomerEmail = emailCheck.normalizedEmail
+
+    // 7.2 BOOKING NOTES SANITIZATION (Stored XSS & Formula Injection Defense)
+    const notesCheck = sanitizeBookingNotes(notes)
+    if (!notesCheck.isValid) {
+      return jsonResponse(
+        {
+          success: false,
+          error: notesCheck.error || 'Catatan tidak valid.'
+        },
+        400,
+        ipRateLimit.headers
+      )
+    }
+    const sanitizedNotes = notesCheck.sanitizedNotes || undefined
+
     // 8. AUTHORITATIVE PRICE & DOWN PAYMENT CALCULATION (Anti-Tampering)
     const priceCalculation = await verifyAndCalculateBookingPrice({
       serviceIds: Array.isArray(service_ids) ? service_ids : [],
@@ -249,19 +318,34 @@ export async function POST(request: Request): Promise<Response> {
     })
 
     // 9. ATOMIC TEMPORARY SLOT HOLD (With Application Concurrency Lock & DB Constraints)
+    let normalizedStartTime = String(start_time).trim()
+    let normalizedEndTime = String(end_time).trim()
+    if (!normalizedStartTime.includes('T') && !normalizedStartTime.includes('-')) {
+      const match = normalizedStartTime.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
+      if (match) {
+        normalizedStartTime = `${booking_date}T${match[1].padStart(2, '0')}:${match[2]}:${match[3] || '00'}+07:00`
+      }
+    }
+    if (!normalizedEndTime.includes('T') && !normalizedEndTime.includes('-')) {
+      const match = normalizedEndTime.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)
+      if (match) {
+        normalizedEndTime = `${booking_date}T${match[1].padStart(2, '0')}:${match[2]}:${match[3] || '00'}+07:00`
+      }
+    }
+
     const holdParams: CreateSlotHoldParams = {
       barberId: barber_id,
       bookingDate: booking_date,
-      startTime: start_time,
-      endTime: end_time,
+      startTime: normalizedStartTime,
+      endTime: normalizedEndTime,
       serviceDurationMinutes: priceCalculation.authoritativeDurationMinutes,
       totalPriceIdr: priceCalculation.authoritativeTotalPrice,
       downPaymentIdr: FLAT_DOWN_PAYMENT_AMOUNT_IDR, // Strictly locked to Rp 20.000
       customerName: sanitizedCustomerName,
       customerPhone: normalizedPhone,
-      customerEmail: customer_email ? String(customer_email).trim() : null,
+      customerEmail: sanitizedCustomerEmail,
       serviceIds: Array.isArray(service_ids) ? service_ids : [],
-      notes: notes ? String(notes).trim().slice(0, 500) : undefined
+      notes: sanitizedNotes
     }
 
     const result = await createTemporarySlotHold(holdParams)

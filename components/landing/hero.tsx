@@ -1,6 +1,22 @@
+"use client";
+
 import * as React from "react";
-import { Star, ShieldCheck, Clock, Zap, CheckCircle2, ArrowRight } from "lucide-react";
+import { motion } from "motion/react";
+import {
+  IconStar,
+  IconShieldCheck,
+  IconClock,
+  IconBolt,
+  IconCircleCheck,
+  IconArrowRight,
+} from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
+import { GalaxyShimmerButton } from "@/components/ui/galaxy-components";
+import {
+  heroContainerVariants,
+  heroItemVariants,
+  heroCardVariants,
+} from "@/lib/motion";
 
 export function Hero() {
   return (
@@ -16,63 +32,83 @@ export function Hero() {
       />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
+        <motion.div
+          variants={heroContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center"
+        >
           {/* Left Column: Copy & CTAs */}
           <div className="flex flex-col gap-6 lg:col-span-7">
             {/* Social Proof Badge */}
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 backdrop-blur-md shadow-sm">
+            <motion.div
+              variants={heroItemVariants}
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 backdrop-blur-md shadow-sm"
+            >
               <div className="flex items-center text-primary">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="size-3.5 fill-primary text-primary" />
+                  <IconStar key={i} size="micro" className="fill-primary text-primary" aria-hidden="true" />
                 ))}
               </div>
               <span className="text-xs font-bold text-foreground">4.9 dari 5 Bintang</span>
               <span className="text-xs text-muted-foreground">• 320 lebih ulasan terverifikasi di Google Maps</span>
-            </div>
+            </motion.div>
 
             {/* Hero Headline */}
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.15]">
+            <motion.h1
+              variants={heroItemVariants}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.15]"
+            >
               Tampil Rapi <br className="hidden sm:inline" />
               <span className="text-primary">Tanpa Mengantre</span>
-            </h1>
+            </motion.h1>
 
             {/* Sub-headline */}
-            <p className="max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">
+            <motion.p
+              variants={heroItemVariants}
+              className="max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed"
+            >
               Dapatkan potongan rambut presisi dan perawatan pria yang bersih di kawasan Senopati. Pilih barber andalan Anda, tentukan jam kedatangan, dan langsung duduk di kursi pangkas saat tiba.
-            </p>
+            </motion.p>
 
             {/* CTA Group */}
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+            <motion.div
+              variants={heroItemVariants}
+              className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center"
+            >
               <a href="#layanan" className="w-full sm:w-auto">
-                <Button
-                  variant="primary"
+                <GalaxyShimmerButton
+                  variant="amber"
                   size="lg"
-                  className="w-full sm:w-auto gap-2 text-base shadow-lg shadow-primary/25"
+                  className="w-full sm:w-auto"
+                  icon={<IconArrowRight size="sm" aria-hidden="true" />}
                 >
-                  <span>Booking Kursi Sekarang</span>
-                  <ArrowRight className="size-5" />
-                </Button>
+                  Booking Kursi Sekarang
+                </GalaxyShimmerButton>
               </a>
               <a href="#layanan" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto text-base border-border hover:border-primary/50 text-foreground"
+                  className="w-full sm:w-auto text-base border-border hover:border-primary/50 text-foreground min-h-[48px]"
                 >
                   <span>Lihat Paket Layanan & Tarif</span>
                 </Button>
               </a>
-            </div>
+            </motion.div>
 
             {/* Microcopy DP notice */}
-            <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+            <motion.p
+              variants={heroItemVariants}
+              className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2"
+            >
               <span className="size-1.5 rounded-full bg-primary inline-block" />
               DP Flat Rp 20.000 via QRIS. Biaya DP memotong nota saat pelunasan di kasir.
-            </p>
+            </motion.p>
           </div>
 
           {/* Right Column: Visual Trust Bento Box */}
-          <div className="lg:col-span-5">
+          <motion.div variants={heroCardVariants} className="lg:col-span-5">
             <div className="relative rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-2xl">
               <div className="absolute top-0 right-0 -mr-2 -mt-2 rounded-full border border-primary/40 bg-primary/20 px-3 py-1 text-[11px] font-bold text-primary tracking-wider uppercase">
                 Jaminan Kursi Pasti
@@ -93,7 +129,7 @@ export function Hero() {
                   {/* Point 1 */}
                   <div className="flex gap-4">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
-                      <Zap className="size-5" />
+                      <IconBolt size="sm" aria-hidden="true" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <h3 className="text-sm font-bold text-foreground">
@@ -108,7 +144,7 @@ export function Hero() {
                   {/* Point 2 */}
                   <div className="flex gap-4">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
-                      <Clock className="size-5" />
+                      <IconClock size="sm" aria-hidden="true" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <h3 className="text-sm font-bold text-foreground">
@@ -123,7 +159,7 @@ export function Hero() {
                   {/* Point 3 */}
                   <div className="flex gap-4">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 border border-primary/30 text-primary">
-                      <ShieldCheck className="size-5" />
+                      <IconShieldCheck size="sm" aria-hidden="true" />
                     </div>
                     <div className="flex flex-col gap-1">
                       <h3 className="text-sm font-bold text-foreground">
@@ -140,13 +176,13 @@ export function Hero() {
                 <div className="mt-2 rounded-xl bg-surface-elevated border border-border/80 p-3.5 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Protokol Kebersihan</span>
                   <span className="font-semibold text-primary flex items-center gap-1.5">
-                    <CheckCircle2 className="size-4" /> Steril UV-C & Silet Baru
+                    <IconCircleCheck size="micro" aria-hidden="true" /> Steril UV-C & Silet Baru
                   </span>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowRight, Lock, Loader2 } from "lucide-react";
+import { IconArrowRight, IconLock, IconLoader2 } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { BookingStep } from "./types";
 import { formatRupiah } from "./utils";
@@ -26,6 +26,19 @@ export function BookingBottomBar({
   isLoading = false,
   disabledReason,
 }: BookingBottomBarProps) {
+  const lastClickRef = React.useRef(0);
+
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const now = Date.now();
+    if (isLoading || !canProceed) return;
+    if (now - lastClickRef.current < 600) {
+      e.preventDefault();
+      return;
+    }
+    lastClickRef.current = now;
+    onNext();
+  };
+
   const getButtonText = () => {
     if (isLoading) {
       if (currentStep === 5) return "Mengunci kursi Anda...";
@@ -67,23 +80,26 @@ export function BookingBottomBar({
         <div className="flex flex-col items-end">
           <Button
             type="button"
-            onClick={onNext}
+            onClick={handleButtonClick}
             disabled={!canProceed || isLoading}
             variant={currentStep === 5 ? "amber-glow" : "primary"}
             size="lg"
             className={cn(
               "h-[52px] min-h-[52px] px-5 py-2 text-sm font-bold tracking-wide gap-2 shadow-lg",
-              currentStep === 5 && "shadow-primary/30"
+              currentStep === 5 && "shadow-primary/30",
+              isLoading && "pointer-events-none opacity-80"
             )}
             aria-disabled={!canProceed || isLoading}
           >
             {isLoading ? (
-              <Loader2 className="size-4 animate-spin" />
+              <IconLoader2 size="sm" className="animate-spin" aria-hidden="true" />
             ) : currentStep === 5 ? (
-              <Lock className="size-4" />
+              <IconLock size="sm" aria-hidden="true" />
             ) : null}
             <span>{getButtonText()}</span>
-            {!isLoading && currentStep !== 5 && <ArrowRight className="size-4" />}
+            {!isLoading && currentStep !== 5 && (
+              <IconArrowRight size="sm" aria-hidden="true" />
+            )}
           </Button>
 
           {!canProceed && disabledReason && (

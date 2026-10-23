@@ -1,6 +1,12 @@
 import * as React from "react";
 import Link from "next/link";
-import { Scissors, MapPin, Phone, Mail, ShieldCheck } from "lucide-react";
+import {
+  IconScissors,
+  IconMapPin,
+  IconPhone,
+  IconMail,
+  IconShieldCheck,
+} from "@/components/ui/icons";
 
 export function Footer() {
   return (
@@ -11,7 +17,7 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-xl bg-surface-elevated border border-primary/40 text-primary">
-                <Scissors className="size-5 rotate-45" />
+                <IconScissors size="sm" className="rotate-45" aria-hidden="true" />
               </div>
               <div className="flex flex-col">
                 <span className="font-display text-lg font-bold tracking-wider text-foreground">
@@ -87,15 +93,15 @@ export function Footer() {
             </h4>
             <div className="flex flex-col gap-2 text-xs">
               <div className="flex items-center gap-2">
-                <MapPin className="size-3.5 text-primary shrink-0" />
+                <IconMapPin size="micro" className="text-primary shrink-0" aria-hidden="true" />
                 <span className="line-clamp-2">Jl. Senopati Raya No. 42, Jakarta Selatan</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="size-3.5 text-primary shrink-0" />
+                <IconPhone size="micro" className="text-primary shrink-0" aria-hidden="true" />
                 <span className="font-mono">+62 812-3456-7890</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="size-3.5 text-primary shrink-0" />
+                <IconMail size="micro" className="text-primary shrink-0" aria-hidden="true" />
                 <span>booking@damezbarber.com</span>
               </div>
             </div>
@@ -108,7 +114,7 @@ export function Footer() {
             &copy; 2026 Damez Barbershop. Seluruh Hak Cipta Dilindungi Undang-Undang.
           </p>
           <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-            <ShieldCheck className="size-4 text-primary shrink-0" />
+            <IconShieldCheck size="micro" className="text-primary shrink-0" aria-hidden="true" />
             <span>Kepatuhan Privasi Konsumen (UU PDP No. 27 Tahun 2022)</span>
           </div>
         </div>

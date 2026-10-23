@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Camera, Sparkles, Eye, X } from "lucide-react";
+import {
+  IconCamera,
+  IconSparkles,
+  IconEye,
+  IconX,
+} from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -108,7 +113,7 @@ export function GallerySection() {
               >
                 {/* Visual Pattern & Watermark Icon */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-15 transition-opacity duration-300 group-hover:opacity-25">
-                  <Camera className="size-24 text-primary" />
+                  <IconCamera size="xl" className="text-primary" aria-hidden="true" />
                 </div>
 
                 {/* Ambient Top Tag */}
@@ -120,7 +125,7 @@ export function GallerySection() {
 
                 {/* Hover Eye Trigger */}
                 <div className="absolute top-4 right-4 z-10 flex size-9 items-center justify-center rounded-full bg-surface/80 text-foreground opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
-                  <Eye className="size-4 text-primary" />
+                  <IconEye size="micro" className="text-primary" aria-hidden="true" />
                 </div>
 
                 {/* Bottom Overlay Gradient */}
@@ -157,7 +162,7 @@ export function GallerySection() {
               className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-xl border border-border bg-surface-elevated text-muted-foreground hover:text-foreground cursor-pointer"
               aria-label="Tutup Dialog"
             >
-              <X className="size-5" />
+              <IconX size="sm" aria-hidden="true" />
             </button>
 
             <Badge variant="primary" className="mb-3">
@@ -169,7 +174,7 @@ export function GallerySection() {
             </h3>
 
             <div className="my-4 h-48 w-full rounded-xl bg-gradient-to-br from-amber-950/40 via-surface-elevated to-surface flex items-center justify-center border border-border">
-              <Camera className="size-16 text-primary/40" />
+              <IconCamera size="xl" className="text-primary/40" aria-hidden="true" />
             </div>
 
             <p className="text-sm text-muted-foreground leading-relaxed">

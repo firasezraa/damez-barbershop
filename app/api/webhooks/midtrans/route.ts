@@ -13,6 +13,12 @@ import {
 } from '../../../../lib/payment/webhook.ts'
 import { dispatchBookingConfirmedWhatsApp } from '../../../../lib/notifications/whatsapp.ts'
 import { trackTelemetryEvent } from '../../../../lib/analytics/telemetry.ts'
+import {
+  globalRateLimiter,
+  WEBHOOK_RATE_LIMIT_CONFIG,
+  extractClientIp,
+  createRateLimitResponse
+} from '../../../../lib/security/rate-limit.ts'
 
 /**
  * Handles CORS Preflight
@@ -57,6 +63,16 @@ export async function GET(): Promise<Response> {
  */
 export async function POST(request: Request): Promise<Response> {
   try {
+    // 1. Webhook Flooding Bot Protection (RFC 6585 Rate Limiting)
+    const clientIp = extractClientIp(request)
+    const ipRateLimit = globalRateLimiter.check(clientIp, WEBHOOK_RATE_LIMIT_CONFIG)
+    if (!ipRateLimit.isAllowed) {
+      return createRateLimitResponse(
+        ipRateLimit,
+        'Terlalu banyak permintaan webhook dari alamat IP ini. Harap kurangi frekuensi pengiriman.'
+      )
+    }
+
     let payload: MidtransWebhookPayload
 
     // Parse JSON safely

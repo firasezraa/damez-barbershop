@@ -8,6 +8,7 @@
  */
 
 import { releaseExpiredSlotHolds } from '../../../../lib/slots/auto-expire.ts'
+import { timingSafeEqualString } from '../../../../lib/payment/webhook.ts'
 
 interface CronApiResponse {
   success: boolean
@@ -34,23 +35,27 @@ function jsonResponse(body: CronApiResponse, status: number = 200): Response {
 function isAuthorizedCronRequest(request: Request): boolean {
   const configuredSecret = process.env.CRON_SECRET
 
-  // Jika di environment development atau testing dan secret belum di-set, izinkan
+  // Di environment production, CRON_SECRET wajib dikonfigurasi
   if (!configuredSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[Security Alert] CRON_SECRET is required in production mode!')
+      return false
+    }
     return true
   }
 
-  // 1. Periksa Authorization: Bearer <secret>
+  // 1. Periksa Authorization: Bearer ***
   const authHeader = request.headers.get('authorization')
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.slice(7).trim()
-    if (token === configuredSecret) {
+    if (timingSafeEqualString(token, configuredSecret)) {
       return true
     }
   }
 
   // 2. Periksa x-cron-secret header
   const customHeader = request.headers.get('x-cron-secret')
-  if (customHeader && customHeader.trim() === configuredSecret) {
+  if (customHeader && timingSafeEqualString(customHeader.trim(), configuredSecret)) {
     return true
   }
 
@@ -58,7 +63,7 @@ function isAuthorizedCronRequest(request: Request): boolean {
   try {
     const url = new URL(request.url)
     const querySecret = url.searchParams.get('secret')
-    if (querySecret && querySecret === configuredSecret) {
+    if (querySecret && timingSafeEqualString(querySecret, configuredSecret)) {
       return true
     }
   } catch {

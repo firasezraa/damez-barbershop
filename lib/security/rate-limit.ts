@@ -28,6 +28,7 @@ interface RequestRecord {
 
 class SlidingWindowRateLimiter {
   private store: Map<string, RequestRecord> = new Map()
+  private lastPruneTime: number = 0
 
   /**
    * Mengecek dan mencatat request pada sliding window
@@ -36,6 +37,12 @@ class SlidingWindowRateLimiter {
     const now = Date.now()
     const windowMs = config.windowSeconds * 1000
     const windowStart = now - windowMs
+
+    // Pencegahan Memory Leak: Auto-prune entri kedaluwarsa secara berkala
+    if (this.store.size > 100 && now - this.lastPruneTime > 30000) {
+      this.prune(windowMs)
+      this.lastPruneTime = now
+    }
 
     const key = `${config.identifierPrefix || 'rate'}:${identifier}`
     let record = this.store.get(key)
@@ -53,6 +60,11 @@ class SlidingWindowRateLimiter {
 
     if (isAllowed) {
       record.timestamps.push(now)
+    }
+
+    // Jika record kosong dan tidak ada request aktif, hapus kunci dari memori
+    if (record.timestamps.length === 0) {
+      this.store.delete(key)
     }
 
     const remaining = Math.max(0, config.maxRequests - record.timestamps.length)
@@ -123,6 +135,30 @@ export const PHONE_RATE_LIMIT_CONFIG: RateLimitConfig = {
   maxRequests: 5,
   windowSeconds: 300, // 5 booking hold / 5 menit per nomor HP
   identifierPrefix: 'phone_hold'
+}
+
+export const WEBHOOK_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  maxRequests: 60,
+  windowSeconds: 60, // 60 request / 60 detik per IP untuk Webhook Listener
+  identifierPrefix: 'ip_webhook'
+}
+
+export const SLOTS_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  maxRequests: 60,
+  windowSeconds: 60, // 60 request / 60 detik per IP untuk endpoint ketersediaan slot
+  identifierPrefix: 'ip_slots'
+}
+
+export const BOOKING_CODE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  maxRequests: 30,
+  windowSeconds: 60, // 30 request / 60 detik per IP untuk mencegah enumerasi kode booking
+  identifierPrefix: 'ip_booking_code'
+}
+
+export const TELEMETRY_RATE_LIMIT_CONFIG: RateLimitConfig = {
+  maxRequests: 100,
+  windowSeconds: 60, // 100 request / 60 detik per IP untuk event telemetri
+  identifierPrefix: 'ip_telemetry'
 }
 
 /**

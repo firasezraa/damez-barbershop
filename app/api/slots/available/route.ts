@@ -13,6 +13,13 @@
 import { NextRequest, NextResponse } from 'next/server.js';
 import { fetchAndCalculateAvailableSlots } from '../../../../lib/slots/service.ts';
 import type { AggregatedSlotResult } from '../../../../lib/slots/engine.ts';
+import {
+  globalRateLimiter,
+  SLOTS_RATE_LIMIT_CONFIG,
+  extractClientIp,
+  createRateLimitResponse
+} from '../../../../lib/security/rate-limit.ts';
+import { isValidSafeIdentifier } from '../../../../lib/security/bot-protection.ts';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -41,6 +48,16 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
+    // 0. Flooding Bot Rate Limiting Protection (RFC 6585)
+    const clientIp = extractClientIp(request);
+    const ipRateLimit = globalRateLimiter.check(clientIp, SLOTS_RATE_LIMIT_CONFIG);
+    if (!ipRateLimit.isAllowed) {
+      return createRateLimitResponse(
+        ipRateLimit,
+        'Terlalu banyak permintaan ketersediaan slot dari alamat IP ini. Silakan coba beberapa saat lagi.'
+      ) as unknown as NextResponse<ErrorResponse>;
+    }
+
     const { searchParams } = new URL(request.url);
 
     // 1. Ekstraksi dan Validasi Parameter 'date'
@@ -86,6 +103,18 @@ export async function GET(
 
     // 2. Ekstraksi Parameter 'barber_id'
     const barberIdParam: string | null = searchParams.get('barber_id');
+    if (barberIdParam && barberIdParam.toLowerCase() !== 'any' && barberIdParam.toLowerCase() !== 'all') {
+      if (!isValidSafeIdentifier(barberIdParam)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Format parameter 'barber_id' tidak valid."
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     const normalizedBarberId: string | null =
       !barberIdParam || barberIdParam.toLowerCase() === 'any' || barberIdParam.toLowerCase() === 'all'
         ? null
@@ -117,6 +146,18 @@ export async function GET(
           .map((s: string) => s.trim())
           .filter((s: string) => s.length > 0)
       : [];
+
+    for (const sId of serviceIds) {
+      if (!isValidSafeIdentifier(sId)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Format salah satu 'service_ids' tidak valid."
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // 5. Eksekusi Service Penentuan Slot
     const result: AggregatedSlotResult = await fetchAndCalculateAvailableSlots({

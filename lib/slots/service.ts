@@ -259,12 +259,18 @@ export async function fetchAndCalculateAvailableSlots(
         }
       }
 
-      // E. Query Active Bookings pada Tanggal Tersebut
-      const { data: bookingsData } = await supabase
+      // E. Query Active Bookings pada Tanggal Tersebut (Query Index Optimization < 5ms)
+      let bookingsQuery = supabase
         .from('bookings')
         .select('id, barber_id, start_time, end_time, status, hold_expires_at')
         .eq('booking_date', date)
         .in('status', ['confirmed', 'in_progress', 'pending_payment']);
+
+      if (barberId) {
+        bookingsQuery = bookingsQuery.eq('barber_id', barberId);
+      }
+
+      const { data: bookingsData } = await bookingsQuery;
 
       if (bookingsData) {
         existingBookings = bookingsData.map((b) => ({

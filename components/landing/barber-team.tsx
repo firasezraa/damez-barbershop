@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Scissors, Award, Clock, ArrowRight, UserCheck } from "lucide-react";
+import {
+  IconScissors,
+  IconAward,
+  IconClock,
+  IconArrowRight,
+  IconUserCheck,
+} from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -111,7 +117,7 @@ export function BarberTeam() {
                 {/* Barber Visual Icon Frame */}
                 <div className="flex items-center gap-4 mt-2">
                   <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-surface border border-primary/40 text-primary shadow-inner">
-                    <Scissors className="size-6 rotate-45" />
+                    <IconScissors size="md" className="rotate-45" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-display text-xl font-bold text-foreground">
@@ -173,7 +179,7 @@ export function BarberTeam() {
                     className="w-full justify-between"
                   >
                     <span>Booking dengan {barber.name.split(" ")[0]}</span>
-                    <ArrowRight className="size-4" />
+                    <IconArrowRight size="micro" aria-hidden="true" />
                   </Button>
                 </a>
               </CardFooter>

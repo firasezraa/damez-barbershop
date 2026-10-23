@@ -1115,7 +1115,12 @@ export async function generateDailyRevenueCsv(
 
   const escapeCsv = (val: string | number | null | undefined): string => {
     if (val === null || val === undefined) return '""';
-    const str = String(val).replace(/"/g, '""');
+    let str = String(val).replace(/"/g, '""');
+    // Mitigasi Formula Injection (OWASP CSV Injection Defense):
+    // Jika data diawali karakter formula (=, +, -, @, \t, \r), netralkan dengan prefix petik tunggal '
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = `'${str}`;
+    }
     return `"${str}"`;
   };
 

@@ -2,8 +2,11 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
+import { wizardSlideVariants } from "@/lib/motion";
 import { BookingHeader } from "./booking-header";
 import { BookingBottomBar } from "./booking-bottom-bar";
+import { Button } from "@/components/ui/button";
 import { Step1Services } from "./step-1-services";
 import { Step2Barber } from "./step-2-barber";
 import { Step3Schedule } from "./step-3-schedule";
@@ -34,8 +37,16 @@ export function BookingWizard({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 1. Initial State Initialization
-  const [currentStep, setCurrentStep] = React.useState<BookingStep>(1);
+  // 1. Initial State Initialization (Tuple with Direction: [step, direction])
+  const [stepTuple, setStepTuple] = React.useState<[BookingStep, number]>([1, 0]);
+  const [currentStep, direction] = stepTuple;
+  const setCurrentStep = React.useCallback((step: BookingStep | ((prev: BookingStep) => BookingStep)) => {
+    setStepTuple((prev) => {
+      const next = typeof step === "function" ? step(prev[0]) : step;
+      const dir = next > prev[0] ? 1 : next < prev[0] ? -1 : 0;
+      return [next, dir];
+    });
+  }, []);
   const [formData, setFormData] = React.useState<BookingFormData>(() => {
     // Check initial service from props or URL
     const queryService = searchParams?.get("service") || initialServiceId;
@@ -80,6 +91,8 @@ export function BookingWizard({
   const [isLoading, setIsLoading] = React.useState(false);
   const [conflictError, setConflictError] = React.useState<string | null>(null);
   const [generalError, setGeneralError] = React.useState<string | null>(null);
+  const isSubmittingRef = React.useRef(false);
+  const lastSubmitTimeRef = React.useRef(0);
 
   // Restore draft from localStorage on client mount if available
   React.useEffect(() => {
@@ -232,6 +245,13 @@ export function BookingWizard({
 
   // 5. Submit Booking Hold (15-Minute Locking)
   const handleLockAndHold = async () => {
+    const now = Date.now();
+    if (isSubmittingRef.current || now - lastSubmitTimeRef.current < 800) {
+      return;
+    }
+    isSubmittingRef.current = true;
+    lastSubmitTimeRef.current = now;
+
     setIsLoading(true);
     setConflictError(null);
     setGeneralError(null);
@@ -248,11 +268,19 @@ export function BookingWizard({
         ? phoneValidation.normalized
         : formData.customerPhone;
 
+      // Format ISO 8601 berzona Asia/Jakarta (+07:00) untuk pencegahan NaN Date
+      const startIso = formData.selectedTime.includes("T")
+        ? formData.selectedTime
+        : `${formData.selectedDate}T${formData.selectedTime}:00+07:00`;
+      const endIso = calculation.endTime.includes("T")
+        ? calculation.endTime
+        : `${formData.selectedDate}T${calculation.endTime}:00+07:00`;
+
       const payload = {
         barber_id: targetBarberId,
         booking_date: formData.selectedDate,
-        start_time: formData.selectedTime,
-        end_time: calculation.endTime,
+        start_time: startIso,
+        end_time: endIso,
         service_duration_minutes: calculation.totalServiceMinutes,
         total_price_idr: calculation.totalPrice,
         down_payment_idr: FLAT_DOWN_PAYMENT_IDR,
@@ -297,9 +325,19 @@ export function BookingWizard({
         router.push(`/booking/payment?code=${bookingCode}&id=${bookingId}`);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const isNetworkErr =
+        err instanceof TypeError &&
+        (err.message.includes("fetch") ||
+          err.message.includes("network") ||
+          err.message.includes("Failed"));
+      const msg = isNetworkErr
+        ? "Koneksi internet terputus atau server belum merespons. Periksa jaringan Anda lalu tekan tombol Coba Lagi."
+        : err instanceof Error
+        ? err.message
+        : String(err);
       setGeneralError(msg);
     } finally {
+      isSubmittingRef.current = false;
       setIsLoading(false);
     }
   };
@@ -362,68 +400,94 @@ export function BookingWizard({
         {generalError && (
           <div
             role="alert"
-            className="mb-6 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive"
+            className="mb-6 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive flex items-center justify-between gap-3"
           >
-            {generalError}
+            <div className="flex-1 leading-relaxed">{generalError}</div>
+            {currentStep === 5 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleLockAndHold()}
+                disabled={isLoading}
+                className="shrink-0 border-destructive/50 text-destructive hover:bg-destructive/10"
+              >
+                Coba Lagi
+              </Button>
+            )}
           </div>
         )}
 
-        {currentStep === 1 && (
-          <Step1Services
-            selectedServiceIds={formData.selectedServiceIds}
-            onToggleService={handleToggleService}
-          />
-        )}
+        <div className="relative overflow-hidden w-full min-h-[480px]">
+          <AnimatePresence mode="wait" custom={direction} initial={false}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={wizardSlideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="w-full"
+            >
+              {currentStep === 1 && (
+                <Step1Services
+                  selectedServiceIds={formData.selectedServiceIds}
+                  onToggleService={handleToggleService}
+                />
+              )}
 
-        {currentStep === 2 && (
-          <Step2Barber
-            selectedBarberId={formData.barberId}
-            onSelectBarber={handleSelectBarber}
-            selectedDate={formData.selectedDate}
-          />
-        )}
+              {currentStep === 2 && (
+                <Step2Barber
+                  selectedBarberId={formData.barberId}
+                  onSelectBarber={handleSelectBarber}
+                  selectedDate={formData.selectedDate}
+                />
+              )}
 
-        {currentStep === 3 && (
-          <Step3Schedule
-            selectedDate={formData.selectedDate}
-            selectedTime={formData.selectedTime}
-            barberId={formData.barberId}
-            totalServiceDuration={calculation.totalServiceMinutes}
-            onSelectDate={handleSelectDate}
-            onSelectTime={handleSelectTime}
-          />
-        )}
+              {currentStep === 3 && (
+                <Step3Schedule
+                  selectedDate={formData.selectedDate}
+                  selectedTime={formData.selectedTime}
+                  barberId={formData.barberId}
+                  totalServiceDuration={calculation.totalServiceMinutes}
+                  onSelectDate={handleSelectDate}
+                  onSelectTime={handleSelectTime}
+                />
+              )}
 
-        {currentStep === 4 && (
-          <Step4Contact
-            customerName={formData.customerName}
-            customerPhone={formData.customerPhone}
-            notes={formData.notes}
-            agreedToPDP={formData.agreedToPDP}
-            onUpdateName={(name) =>
-              setFormData((prev) => ({ ...prev, customerName: name }))
-            }
-            onUpdatePhone={(phone) =>
-              setFormData((prev) => ({ ...prev, customerPhone: phone }))
-            }
-            onUpdateNotes={(notes) =>
-              setFormData((prev) => ({ ...prev, notes }))
-            }
-            onTogglePDP={(agreed) =>
-              setFormData((prev) => ({ ...prev, agreedToPDP: agreed }))
-            }
-          />
-        )}
+              {currentStep === 4 && (
+                <Step4Contact
+                  customerName={formData.customerName}
+                  customerPhone={formData.customerPhone}
+                  notes={formData.notes}
+                  agreedToPDP={formData.agreedToPDP}
+                  onUpdateName={(name) =>
+                    setFormData((prev) => ({ ...prev, customerName: name }))
+                  }
+                  onUpdatePhone={(phone) =>
+                    setFormData((prev) => ({ ...prev, customerPhone: phone }))
+                  }
+                  onUpdateNotes={(notes) =>
+                    setFormData((prev) => ({ ...prev, notes }))
+                  }
+                  onTogglePDP={(agreed) =>
+                    setFormData((prev) => ({ ...prev, agreedToPDP: agreed }))
+                  }
+                />
+              )}
 
-        {currentStep === 5 && (
-          <Step5Summary
-            formData={formData}
-            calculation={calculation}
-            onEditStep={(step) => setCurrentStep(step)}
-            conflictError={conflictError}
-            onDismissConflict={() => setConflictError(null)}
-          />
-        )}
+              {currentStep === 5 && (
+                <Step5Summary
+                  formData={formData}
+                  calculation={calculation}
+                  onEditStep={(step) => setCurrentStep(step)}
+                  conflictError={conflictError}
+                  onDismissConflict={() => setConflictError(null)}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </main>
 
       {/* Sticky Ergonomic Bottom Navigation Bar */}

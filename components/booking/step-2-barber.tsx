@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Users, Scissors, Check, Award, Calendar } from "lucide-react";
+import {
+  IconUsers,
+  IconScissors,
+  IconCheck,
+  IconAward,
+  IconCalendar,
+} from "@/components/ui/icons";
 import { BOOKING_BARBERS, ANY_BARBER_ID } from "./constants";
 import { BookingBarber } from "./types";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +79,7 @@ export function Step2Barber({
                 : "border-border bg-surface-elevated text-primary"
             )}
           >
-            <Users className="size-6" />
+            <IconUsers size="md" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
@@ -98,7 +104,7 @@ export function Step2Barber({
               : "border-border bg-surface-elevated text-transparent"
           )}
         >
-          <Check className="size-4 stroke-[3]" />
+          <IconCheck size="micro" stroke={3} aria-hidden="true" />
         </div>
       </div>
 
@@ -164,7 +170,7 @@ export function Step2Barber({
                       : "border-border bg-surface-elevated text-transparent"
                   )}
                 >
-                  <Check className="size-4 stroke-[3]" />
+                  <IconCheck size="micro" stroke={3} aria-hidden="true" />
                 </div>
               </div>
 
@@ -176,7 +182,7 @@ export function Step2Barber({
               {/* Footer: Regular Day Off */}
               <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3 text-[11px]">
                 <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Calendar className="size-3.5 text-primary" />
+                  <IconCalendar size="micro" className="text-primary" aria-hidden="true" />
                   <span>Libur: Hari {barber.dayOffName}</span>
                 </div>
                 {isOffDay && (

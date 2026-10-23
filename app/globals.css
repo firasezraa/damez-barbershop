@@ -60,3 +60,21 @@
     overflow-x: hidden;
   }
 }
+
+@keyframes barberSpin {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 72px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
