@@ -56,10 +56,21 @@ describe("tidak ada jejak auth demo", () => {
   });
 
   it("keeps every admin API route behind requireAdmin", () => {
+    // Dua pengecualian yang tak bisa dihindari: endpoint masuk/keluar justru
+    // yang membuat sesi, jadi tidak mungkin mensyaratkan sesi lebih dulu.
+    const AUTH_ENTRY_POINTS = new Set([
+      path.join("app", "api", "admin", "auth", "sign-in", "route.ts"),
+      path.join("app", "api", "admin", "auth", "sign-out", "route.ts"),
+    ]);
+
+    // Daftar pengecualian tidak boleh tumbuh diam-diam.
+    expect(AUTH_ENTRY_POINTS.size).toBe(2);
+
     const routes = listFiles(path.join(SRC_ROOT, "app", "api", "admin"));
-    expect(routes.length).toBeGreaterThan(0);
+    expect(routes.length).toBeGreaterThan(AUTH_ENTRY_POINTS.size);
 
     const unguarded = routes
+      .filter((route) => !AUTH_ENTRY_POINTS.has(path.relative(SRC_ROOT, route)))
       .filter((route) => !readFileSync(route, "utf8").includes("requireAdmin("))
       .map((route) => path.relative(REPO_ROOT, route));
 
