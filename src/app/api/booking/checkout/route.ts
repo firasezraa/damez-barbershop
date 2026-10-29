@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createCheckout } from "@/features/payment/checkout";
+import { readPaymentEnv, type PaymentEnv } from "@/lib/config/payment-env";
 import { clientKeyFrom, createRateLimiter } from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
@@ -35,9 +36,20 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "Terlalu banyak permintaan. Coba lagi sebentar." }, { status: 429 });
   }
 
+  let payment: PaymentEnv;
+  try {
+    payment = readPaymentEnv();
+  } catch {
+    // Pasangan kunci/lingkungan yang tidak cocok atau env cacat: tolak sebelum
+    // ada pelanggan yang menekan tombol bayar, tanpa membocorkan nilai env.
+    return Response.json({ error: "PAYMENT_NOT_CONFIGURED" }, { status: 503 });
+  }
+
   const result = await createCheckout(parsed.data.bookingCode, {
-    mock: process.env["MOCK_MIDTRANS"] === "true",
-    serverKey: process.env["MIDTRANS_SERVER_KEY"] ?? "",
+    mock: payment.mock,
+    serverKey: payment.serverKey,
+    isProduction: payment.isProduction,
+    ...(payment.appBaseUrl === undefined ? {} : { appBaseUrl: payment.appBaseUrl }),
   });
 
   return Response.json(result.body, { status: result.status });
