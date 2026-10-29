@@ -1,5 +1,14 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vitest/config";
+
+/**
+ * Vitest tidak memuat `.env` otomatis, dan di Windows tidak ada `set -a && . ./.env`.
+ * Nilai yang sudah ada di lingkungan tidak ditimpa, jadi CI tetap memakai env job.
+ */
+if (existsSync(".env")) {
+  process.loadEnvFile(".env");
+}
 
 /**
  * Satu project saja (bukan dua seperti draft plan): fileParallelism dimatikan

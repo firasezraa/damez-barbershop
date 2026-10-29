@@ -48,12 +48,47 @@ Test integrasi membaca `TEST_DATABASE_URL`; kalau kosong, `tests/helpers/db.ts` 
 
 ```bash
 npm install
-set -a && . ./.env && set +a
 npm run migrate
 npm run seed
 npm run verify
 npm run dev
 ```
+
+`npm run migrate`, `npm run seed` dan `npm run seed:admin` membaca `.env` sendiri
+(`node --env-file-if-exists=.env`), dan Vitest memuatnya lewat `vitest.config.ts`. Tidak perlu
+`set -a && . ./.env` — itu tetap dipakai di CI karena env di sana datang dari job, dan nilai dari
+lingkungan selalu menang atas berkas.
+
+`npm run dev` (Next.js) juga memuat `.env` otomatis. Kalau muncul
+`Konfigurasi database belum lengkap. Periksa variabel: DATABASE_URL`, artinya `.env` belum ada
+atau `DATABASE_URL` masih kosong — bukan bug aplikasi.
+
+## 3b. Windows (PowerShell)
+
+Tidak ada `set -a`, tidak ada bash. Langkahnya:
+
+```powershell
+# 1. Database (sekali saja). Tambahkan psql ke PATH kalau belum:
+#    $env:Path += ";C:\Program Files\PostgreSQL\16\bin"
+psql -U postgres -c "CREATE ROLE damez LOGIN PASSWORD 'pilih-sendiri' SUPERUSER;"
+psql -U postgres -c "CREATE DATABASE damez_dev OWNER damez;"
+psql -U postgres -c "CREATE DATABASE damez_test OWNER damez;"
+
+# 2. Berkas env
+Copy-Item .env.example .env
+# sunting .env, isi minimal dua baris ini (password sesuai langkah 1):
+#   DATABASE_URL=postgresql://damez:pilih-sendiri@127.0.0.1:5432/damez_dev
+#   TEST_DATABASE_URL=postgresql://damez:pilih-sendiri@127.0.0.1:5432/damez_test
+
+# 3. Siapkan dan jalankan
+npm install
+npm run migrate
+npm run seed
+npm run dev
+```
+
+`scripts/pg-local-setup.sh` hanya untuk Linux/macOS (butuh sudo dan bash). Di Windows pakai
+perintah `psql` di atas.
 
 `npm run verify` = `typecheck && lint && coverage && test:integration && build`. Ini gate
 yang sama dengan CI (CI menambah E2E Playwright).
