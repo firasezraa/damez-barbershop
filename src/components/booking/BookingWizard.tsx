@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { formatRupiah, type PublicBarber, type PublicService } from "@/features/catalogue/types";
 import { DOWN_PAYMENT_IDR } from "@/lib/config/constants";
@@ -352,6 +353,12 @@ export function BookingWizard({
               <dd className="text-text">{formatRupiah(ticket.remainingIdr)}</dd>
             </div>
           </dl>
+          <Link
+            href={`/booking/success/${ticket.bookingCode}`}
+            className="mt-4 inline-block min-h-11 rounded-card border border-brass px-5 py-3 text-sm text-brass"
+          >
+            Buka halaman tiket &amp; bayar DP
+          </Link>
         </section>
       )}
 

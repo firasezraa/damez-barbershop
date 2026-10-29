@@ -1,5 +1,5 @@
-import { timingSafeEqual } from "node:crypto";
 import { expireStaleHolds } from "@/features/slots/expire";
+import { isAuthorizedCronRequest } from "@/lib/security/cron-auth";
 
 export const runtime = "nodejs";
 
@@ -7,22 +7,6 @@ export const runtime = "nodejs";
  * Perbandingan panjang-tetap: panjang berbeda langsung ditolak (tidak ada
  * informasi yang bocor lewat waktu), isi dibandingkan dengan `timingSafeEqual`.
  */
-export function isAuthorizedCronRequest(request: Request, secret: string | undefined): boolean {
-  const header = request.headers.get("authorization");
-  if (secret === undefined || secret.length === 0 || header === null) {
-    return false;
-  }
-
-  const expected = Buffer.from(`Bearer ${secret}`, "utf8");
-  const received = Buffer.from(header, "utf8");
-
-  if (expected.length !== received.length) {
-    return false;
-  }
-
-  return timingSafeEqual(expected, received);
-}
-
 /**
  * Worker pelepasan hold kedaluwarsa. Dipanggil penjadwal (Vercel Cron) dengan
  * `Authorization: Bearer <CRON_SECRET>`. Tanpa header yang benar: 401 dan

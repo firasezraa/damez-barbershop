@@ -116,6 +116,12 @@ jobs:
     env:
       DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
       TEST_DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+      # E2E menjalankan alur DP dengan Midtrans dan WhatsApp palsu: tanpa biaya,
+      # tanpa jaringan, tetapi jalur kode yang diuji sama dengan produksi.
+      MOCK_MIDTRANS: "true"
+      MOCK_WHATSAPP: "true"
+      MIDTRANS_SERVER_KEY: kunci-server-midtrans-untuk-e2e
+      CRON_SECRET: rahasia-cron-e2e-16karakter
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

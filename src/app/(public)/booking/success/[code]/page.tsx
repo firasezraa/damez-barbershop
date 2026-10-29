@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { bookingPool } from "@/features/slots/services";
 import { formatRupiah } from "@/features/catalogue/types";
+import { PaymentPanel } from "@/components/booking/PaymentPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +129,14 @@ export default async function TicketPage({ params }: { params: Promise<{ code: s
           </div>
         ) : null}
       </dl>
+
+      {ticket.status === "pending_payment" ? (
+        <PaymentPanel bookingCode={ticket.booking_code} />
+      ) : (
+        <p className="rounded-card border border-ok/40 bg-ok/10 px-4 py-3 text-sm text-ok">
+          DP sudah diterima. Kursi Anda terkunci, tiket ini berlaku sebagai bukti.
+        </p>
+      )}
 
       <p className="text-sm text-muted">
         Tunjukkan tiket ini di kasir. DP dipotong dari nota saat pelunasan. Pembatalan paling lambat
