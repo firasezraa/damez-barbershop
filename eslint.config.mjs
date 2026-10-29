@@ -3,9 +3,7 @@
 import nextConfig from "eslint-config-next";
 import boundaries from "./tools/eslint-rules/index.js";
 
-const CONSOLE_ALLOWED_IN = ["src/lib/**", "scripts/**"];
-
-export default [
+const config [
   {
     ignores: [
       ".next/**",
@@ -46,6 +44,4 @@ export default [
     files: ["tools/**/*.js", "*.mjs"],
     languageOptions: { sourceType: "module" },
   },
-];
-
-export { CONSOLE_ALLOWED_IN };
+];export { CONSOLE_ALLOWED_IN };
