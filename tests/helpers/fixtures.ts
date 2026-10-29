@@ -56,13 +56,13 @@ export async function insertCustomer(pool: Pool): Promise<string> {
 
 export async function insertService(
   pool: Pool,
-  overrides: { durationMinutes?: number; priceIdr?: number } = {},
+  overrides: { durationMinutes?: number; priceIdr?: number; isActive?: boolean } = {},
 ): Promise<string> {
   const suffix = uniqueSuffix();
   const result = await pool.query<{ id: string }>(
     `INSERT INTO public.services
-       (service_code, name, slug, category, duration_minutes, price_idr)
-     VALUES ($1, $2, $3, 'Core Haircut', $4, $5)
+       (service_code, name, slug, category, duration_minutes, price_idr, is_active)
+     VALUES ($1, $2, $3, 'Core Haircut', $4, $5, $6)
      RETURNING id`,
     [
       `SRV-${suffix}`,
@@ -70,6 +70,7 @@ export async function insertService(
       `layanan-${suffix}`,
       overrides.durationMinutes ?? 45,
       overrides.priceIdr ?? 50000,
+      overrides.isActive ?? true,
     ],
   );
 

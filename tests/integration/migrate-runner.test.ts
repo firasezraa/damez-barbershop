@@ -13,6 +13,7 @@ const EXPECTED_VERSIONS = [
   "0001_core_schema.sql",
   "0002_slot_hold.sql",
   "0003_audit_rate_limit.sql",
+  "0004_roles_rls.sql",
 ];
 
 let pool: Pool;
