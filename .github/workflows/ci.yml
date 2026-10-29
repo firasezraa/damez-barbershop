@@ -98,6 +98,24 @@ jobs:
     name: 5/6 e2e (chromium)
     needs: integration
     runs-on: ubuntu-latest
+    # E2E menjalankan alur booking sungguhan, jadi butuh Postgres + katalog seed.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: damez
+          POSTGRES_PASSWORD: damez
+          POSTGRES_DB: damez_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+      TEST_DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -106,6 +124,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Migrate from zero
+        run: npm run migrate
+      - name: Seed
+        run: npm run seed
       - name: Build production bundle
         run: npm run build
       - run: npm run test:e2e
