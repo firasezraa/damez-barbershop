@@ -39,7 +39,6 @@ test("admin pages redirect to login before any page code runs", async ({ page })
 test("the login page itself is never redirected, otherwise login would loop", async ({ request }) => {
   const login = await request.get("/admin/login", { maxRedirects: 0 });
 
-  // Halaman login baru dibuat di R1.5 setelah project Supabase ada; yang dipastikan
-  // di sini adalah middleware TIDAK mengalihkannya (404, bukan 302).
-  expect(login.status()).toBe(404);
+  expect(login.status()).toBe(200);
+  expect(login.headers()["location"]).toBeUndefined();
 });

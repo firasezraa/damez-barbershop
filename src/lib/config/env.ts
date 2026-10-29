@@ -40,3 +40,28 @@ export function readServerEnv(source: EnvSource = process.env): ServerEnv {
 
   return parsed.data;
 }
+
+/**
+ * Subset env untuk masuk admin dan pembatas percobaan. Dipisah dari skema penuh
+ * supaya kunci Midtrans atau CRON_SECRET yang belum diisi tidak mematikan login.
+ */
+export const supabaseAuthEnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+});
+
+export type SupabaseAuthEnv = z.infer<typeof supabaseAuthEnvSchema>;
+
+export function readSupabaseAuthEnv(source: EnvSource = process.env): SupabaseAuthEnv {
+  const parsed = supabaseAuthEnvSchema.safeParse(source);
+
+  if (!parsed.success) {
+    const fields = [...new Set(parsed.error.issues.map((issue) => issue.path.join(".")))];
+    throw new Error(
+      `Konfigurasi auth admin belum lengkap. Periksa variabel: ${fields.sort().join(", ")}`,
+    );
+  }
+
+  return parsed.data;
+}

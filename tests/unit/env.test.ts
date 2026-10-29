@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readServerEnv, serverEnvSchema } from "../../src/lib/config/env.ts";
+import { readServerEnv, readSupabaseAuthEnv, serverEnvSchema } from "../../src/lib/config/env.ts";
 
 const validSource = {
   DATABASE_URL: "postgresql://damez:damez@127.0.0.1:5432/damez_test",
@@ -44,5 +44,40 @@ describe("readServerEnv", () => {
 
   it("exposes the schema for reuse by scripts", () => {
     expect(serverEnvSchema.safeParse(validSource).success).toBe(true);
+  });
+});
+
+describe("readSupabaseAuthEnv", () => {
+  it("reads only the variables the admin login path needs", () => {
+    const env = readSupabaseAuthEnv({
+      DATABASE_URL: "postgresql://damez:***@127.0.0.1:5432/damez_test",
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-key",
+    });
+
+    expect(env.NEXT_PUBLIC_SUPABASE_URL).toBe("https://example.supabase.co");
+  });
+
+  it("does not require Midtrans or cron secrets, so login survives their absence", () => {
+    expect(() =>
+      readSupabaseAuthEnv({
+        DATABASE_URL: "postgresql://damez:***@127.0.0.1:5432/damez_test",
+        NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-key",
+      }),
+    ).not.toThrow();
+  });
+
+  it("names the missing variables without printing their values", () => {
+    let message = "";
+    try {
+      readSupabaseAuthEnv({ DATABASE_URL: "postgresql://damez:***@127.0.0.1:5432/damez_test" });
+    } catch (error) {
+      message = error instanceof Error ? error.message : String(error);
+    }
+
+    expect(message).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    expect(message).toContain("NEXT_PUBLIC_SUPABASE_URL");
+    expect(message).not.toContain("damez:");
   });
 });
