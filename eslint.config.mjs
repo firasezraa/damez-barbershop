@@ -45,3 +45,5 @@ const config = [
     languageOptions: { sourceType: "module" },
   },
 ];
+
+export default config;
