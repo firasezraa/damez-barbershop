@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/*
+ * Satu-satunya sumber token desain (IDEA.md §5).
+ * Tidak ada tailwind.config.ts di repo ini — semua token hidup di sini.
+ */
+@theme {
+  --color-ink: #0b0b0c;
+  --color-surface: #141417;
+  --color-surface-2: #1d1d21;
+  --color-brass: #c8a24a;
+  --color-text: #f5f1e8;
+  --color-muted: #9a958c;
+  --color-danger: #d9534f;
+  --color-ok: #4e9f6a;
+  --radius-card: 0.875rem;
+  --font-display: var(--font-plus-jakarta), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-text);
+}
