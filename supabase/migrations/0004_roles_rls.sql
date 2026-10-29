@@ -42,8 +42,18 @@ ALTER TABLE public.schema_migrations ENABLE ROW LEVEL SECURITY;
 
 -- service_role diberi perlakukan sama seperti Supabase: melewati RLS. NOLOGIN,
 -- jadi tidak ada kredensial peran ini di repo dan tidak ada koneksi langsung.
--- Dipakai worker/backoffice kalau nanti butuh jalur terpisah.
-ALTER ROLE service_role BYPASSRLS;
+-- ALTER ROLE BYPASSRLS butuh superuser, sedangkan di Supabase peran ini sudah
+-- punya atribut tersebut — jadi hanya dijalankan kalau belum, dan kegagalan hak
+-- akses tidak menggagalkan migrasi (di Supabase memang sudah benar).
+DO $$
+BEGIN
+  IF NOT (SELECT rolbypassrls FROM pg_roles WHERE rolname = 'service_role') THEN
+    EXECUTE 'ALTER ROLE service_role BYPASSRLS';
+  END IF;
+EXCEPTION
+  WHEN insufficient_privilege THEN
+    RAISE NOTICE 'BYPASSRLS untuk service_role tidak diubah (bukan superuser, sudah diatur platform)';
+END $$;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO service_role;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
