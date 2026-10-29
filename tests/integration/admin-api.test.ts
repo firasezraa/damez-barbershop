@@ -236,7 +236,7 @@ describe("POST /api/admin/settle", () => {
       "SELECT amount_idr, method FROM public.payments WHERE booking_id = $1",
       [bookingId],
     );
-    expect(payments.rows).toEqual([{ amount_idr: 45000, method: "cash" }]);
+    expect(payments.rows).toEqual([{ amount_idr: 65000, method: "cash" }]);
   });
 
   it("answers 409 when the cashier presses the button twice", async () => {

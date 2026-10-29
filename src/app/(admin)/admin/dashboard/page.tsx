@@ -50,6 +50,14 @@ export default async function CashierDashboardPage() {
         <p className="text-sm text-muted">
           {today} WIB · masuk sebagai {session.session.role}
         </p>
+        {session.session.role === "owner" ? (
+          <a
+            href={`/api/admin/reports/daily-csv?date=${today}`}
+            className="min-h-11 self-start rounded-card border border-brass px-4 py-3 text-sm text-brass"
+          >
+            Unduh rekap kas hari ini (CSV)
+          </a>
+        ) : null}
       </header>
 
       <section aria-label="Rekap hari ini" className="grid gap-3 sm:grid-cols-4">

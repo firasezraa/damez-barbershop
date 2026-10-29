@@ -123,6 +123,10 @@ $$ LANGUAGE plpgsql;
 -- Walk-in: tamu yang datang langsung. Kursi langsung terisi (tanpa hold 15
 -- menit), harga tetap dihitung dari katalog, dan benturan slot tetap ditolak
 -- oleh exclusion constraint yang sama.
+--
+-- DP tidak dipungut untuk walk-in: tidak ada kursi yang perlu dikunci, jadi
+-- `dp_idr = 0` dan seluruh tagihan dibayar di kasir. Kalau DP ikut dicatat,
+-- rekap kas akan mengira ada uang masuk yang tidak pernah diterima.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.fn_admin_schedule_walk_in(
   p_full_name varchar,
@@ -142,7 +146,6 @@ DECLARE
   v_duration integer := 0;
   v_matched integer := 0;
   v_requested integer := 0;
-  v_dp constant integer := 20000;
   v_buffer constant integer := 10;
 BEGIN
   IF p_actor_role NOT IN ('owner', 'cashier', 'barber') THEN
@@ -192,7 +195,7 @@ BEGIN
     v_booking_code, v_customer_id, p_barber_id, 'walk_in', 'confirmed',
     p_start_time, p_start_time + make_interval(mins => v_duration + v_buffer),
     v_duration, v_buffer,
-    v_total, v_dp, GREATEST(0, v_total - v_dp), NULL
+    v_total, 0, v_total, NULL
   )
   RETURNING id INTO v_booking_id;
 
@@ -213,8 +216,8 @@ BEGIN
     'bookingCode', v_booking_code,
     'status', 'confirmed',
     'totalIdr', v_total,
-    'dpIdr', v_dp,
-    'remainingIdr', GREATEST(0, v_total - v_dp)
+    'dpIdr', 0,
+    'remainingIdr', v_total
   );
 EXCEPTION
   WHEN exclusion_violation THEN
