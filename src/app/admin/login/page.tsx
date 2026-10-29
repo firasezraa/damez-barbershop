@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
-import { normalizeNextPath } from "@/features/admin/login";
+import { normalizeNextPath, type LoginErrorCode } from "@/features/admin/login";
+
+/**
+ * Pesan per kode galat. Kode dikirim route sign-in lewat `?error=`, jadi pengguna
+ * membaca kalimat di halaman ini, bukan JSON mentah hasil POST formulir.
+ */
+const ERROR_MESSAGES: Record<LoginErrorCode | "session", string> = {
+  validation: "Email dan kata sandi wajib diisi dengan benar.",
+  credentials: "Email atau kata sandi salah.",
+  rate: "Terlalu banyak percobaan masuk. Coba lagi beberapa menit lagi.",
+  config:
+    "Layanan masuk belum dikonfigurasi di server (Supabase). Hubungi pengelola gerai.",
+  session: "Sesi tidak bisa diverifikasi. Silakan masuk lagi.",
+};
 
 export const metadata: Metadata = {
   title: "Masuk Admin — Damez Barbershop",
@@ -36,7 +49,8 @@ export default async function AdminLoginPage({
           role="alert"
           className="rounded-card border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger"
         >
-          Email atau kata sandi salah.
+          {ERROR_MESSAGES[params.error as LoginErrorCode] ??
+            "Masuk gagal. Cek email dan kata sandi, lalu coba lagi."}
         </p>
       )}
 

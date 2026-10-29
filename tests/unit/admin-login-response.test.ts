@@ -13,6 +13,20 @@ const httpsRequest = (): Request =>
 const httpRequest = (): Request =>
   new Request("http://localhost:3000/api/admin/auth/sign-in", { method: "POST" });
 
+/** Klien API: menerima JSON apa adanya. */
+const apiRequest = (): Request =>
+  new Request("https://damez.example/api/admin/auth/sign-in", {
+    method: "POST",
+    headers: { accept: "application/json" },
+  });
+
+/** Browser yang mengirim formulir HTML. */
+const htmlRequest = (): Request =>
+  new Request("https://damez.example/api/admin/auth/sign-in", {
+    method: "POST",
+    headers: { accept: "text/html,application/xhtml+xml" },
+  });
+
 describe("buildSignInResponse", () => {
   it("answers 303 with a secure HttpOnly session cookie on success", () => {
     const response = buildSignInResponse(
@@ -40,13 +54,37 @@ describe("buildSignInResponse", () => {
   it("never sets a cookie when the sign-in failed", () => {
     for (const status of [400, 401, 429, 503] as const) {
       const response = buildSignInResponse(
-        { kind: "failure", status, body: { error: "gagal" } },
-        httpsRequest(),
+        { kind: "failure", status, code: "credentials", body: { error: "gagal" } },
+        apiRequest(),
       );
 
       expect(response.status).toBe(status);
       expect(response.headers.get("set-cookie")).toBeNull();
     }
+  });
+
+  it("sends a browser form post back to the login page with the reason", () => {
+    // Formulir masuk adalah form HTML. Tanpa ini, pengguna melihat JSON mentah
+    // dan tidak pernah kembali ke dashboard — keluhan pertama dari mesin Windows.
+    const response = buildSignInResponse(
+      { kind: "failure", status: 401, code: "credentials", body: { error: "Email atau kata sandi salah." } },
+      htmlRequest(),
+    );
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toBe("/admin/login?error=credentials");
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("keeps the json contract for api clients", () => {
+    const response = buildSignInResponse(
+      { kind: "failure", status: 401, code: "credentials", body: { error: "Email atau kata sandi salah." } },
+      apiRequest(),
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.headers.get("content-type")).toContain("application/json");
   });
 });
 

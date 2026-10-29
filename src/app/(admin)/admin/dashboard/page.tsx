@@ -34,8 +34,10 @@ export default async function CashierDashboardPage() {
 
   if (!session.ok) {
     // Middleware sudah mengalihkan pengunjung tanpa cookie; sampai di sini berarti
-    // ada cookie tetapi sesinya tidak terverifikasi di server. Perlakukan sama.
-    redirect("/admin/login?next=%2Fadmin%2Fdashboard");
+    // ada cookie tetapi sesinya tidak terverifikasi di server (kedaluwarsa, atau
+    // Supabase tidak bisa dihubungi). Bawa alasannya supaya halaman masuk bisa
+    // menjelaskan, bukan diam-diam memantulkan pengguna.
+    redirect("/admin/login?error=session&next=%2Fadmin%2Fdashboard");
   }
 
   const today = jakartaDateString(new Date());

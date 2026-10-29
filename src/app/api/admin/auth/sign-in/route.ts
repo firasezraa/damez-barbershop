@@ -9,6 +9,14 @@ import { buildSessionCookie } from "@/lib/auth/session-cookie";
 
 export const runtime = "nodejs";
 
+/**
+ * Formulir masuk adalah form HTML biasa: kegagalan harus kembali ke halaman login
+ * dengan kode galat supaya pengguna membaca pesan, bukan JSON mentah. Klien API
+ * (Accept: application/json) tetap menerima status + body JSON.
+ */
+const prefersHtml = (request: Request): boolean =>
+  (request.headers.get("accept") ?? "").includes("text/html");
+
 const isSecureRequest = (request: Request): boolean =>
   new URL(request.url).protocol === "https:" ||
   request.headers.get("x-forwarded-proto") === "https";
@@ -20,6 +28,13 @@ const isSecureRequest = (request: Request): boolean =>
  */
 export function buildSignInResponse(result: SignInResult, request: Request): Response {
   if (result.kind !== "success") {
+    if (prefersHtml(request)) {
+      return new Response(null, {
+        status: 303,
+        headers: { location: `/admin/login?error=${result.code}` },
+      });
+    }
+
     return new Response(JSON.stringify(result.body), {
       status: result.status,
       headers: { "content-type": "application/json" },
@@ -61,9 +76,14 @@ export async function POST(request: Request): Promise<Response> {
     // tanpa cookie dan tanpa membocorkan detail ke pemanggil.
     console.error("sign-in gagal:", error instanceof Error ? error.message : "error tidak dikenal");
 
-    return new Response(
-      JSON.stringify({ error: "Layanan masuk sedang tidak tersedia. Coba lagi sebentar lagi." }),
-      { status: 503, headers: { "content-type": "application/json" } },
+    return buildSignInResponse(
+      {
+        kind: "failure",
+        status: 503,
+        code: "config",
+        body: { error: "Layanan masuk sedang tidak tersedia. Coba lagi sebentar lagi." },
+      },
+      request,
     );
   }
 }
