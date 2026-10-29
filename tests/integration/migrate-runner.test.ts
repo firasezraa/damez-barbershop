@@ -14,6 +14,7 @@ const EXPECTED_VERSIONS = [
   "0002_slot_hold.sql",
   "0003_audit_rate_limit.sql",
   "0004_roles_rls.sql",
+  "0005_admin_actions.sql",
 ];
 
 let pool: Pool;
