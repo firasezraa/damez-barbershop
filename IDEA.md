@@ -399,3 +399,17 @@ Plan R0 (fondasi) ada di `docs/superpowers/plans/2026-10-30-damez-v2-r0-foundati
 Kunci `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` sudah ada di `.env` lokal
 (tidak di-commit; `.env` diabaikan git). `SUPABASE_SERVICE_ROLE_KEY` dan connection string DB
 diisi owner langsung di `.env` — tidak pernah lewat chat.
+
+---
+
+## 16. Keputusan Dikunci (lanjutan 2026-10-30)
+
+1. **Tidak ada hosting.** Proyek ini hanya hidup di repo GitHub (`firasezraa/damez-barbershop`,
+   branch `dev`). Tidak ada Vercel, tidak ada URL publik, tidak ada deployment otomatis.
+2. **Merge `dev` → `main` dilakukan pemilik**, bukan agen. Riwayat branch tidak ditulis ulang
+   dan tidak ada `git push --force`.
+3. **Lingkungan Snap dari env eksplisit** `MIDTRANS_IS_PRODUCTION`, bukan `NODE_ENV`. Pasangan
+   kunci/lingkungan yang tidak cocok ditolak saat env dibaca (503 sebelum pelanggan menekan
+   tombol bayar), bukan 401 dari Midtrans.
+4. **Autentikasi admin tetap di Supabase hosted**; data operasional tetap Postgres. E2E kasir
+   memakai akun nyata lewat GitHub Actions secrets, bukan tiruan.

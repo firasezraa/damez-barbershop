@@ -106,11 +106,54 @@ Simpan URL-nya di `.env` sebagai `SUPABASE_DB_URL` (pakai host **Session pooler*
 dipindah antar koneksi sehingga `FOR UPDATE`, `pg_advisory_xact_lock`, dan DDL bisa patah.
 
 **Catatan TLS.** `createPgPool` mewajibkan TLS untuk host non-lokal dan memverifikasi
-sertifikat secara default. Pooler Supabase mengirim rantai yang memuat sertifikat
-self-signed sehingga Node menolaknya walau root sebenarnya ada di trust store; karena itu
-bootstrap sekali jalan memakai `PG_SSL_INSECURE=true`. **Jangan** pakai variabel itu di
-runtime produksi — perbaikan yang benar (pin root pooler atau jalur koneksi dari Vercel)
-adalah tugas R5.
+sertifikat secara default (`tests/unit/pg.test.ts` mengunci perilaku ini). Pooler Supabase
+mengirim rantai yang memuat sertifikat self-signed sehingga Node menolaknya walau root
+sebenarnya ada di trust store; karena itu bootstrap sekali jalan memakai
+`PG_SSL_INSECURE=true`. **Jangan** pakai variabel itu untuk runtime aplikasi: kalau nanti
+butuh koneksi runtime ke Supabase, pin root CA pooler lewat `ssl.ca` daripada mematikan
+verifikasi.
 
 Jangan arahkan `TEST_DATABASE_URL` ke Supabase: test integrasi melakukan
 `DROP SCHEMA public CASCADE`.
+
+## 8. E2E lokal
+
+E2E memakai Postgres yang sama dengan test integrasi, jadi jalankan urutannya seperti ini —
+kalau tidak, katalog ikut terhapus oleh `resetTestDb` dan semua skenario booking gagal dengan
+daftar layanan kosong:
+
+```bash
+set -a && . ./.env && set +a
+export DATABASE_URL="$TEST_DATABASE_URL"
+psql "$DATABASE_URL" -c "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public;"
+npm run migrate && npm run seed
+npm run build && npx playwright test
+```
+
+Skenario SOP kasir (`tests/e2e/cashier-sop.spec.ts`) butuh akun Supabase nyata:
+
+```
+E2E_ADMIN_EMAIL=kasir@damez.id
+E2E_OWNER_EMAIL=owner@damez.id
+E2E_ADMIN_PASSWORD=<ADMIN_SEED_PASSWORD>
+```
+
+Tanpa variabel itu test di-skip (bukan gagal). Di CI nilainya datang dari GitHub Actions
+secrets: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `E2E_ADMIN_EMAIL`,
+`E2E_OWNER_EMAIL`, `E2E_ADMIN_PASSWORD`.
+
+Setiap project Playwright mengaku datang dari alamat IP berbeda (`x-forwarded-for`). Aplikasi
+membatasi laju per IP; tanpa itu seluruh suite berbagi satu jatah dan test yang berjalan
+belakangan gagal karena 429, bukan karena aplikasinya.
+
+## 9. Konfigurasi pembayaran
+
+| Variabel | Arti |
+|---|---|
+| `MIDTRANS_SERVER_KEY` | Kunci server. Sandbox berawalan `SB-Mid-server-`, produksi `Mid-server-`. |
+| `MIDTRANS_IS_PRODUCTION` | `true` hanya kalau endpoint produksi yang dituju. Bukan `NODE_ENV`. |
+| `APP_BASE_URL` | URL publik; dipakai untuk `callbacks.finish` Snap. Boleh kosong. |
+| `MOCK_MIDTRANS` | `true` = transaksi palsu tanpa jaringan (E2E, pengembangan). |
+
+Pasangan kunci/lingkungan yang tidak cocok ditolak saat env dibaca sehingga route menjawab
+`503 PAYMENT_NOT_CONFIGURED` — bukan galat 401 yang membingungkan dari Midtrans.
