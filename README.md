@@ -72,6 +72,8 @@ tools/eslint-rules    aturan batas modul, diuji di tests/unit/eslint-rules.test.
 - `IDEA.md` — spesifikasi rebuild, temuan audit, aturan bisnis terkunci, milestone.
 - `docs/adr/` — ADR-000 alasan rebuild, ADR-001..003 keputusan bisnis v1 yang masih berlaku.
 - `docs/runbook/local-setup.md` — database, migrasi, test, menerapkan skema ke Supabase.
+- `docs/runbook/windows-setup.md` — dari nol di Windows: install PostgreSQL, `.env`, jalan di IDE,
+  menyambungkan alat database, masalah umum.
 - `docs/runbook/operations.md` — operasional harian tanpa hosting: cron, backup, rilis.
 - `docs/superpowers/plans/` — rencana teknis per milestone (R0, R1, R5, ...).
 - `docs/reference/v1/` — runbook deployment, SOP kasir, benchmark harga v1 sebagai acuan.
