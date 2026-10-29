@@ -18,6 +18,11 @@ function uniqueDigits(): string {
   return `${stamp}${String(counter).padStart(4, "0")}`;
 }
 
+/** Nomor WA unik berformat E.164 untuk test anti-hoarding dan pelanggan baru. */
+export function uniquePhone(): string {
+  return `+62${uniqueDigits()}`;
+}
+
 export async function insertBarber(
   pool: Pool,
   overrides: { chair?: number; isActive?: boolean; fullName?: string } = {},
