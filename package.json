@@ -19,6 +19,7 @@
     "migrate": "node --env-file-if-exists=.env --experimental-strip-types scripts/migrate.ts",
     "seed": "node --env-file-if-exists=.env --experimental-strip-types scripts/seed.ts",
     "verify": "npm run typecheck && npm run lint && npm run coverage && npm run test:integration && npm run build",
+    "doctor": "node --experimental-strip-types scripts/doctor.ts",
     "seed:admin": "node --env-file-if-exists=.env --experimental-strip-types scripts/seed-admin-users.ts"
   },
   "dependencies": {

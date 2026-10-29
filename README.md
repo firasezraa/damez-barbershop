@@ -38,6 +38,7 @@ dilakukan pemilik. Tidak ada konfigurasi Vercel di repo ini.
 | `npm run test:integration` | Vitest terhadap Postgres nyata (`TEST_DATABASE_URL`) |
 | `npm run test:e2e` | Playwright, 2 viewport (butuh build dulu) |
 | `npm run coverage` | Test unit + ambang coverage 80% pada `src/lib/**` |
+| `npm run doctor` | Periksa setup lokal: berkas `.env`, koneksi, migrasi, isi katalog |
 | `npm run migrate` | Terapkan migrasi `supabase/migrations` ke `DATABASE_URL` |
 | `npm run seed` | Isi katalog layanan, barber, jam kerja, istirahat (idempoten) |
 | `npm run seed:admin` | Buat/perbarui 3 akun admin di Supabase (owner, kasir, barber) |

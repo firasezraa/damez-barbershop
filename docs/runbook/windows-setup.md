@@ -168,11 +168,28 @@ Dua hal yang sering membingungkan saat memeriksa data lewat alat DB:
 2. **`audit_log` menolak UPDATE/DELETE** — memang append-only (trigger `BEFORE UPDATE OR
    DELETE` → `RAISE EXCEPTION 'audit_log is append-only'`). Itu bukan kerusakan.
 
+## 6b. Kalau ragu, jalankan `npm run doctor`
+
+Memeriksa `.env` (nama berkas, encoding, nilai placeholder), variabel wajib, koneksi database,
+migrasi, dan isi katalog — lalu mencetak langkah perbaikannya. Contoh keluaran sehat:
+
+```
+OK     tersambung ke PostgreSQL 16.15 (sesi Asia/Jakarta)
+OK     13 tabel di schema public
+OK     migrasi diterapkan: 0001, 0002, 0003, 0004, 0005
+OK     katalog terisi: 8 layanan aktif, 3 barber
+Hasil: setup lokal siap. Lanjut: npm run dev
+```
+
+Dua kesalahan yang paling sering dan langsung tertangkap: password ditulis `***` (itu placeholder
+dokumentasi, bukan nilai), dan berkas tersimpan sebagai `.env.txt` atau UTF-16 oleh Notepad.
+
 ## 7. Masalah umum
 
 | Gejala | Sebab dan tindakan |
 |---|---|
-| `Konfigurasi database belum lengkap. Periksa variabel: DATABASE_URL` | `.env` belum ada atau `DATABASE_URL` kosong. Ulangi langkah 3. |
+| `Konfigurasi database belum lengkap. Periksa variabel: DATABASE_URL` | `.env` belum ada, bernama `.env.txt`, tersimpan UTF-16, atau `DATABASE_URL` kosong. Jalankan `npm run doctor`. |
+| `password authentication failed for user "damez"` tapi password benar | Nilai di `.env` masih placeholder `***`. Isi password asli. |
 | `psql : The term 'psql' is not recognized` | `bin` belum masuk PATH; ulangi langkah 1A nomor 3 dan buka PowerShell baru. |
 | `psql: error: connection to server at "127.0.0.1", port 5432 failed: Connection refused` | Service PostgreSQL berhenti: `Start-Service postgresql-x64-16`. Cek juga port terpakai proses lain: `netstat -ano \| findstr :5432`. |
 | `password authentication failed for user "damez"` | Password di `.env` tidak sama dengan yang dipakai di `CREATE ROLE`. Setel ulang: `ALTER ROLE damez WITH PASSWORD 'baru';` lalu perbarui `.env`. |

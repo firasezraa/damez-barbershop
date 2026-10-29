@@ -63,6 +63,19 @@ lingkungan selalu menang atas berkas.
 `Konfigurasi database belum lengkap. Periksa variabel: DATABASE_URL`, artinya `.env` belum ada
 atau `DATABASE_URL` masih kosong — bukan bug aplikasi.
 
+## 3a. Kalau ada yang tidak beres: `npm run doctor`
+
+Satu perintah yang memeriksa seluruh setup dan menunjuk sebabnya: berkas `.env` ada atau tidak
+(termasuk kalau namanya jadi `.env.txt` karena Notepad), encoding UTF-16 yang tidak terbaca Node,
+nilai yang masih placeholder, variabel wajib yang kosong, koneksi database, migrasi yang sudah
+diterapkan, dan katalog yang sudah di-seed. Keluar dengan kode 1 kalau ada yang perlu diperbaiki.
+
+```bash
+npm run doctor
+```
+
+Nilai rahasia tidak pernah dicetak; hanya nama variabel yang bermasalah.
+
 ## 3b. Windows (PowerShell)
 
 Tidak ada `set -a`, tidak ada bash. Langkahnya:
