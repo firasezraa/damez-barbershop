@@ -211,6 +211,7 @@ BEGIN
     'success', true,
     'bookingId', v_booking_id,
     'bookingCode', v_booking_code,
+    'status', 'confirmed',
     'totalIdr', v_total,
     'dpIdr', v_dp,
     'remainingIdr', GREATEST(0, v_total - v_dp)
