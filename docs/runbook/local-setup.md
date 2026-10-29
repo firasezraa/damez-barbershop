@@ -89,3 +89,28 @@ npm run coverage           # unit + ambang coverage pada src/lib/**
 
 Test integrasi melakukan `DROP SCHEMA public CASCADE` pada `TEST_DATABASE_URL` tiap berkas
 test. **Jangan** arahkan `TEST_DATABASE_URL` ke database kerja atau database produksi.
+
+## 7. Menjalankan migrasi ke Supabase (hosted)
+
+Skema v2 dipasang ke project Supabase dengan perintah yang sama, hanya berbeda URL:
+
+```bash
+cd /home/ubuntu/project-utama/damez-barbershop-v2
+PG_SSL_INSECURE=true DATABASE_URL="$SUPABASE_DB_URL" npm run migrate
+PG_SSL_INSECURE=true DATABASE_URL="$SUPABASE_DB_URL" npm run seed
+```
+
+Simpan URL-nya di `.env` sebagai `SUPABASE_DB_URL` (pakai host **Session pooler**:
+`<region>.pooler.supabase.com:5432`, user `postgres.<project-ref>`). Jangan memakai
+*Direct connection* (hanya IPv6) atau *Transaction pooler* (6543) — transaksi
+dipindah antar koneksi sehingga `FOR UPDATE`, `pg_advisory_xact_lock`, dan DDL bisa patah.
+
+**Catatan TLS.** `createPgPool` mewajibkan TLS untuk host non-lokal dan memverifikasi
+sertifikat secara default. Pooler Supabase mengirim rantai yang memuat sertifikat
+self-signed sehingga Node menolaknya walau root sebenarnya ada di trust store; karena itu
+bootstrap sekali jalan memakai `PG_SSL_INSECURE=true`. **Jangan** pakai variabel itu di
+runtime produksi — perbaikan yang benar (pin root pooler atau jalur koneksi dari Vercel)
+adalah tugas R5.
+
+Jangan arahkan `TEST_DATABASE_URL` ke Supabase: test integrasi melakukan
+`DROP SCHEMA public CASCADE`.

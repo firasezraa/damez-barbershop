@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Pool } from "pg";
-import { createPgPool } from "../../src/lib/db/pg.ts";
+import { createPgPool, sslFor } from "../../src/lib/db/pg.ts";
 import { TIMEZONE } from "../../src/lib/config/constants.ts";
 
 describe("createPgPool", () => {
@@ -32,6 +32,26 @@ describe("createPgPool", () => {
       expect(pool.options.options).toBe(`-c timezone=${TIMEZONE}`);
     } finally {
       void pool.end();
+    }
+  });
+});
+
+describe("sslFor", () => {
+  it("leaves local connections without TLS", () => {
+    expect(sslFor("postgresql://damez:pw@127.0.0.1:5432/damez_test")).toBeUndefined();
+    expect(sslFor("postgresql://damez:pw@localhost:5432/damez_test")).toBeUndefined();
+  });
+
+  it("requires verified TLS for a remote host and only relaxes it on explicit request", () => {
+    const remote = "postgresql://postgres.ref:pw@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres";
+
+    expect(sslFor(remote)).toEqual({ rejectUnauthorized: true });
+
+    process.env["PG_SSL_INSECURE"] = "true";
+    try {
+      expect(sslFor(remote)).toEqual({ rejectUnauthorized: false });
+    } finally {
+      delete process.env["PG_SSL_INSECURE"];
     }
   });
 });
