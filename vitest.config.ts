@@ -1,11 +1,20 @@
+import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 /**
  * Satu project saja (bukan dua seperti draft plan): fileParallelism dimatikan
  * karena test integrasi berbagi satu database Postgres nyata dan VPS ini hanya
  * punya ~600 MB RAM bebas. Test unit dipilih lewat filter CLI di `npm run *`.
+ *
+ * `resolve.alias` mencerminkan `paths` di tsconfig supaya test bisa mengimpor
+ * route handler yang memakai alias `@/`.
  */
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "src"),
+    },
+  },
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],
