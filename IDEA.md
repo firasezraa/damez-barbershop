@@ -384,3 +384,18 @@ Alasan: VPS tanpa Docker (Supabase CLI `supabase start` butuh Docker + ~2 GB RAM
 ### 15.4 Rencana implementasi
 
 Plan R0 (fondasi) ada di `docs/superpowers/plans/2026-10-30-damez-v2-r0-foundation.md`. Milestone R1–R5 masing-masing mendapat plan sendiri setelah gate milestone sebelumnya hijau (§11).
+
+### 15.1 Project Supabase (dibuat 2026-10-30)
+
+| Item | Nilai |
+|---|---|
+| Project | `damez-barbershop` |
+| Ref | `jhsoxrojsgdgmchxglit` |
+| Region | `ap-southeast-1` (Singapore) |
+| Biaya | $0/bulan (free tier) — dikutip lewat `get_cost` sebelum dibuat |
+| Auth | GoTrue aktif; diverifikasi dari mesin lokal: `/auth/v1/health` → 200, token palsu → 403 `bad_jwt` |
+| Status skema aplikasi | **belum diterapkan** — `npm run migrate` dengan connection string Supabase dijalankan setelah owner mengisi `.env` |
+
+Kunci `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY` sudah ada di `.env` lokal
+(tidak di-commit; `.env` diabaikan git). `SUPABASE_SERVICE_ROLE_KEY` dan connection string DB
+diisi owner langsung di `.env` — tidak pernah lewat chat.
