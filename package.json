@@ -18,7 +18,8 @@
     "coverage": "vitest run tests/unit --coverage",
     "migrate": "node --experimental-strip-types scripts/migrate.ts",
     "seed": "node --experimental-strip-types scripts/seed.ts",
-    "verify": "npm run typecheck && npm run lint && npm run coverage && npm run test:integration && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run coverage && npm run test:integration && npm run build",
+    "seed:admin": "node --experimental-strip-types scripts/seed-admin-users.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
