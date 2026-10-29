@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { createPgPool } from "../../src/lib/db/pg.ts";
+import { TIMEZONE } from "../../src/lib/config/constants.ts";
 
 describe("createPgPool", () => {
   it("returns a pg Pool bound to the given connection string", () => {
@@ -16,10 +17,19 @@ describe("createPgPool", () => {
   });
 
   it("caps the pool at 5 connections by default", () => {
-    const pool = createPgPool("postgresql://damez:damez@127.0.0.1:5432/damez_test");
+    const pool = createPgPool("postgresql://damez:***@127.0.0.1:5432/damez_test");
     try {
       expect(pool.options.max).toBe(5);
       expect(createPgPool("postgresql://x", 1).options.max).toBe(1);
+    } finally {
+      void pool.end();
+    }
+  });
+
+  it("pins the session timezone of every connection to Asia/Jakarta", () => {
+    const pool = createPgPool("postgresql://damez:***@127.0.0.1:5432/damez_test");
+    try {
+      expect(pool.options.options).toBe(`-c timezone=${TIMEZONE}`);
     } finally {
       void pool.end();
     }
