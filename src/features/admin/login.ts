@@ -1,6 +1,4 @@
-import type { Pool } from "pg";
 import { z } from "zod";
-import { createPgPool } from "../../lib/db/pg.ts";
 import { readSupabaseAuthEnv } from "../../lib/config/env.ts";
 import { createClient } from "@supabase/supabase-js";
 
@@ -86,27 +84,6 @@ export async function handleSignIn(form: FormData, deps: SignInDeps): Promise<Si
   };
 }
 
-/** Pembatas percobaan masuk memakai penyimpanan persisten R0.8, bukan Map memori. */
-export function createPostgresRateLimiter(): (clientKey: string) => Promise<boolean> {
-  let pool: Pool | null = null;
-
-  function getPool(): Pool {
-    if (pool === null) {
-      pool = createPgPool(readSupabaseAuthEnv().DATABASE_URL, 2);
-    }
-    return pool;
-  }
-
-  return async (clientKey: string): Promise<boolean> => {
-    const result = await getPool().query<{ allowed: boolean }>(
-      "SELECT public.fn_rate_limit_hit($1, $2, $3) AS allowed",
-      [`login:${clientKey}`, LOGIN_RATE_LIMIT.limit, LOGIN_RATE_LIMIT.windowSeconds],
-    );
-
-    return (result.rows[0] as { allowed: boolean }).allowed;
-  };
-}
-
 /** Klien Supabase memakai kunci anon: masuk bukan operasi istimewa. */
 export function createSupabaseSignIn(): SignInDeps["signIn"] {
   return async (email, password) => {
@@ -123,15 +100,4 @@ export function createSupabaseSignIn(): SignInDeps["signIn"] {
 
     return { ok: true, accessToken: data.session.access_token };
   };
-}
-
-/** Kunci pembatas dari header proxy, bukan dari body. */
-export function clientKeyFrom(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded !== null && forwarded.length > 0) {
-    const [first] = forwarded.split(",");
-    return (first ?? "unknown").trim();
-  }
-
-  return request.headers.get("x-real-ip") ?? "unknown";
 }
