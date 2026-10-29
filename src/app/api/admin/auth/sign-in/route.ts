@@ -1,10 +1,10 @@
 import {
-  clientKeyFrom,
-  createPostgresRateLimiter,
   createSupabaseSignIn,
   handleSignIn,
+  LOGIN_RATE_LIMIT,
   type SignInResult,
 } from "@/features/admin/login";
+import { clientKeyFrom, createRateLimiter } from "@/lib/security/rate-limit";
 import { buildSessionCookie } from "@/lib/auth/session-cookie";
 
 export const runtime = "nodejs";
@@ -47,7 +47,7 @@ export async function POST(request: Request): Promise<Response> {
   try {
     const result = await handleSignIn(form, {
       signIn: createSupabaseSignIn(),
-      rateLimit: createPostgresRateLimiter(),
+      rateLimit: createRateLimiter({ name: "login", ...LOGIN_RATE_LIMIT }),
       clientKey: clientKeyFrom(request),
     });
 
