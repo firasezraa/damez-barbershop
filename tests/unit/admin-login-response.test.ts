@@ -21,7 +21,7 @@ describe("buildSignInResponse", () => {
     );
 
     expect(response.status).toBe(303);
-    expect(response.headers.get("location")).toBe("https://damez.example/admin/dashboard");
+    expect(response.headers.get("location")).toBe("/admin/dashboard");
     const cookie = response.headers.get("set-cookie") ?? "";
     expect(cookie).toContain("dmz_admin_session=token-owner");
     expect(cookie).toContain("HttpOnly");
@@ -55,7 +55,7 @@ describe("buildSignOutResponse", () => {
     const response = buildSignOutResponse(httpsRequest());
 
     expect(response.status).toBe(303);
-    expect(response.headers.get("location")).toBe("https://damez.example/admin/login");
+    expect(response.headers.get("location")).toBe("/admin/login");
     const cookie = response.headers.get("set-cookie") ?? "";
     expect(cookie).toContain("dmz_admin_session=");
     expect(cookie).toContain("Max-Age=0");

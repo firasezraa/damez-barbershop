@@ -14,7 +14,7 @@ export function buildSignOutResponse(request: Request): Response {
   return new Response(null, {
     status: 303,
     headers: {
-      location: new URL("/admin/login", request.url).toString(),
+      location: "/admin/login",
       "set-cookie": buildClearSessionCookie({ secure: isSecureRequest(request) }),
     },
   });

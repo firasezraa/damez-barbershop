@@ -29,7 +29,11 @@ export function buildSignInResponse(result: SignInResult, request: Request): Res
   return new Response(null, {
     status: 303,
     headers: {
-      location: new URL(result.redirectTo, request.url).toString(),
+      // Location relatif, bukan URL absolut dari `request.url`: kalau hostname
+      // permintaan berbeda dari hostname yang dibuka browser (mis. 127.0.0.1 vs
+      // localhost), redirect absolut memindahkan origin dan cookie sesi yang
+      // host-only ikut hilang sehingga pengguna terlempar kembali ke halaman masuk.
+      location: result.redirectTo,
       "set-cookie": buildSessionCookie(result.accessToken, { secure: isSecureRequest(request) }),
     },
   });
