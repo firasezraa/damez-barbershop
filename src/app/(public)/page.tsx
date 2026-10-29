@@ -1,3 +1,8 @@
+// Katalog dibaca dari database saat request, bukan saat build: build produksi
+// (termasuk preview di Vercel) tidak boleh bergantung pada ketersediaan database.
+// Cache/ISR menyusul di R5 bersama pengukuran LCP.
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatRupiah, listActiveBarbers, listActiveServices } from "@/features/catalogue/queries";
