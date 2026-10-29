@@ -634,7 +634,7 @@ git add -A && git commit -m "feat(db): add append-only audit log and persistent 
 - Produces: `export async function seed(pool: Pool): Promise<{ services: number; barbers: number; workingHours: number; blockedSlots: number }>` — idempoten (upsert by `slug`/`barber_code`/`(barber_id, day_of_week)`/`(barber_id, day_of_week, start_time, slot_type)`).
 
 - [ ] **Step 1: Tulis test integrasi yang gagal** `tests/integration/seed.test.ts` — assertion wajib:
-  (a) setelah `resetTestDb()` + `seed()` → `services 8`, `barbers 3`, `working_hours 21`, `blocked_slots 12`;
+  (a) setelah `resetTestDb()` + `seed()` → `services 8`, `barbers 3`, `working_hours 21`, `blocked_slots 36` (3 barber × 2 istirahat × 6 hari kerja — v1 menyimpan satu baris per hari, bukan satu baris per pola);
   (b) `seed()` kedua kali → angka sama (idempoten, tidak menambah baris);
   (c) `SRV-08` harga `95000` durasi `60`; `SRV-01` harga `50000` durasi `45`;
   (d) chair 1 = "Rian Pratama" istirahat `12:00–12:55` dan `18:00–18:55`; chair 2 = "Dimas Arisandi" `13:00–13:55`/`19:00–19:55`; chair 3 = "Kevin Sanjaya" `14:00–14:55`/`20:00–20:55`;

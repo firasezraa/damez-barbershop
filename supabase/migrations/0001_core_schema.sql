@@ -109,6 +109,9 @@ CREATE TABLE public.blocked_slots (
   CONSTRAINT chk_blocked_type CHECK (
     slot_type IN ('recurring_break', 'custom_block', 'maintenance', 'holiday')
   ),
+  -- Kunci idempotensi seed: istirahat berulang sama tidak boleh dobel.
+  -- Baris non-recurring punya NULL di dua kolom sehingga tidak terpengaruh.
+  CONSTRAINT uq_blocked_slots_recurring UNIQUE (barber_id, day_of_week, start_time, slot_type),
   CONSTRAINT chk_blocked_shape CHECK (
     (
       slot_type = 'recurring_break'
