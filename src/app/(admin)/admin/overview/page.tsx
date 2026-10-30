@@ -42,7 +42,9 @@ interface AdminOverviewPageProps {
 
 export default async function AdminOverviewPage({ searchParams }: AdminOverviewPageProps) {
   const { q } = await searchParams;
-  const cookieHeader = (await cookies())
+  const cookieStore = await cookies();
+  const initialCollapsed = cookieStore.get("dmz_admin_sidebar")?.value === "true";
+  const cookieHeader = cookieStore
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
@@ -60,7 +62,7 @@ export default async function AdminOverviewPage({ searchParams }: AdminOverviewP
   const [stats, bookings] = await Promise.all([getOverallStats(), listRecentBookings(25, q)]);
 
   return (
-    <AdminShell role={session.session.role} today={today}>
+    <AdminShell role={session.session.role} today={today} initialCollapsed={initialCollapsed}>
       <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <header className="flex flex-col gap-2">

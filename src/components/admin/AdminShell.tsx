@@ -40,18 +40,26 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "dmz_admin_sidebar_collapsed";
+const SIDEBAR_COLLAPSED_COOKIE = "dmz_admin_sidebar";
 
 interface AdminShellProps {
   role: string;
   today: string;
+  initialCollapsed?: boolean;
   children: ReactNode;
 }
 
-export function AdminShell({ role, today, children }: AdminShellProps) {
+export function AdminShell({ role, today, initialCollapsed = false, children }: AdminShellProps) {
   const pathname = usePathname();
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
+    if (initialCollapsed) {
+      return true;
+    }
     if (typeof window !== "undefined") {
       try {
+        if (document.cookie.includes(`${SIDEBAR_COLLAPSED_COOKIE}=true`)) {
+          return true;
+        }
         return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
       } catch {
         return false;
@@ -66,8 +74,10 @@ export function AdminShell({ role, today, children }: AdminShellProps) {
       const next = !prev;
       try {
         window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(next));
+        // Also persist as cookie so server-side HTML prerenders exactly collapsed
+        document.cookie = `${SIDEBAR_COLLAPSED_COOKIE}=${next}; path=/; max-age=31536000; SameSite=Lax`;
       } catch {
-        // Ignore localStorage error
+        // Ignore storage error
       }
       return next;
     });

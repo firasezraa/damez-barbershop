@@ -23,7 +23,9 @@ export const metadata: Metadata = {
  * Dilengkapi dengan navigation sidebar portal admin.
  */
 export default async function CashierDashboardPage() {
-  const cookieHeader = (await cookies())
+  const cookieStore = await cookies();
+  const initialCollapsed = cookieStore.get("dmz_admin_sidebar")?.value === "true";
+  const cookieHeader = cookieStore
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
@@ -42,7 +44,7 @@ export default async function CashierDashboardPage() {
   const summary = summarizeDay(chairs);
 
   return (
-    <AdminShell role={session.session.role} today={today}>
+    <AdminShell role={session.session.role} today={today} initialCollapsed={initialCollapsed}>
       <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <header className="flex flex-col gap-2">
