@@ -228,7 +228,7 @@ export function Navigation11() {
   const activeCategory = NAVIGATION_DATA.find((c) => c.id === activeTab);
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 transition-all">
+    <header className="sticky top-0 z-50 w-full bg-ink/80 px-4 pt-3 pb-2 backdrop-blur-md transition-all">
       <div
         ref={navRef}
         onMouseLeave={handleMouseLeave}

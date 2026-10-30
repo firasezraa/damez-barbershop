@@ -36,7 +36,7 @@ export function AdminSidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-full flex-col border-b border-line bg-surface lg:min-h-screen lg:w-64 lg:border-r lg:border-b-0">
+    <aside className="sticky top-0 z-40 flex w-full flex-col border-b border-line bg-surface lg:h-screen lg:w-64 lg:shrink-0 lg:border-r lg:border-b-0">
       {/* Brand Header */}
       <div className="flex flex-col gap-1 border-b border-line px-6 py-6">
         <MonoLabel tone="brass">Damez Management</MonoLabel>
@@ -52,7 +52,7 @@ export function AdminSidebar({
       </div>
 
       {/* Nav Items */}
-      <nav aria-label="Menu Admin" className="flex flex-1 flex-col gap-1 p-3">
+      <nav aria-label="Menu Admin" className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
         <div className="px-3 py-2">
           <MonoLabel>Navigasi Utama</MonoLabel>
         </div>

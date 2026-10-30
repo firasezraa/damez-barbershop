@@ -46,7 +46,7 @@ export default async function CashierDashboardPage() {
     <div className="flex min-h-screen flex-col bg-ink lg:flex-row">
       <AdminSidebar role={session.session.role} today={today} />
 
-      <div className="flex flex-1 flex-col overflow-x-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
         <AdminTopNav role={session.session.role} today={today} />
 
         <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">

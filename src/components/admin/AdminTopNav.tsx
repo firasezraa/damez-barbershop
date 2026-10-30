@@ -90,7 +90,7 @@ export function AdminTopNav({ role, today }: AdminTopNavProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-line bg-ink/90 px-6 backdrop-blur-md lg:px-10">
+    <header className="sticky top-0 z-30 flex h-16 w-full shrink-0 items-center justify-between border-b border-line bg-ink/90 px-6 backdrop-blur-md lg:px-10">
       {/* Search Bar Container */}
       <div ref={containerRef} className="relative w-full max-w-md sm:max-w-lg">
         <div className="relative flex items-center">
