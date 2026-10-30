@@ -118,40 +118,59 @@ export function Hero6() {
       className="relative overflow-hidden border-b border-line px-6 py-14 lg:px-16 lg:py-20"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
-        {/* Kolom Kiri: Teks Narasi & CTA. Semua blok diberi tinggi minimum tetap
-            supaya pergantian slide tidak mengubah tinggi hero sama sekali. */}
-        <div className="flex flex-1 flex-col gap-6">
-          <div className="flex min-h-[188px] flex-col gap-3 sm:min-h-[248px] lg:min-h-[288px]">
-            <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
-            <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
-              <span className="block">{currentSlide.titlePrimary}</span>
-              <span className="block text-brass">{currentSlide.titleAccent}</span>
-            </h1>
-          </div>
+        {/* Kolom Kiri: Teks Narasi & CTA. Menggunakan CSS Grid Stack
+            (seluruh slide menempati sel grid yang sama) sehingga tinggi kontainer
+            otomatis mengikuti slide tertinggi secara absolut, dan 100% stabil
+            tanpa layout shift di resolusi layar berapa pun! */}
+        <div className="flex flex-1 flex-col justify-between">
+          <div className="grid">
+            {DAMEZ_HERO_SLIDES.map((slide, idx) => {
+              const active = idx === currentIndex;
+              return (
+                <div
+                  key={slide.id}
+                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-opacity duration-500 ${
+                    active ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  }`}
+                  aria-hidden={!active}
+                >
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-3">
+                      <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
+                      <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                        <span className="block">{slide.titlePrimary}</span>
+                        <span className="block text-brass">{slide.titleAccent}</span>
+                      </h1>
+                    </div>
 
-          <p className="min-h-[96px] max-w-xl text-base leading-relaxed text-muted sm:min-h-[84px] sm:text-lg">
-            {currentSlide.description}
-          </p>
+                    <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+                      {slide.description}
+                    </p>
+                  </div>
 
-          {/* Dua tombol punya lebar tetap per posisi dan tidak pernah membungkus,
-              jadi baris aksi identik di semua slide. */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            <Link
-              href={currentSlide.ctaHref}
-              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
-            >
-              {currentSlide.ctaText}
-            </Link>
-            <a
-              href={currentSlide.secondaryCtaHref}
-              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
-            >
-              {currentSlide.secondaryCtaText}
-            </a>
+                  <div className="flex flex-wrap items-center gap-4 pt-6">
+                    <Link
+                      href={slide.ctaHref}
+                      tabIndex={active ? 0 : -1}
+                      className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
+                    >
+                      {slide.ctaText}
+                    </Link>
+                    <a
+                      href={slide.secondaryCtaHref}
+                      tabIndex={active ? 0 : -1}
+                      className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
+                    >
+                      {slide.secondaryCtaText}
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Indikator Progres Baris (Bawah Teks pada Layar Mobile/Tablet) */}
-          <div className="mt-4 flex items-center gap-2 lg:hidden">
+          <div className="mt-8 flex items-center gap-2 lg:hidden">
             {DAMEZ_HERO_SLIDES.map((slide, idx) => {
               const active = idx === currentIndex;
               return (
