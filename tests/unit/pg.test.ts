@@ -29,7 +29,18 @@ describe("createPgPool", () => {
   it("pins the session timezone of every connection to Asia/Jakarta", () => {
     const pool = createPgPool("postgresql://damez:***@127.0.0.1:5432/damez_test");
     try {
-      expect(pool.options.options).toBe(`-c timezone=${TIMEZONE}`);
+      expect(pool.options.options).toContain(`-c timezone=${TIMEZONE}`);
+    } finally {
+      void pool.end();
+    }
+  });
+
+  it("bounds every connection so a stuck query fails instead of hanging", () => {
+    const pool = createPgPool("postgresql://damez:***@127.0.0.1:5432/damez_test");
+    try {
+      expect(pool.options.options).toContain("-c statement_timeout=");
+      expect(pool.options.options).toContain("-c idle_in_transaction_session_timeout=");
+      expect(pool.options.connectionTimeoutMillis).toBeLessThanOrEqual(5_000);
     } finally {
       void pool.end();
     }
