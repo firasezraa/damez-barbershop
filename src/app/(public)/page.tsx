@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Hero6 } from "@/components/hero/Hero6";
 import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 import { SlotCell } from "@/components/ui/slot-cell";
 import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
@@ -134,40 +135,13 @@ export default async function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      {/* 1. HERO BRAND & COMPANY PROFILE INTRO */}
-      <section className="border-b border-line px-6 py-16 lg:px-16 lg:py-20">
-        <div className="mx-auto flex max-w-5xl flex-col gap-8">
-          <div className="flex flex-col gap-3">
-            <MonoLabel tone="brass">Damez Barbershop · Est. Jakarta Selatan</MonoLabel>
-            <h1 className="font-display text-4xl font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
-              Seni Pangkas Presisi.
-              <span className="block text-brass">Ruang Tenang Pria Modern.</span>
-            </h1>
-          </div>
+      {/* 1. HERO SECTION (REACT BITS PRO HERO-6: ROTATING CAROUSEL WITH PROGRESS LINE & GLOW) */}
+      <Hero6 />
 
-          <p className="max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">
-            Kami hadir untuk mengakhiri kompromi antara potongan tergesa-gesa dan antrean panjang
-            yang membuang waktu. Tiga kursi vintage, tiga master barber, dan komitmen penuh
-            menghormati ritme hidup Anda.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            <Link
-              href="/booking"
-              className="inline-flex h-13 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold text-ink transition-colors hover:brightness-105"
-            >
-              Kunci Kursi Sekarang
-            </Link>
-            <a
-              href="#papan-jadwal"
-              className="inline-flex h-13 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs uppercase tracking-wider text-text transition-colors hover:border-brass/60"
-            >
-              Lihat Ketersediaan Hari Ini ↓
-            </a>
-          </div>
-
-          {/* Grid Nilai Utama Gerai */}
-          <div className="mt-8 grid gap-4 border-t border-line pt-8 sm:grid-cols-3">
+      {/* Nilai Utama Gerai Damez */}
+      <section className="border-b border-line px-6 py-12 lg:px-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-4 sm:grid-cols-3">
             {VALUES.map((v) => (
               <Plate key={v.number} className="flex flex-col gap-2 p-5">
                 <MonoLabel tone="brass">{v.number}</MonoLabel>
