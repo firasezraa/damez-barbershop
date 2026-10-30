@@ -7,8 +7,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       {/* React Bits Pro Navigation 11 Component */}
       <Navigation11 />
 
-      {/* Main Page Content dengan Animasi Reveal Halaman Pembuka */}
-      <div className="flex-1 animate-page-enter">{children}</div>
+      {/* Main Page Content */}
+      <div className="flex-1">{children}</div>
     </div>
   );
 }
