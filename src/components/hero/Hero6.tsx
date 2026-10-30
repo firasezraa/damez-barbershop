@@ -136,31 +136,27 @@ export function Hero6() {
                 >
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3">
-                      {/* Eyebrow Label: Blur & Float Reveal */}
+                      {/* Eyebrow Label: Pure Dissolve Transition */}
                       <div
                         style={{
                           transitionDuration: "850ms",
-                          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
                           transitionDelay: active ? "100ms" : "0ms",
-                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, -6px, 0)",
-                          filter: active ? "blur(0px)" : "blur(5px)",
                           opacity: active ? 1 : 0,
-                          willChange: "transform, opacity, filter",
+                          willChange: "opacity",
                         }}
                       >
                         <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
                       </div>
 
-                      {/* Heading H1: Blur & Float Reveal */}
+                      {/* Heading H1: Pure Dissolve Transition */}
                       <h1
                         style={{
                           transitionDuration: "1000ms",
-                          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
                           transitionDelay: active ? "180ms" : "0ms",
-                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 10px, 0)",
-                          filter: active ? "blur(0px)" : "blur(6px)",
                           opacity: active ? 1 : 0,
-                          willChange: "transform, opacity, filter",
+                          willChange: "opacity",
                         }}
                         className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl"
                       >
@@ -169,16 +165,14 @@ export function Hero6() {
                       </h1>
                     </div>
 
-                    {/* Deskripsi: Blur & Float Reveal */}
+                    {/* Deskripsi: Pure Dissolve Transition */}
                     <p
                       style={{
                         transitionDuration: "1000ms",
-                        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
                         transitionDelay: active ? "260ms" : "0ms",
-                        transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 8px, 0)",
-                        filter: active ? "blur(0px)" : "blur(6px)",
                         opacity: active ? 1 : 0,
-                        willChange: "transform, opacity, filter",
+                        willChange: "opacity",
                       }}
                       className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
                     >
@@ -186,16 +180,14 @@ export function Hero6() {
                     </p>
                   </div>
 
-                  {/* Tombol CTA: Blur & Pop Reveal */}
+                  {/* Tombol CTA: Pure Dissolve Transition */}
                   <div
                     style={{
                       transitionDuration: "1050ms",
-                      transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
                       transitionDelay: active ? "340ms" : "0ms",
-                      transform: active ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 8px, 0) scale(0.98)",
-                      filter: active ? "blur(0px)" : "blur(5px)",
                       opacity: active ? 1 : 0,
-                      willChange: "transform, opacity, filter",
+                      willChange: "opacity",
                     }}
                     className="flex flex-wrap items-center gap-4 pt-6"
                   >
@@ -288,14 +280,16 @@ export function Hero6() {
                 <div
                   key={slide.id}
                   style={{
-                    willChange: "transform, opacity",
+                    transitionDuration: "1000ms",
+                    transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+                    willChange: "opacity",
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                   }}
-                  className={`absolute inset-0 transition-all duration-1000 ease-out ${
+                  className={`absolute inset-0 transition-opacity ${
                     idx === currentIndex
-                      ? "opacity-100 scale-100 z-10"
-                      : "opacity-0 scale-105 z-0 pointer-events-none"
+                      ? "opacity-100 z-10"
+                      : "opacity-0 z-0 pointer-events-none"
                   }`}
                 >
                   <Image
