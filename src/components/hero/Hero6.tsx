@@ -71,9 +71,7 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
-const AUTOPLAY_STEP_MS = 40;
 const AUTOPLAY_TOTAL_MS = 3500; // 3.5 detik per slide (lebih dinamis dan gesit)
-const STEP_PERCENT = (AUTOPLAY_STEP_MS / AUTOPLAY_TOTAL_MS) * 100;
 
 export function Hero6() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -86,21 +84,33 @@ export function Hero6() {
     setProgressPercent(0);
   }, []);
 
-  // Interval-driven progress update ensuring strictly sequential progression (1 -> 2 -> 3 -> 1)
+  // Single master timer per slide: guaranteed 1 -> 2 -> 3 -> 1 sequence
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgressPercent((prev) => {
-        const next = prev + STEP_PERCENT;
-        if (next >= 100) {
-          setCurrentIndex((current) => (current + 1) % DAMEZ_HERO_SLIDES.length);
-          return 0;
-        }
-        return next;
-      });
-    }, AUTOPLAY_STEP_MS);
+    let animFrame: number;
+    const startTime = performance.now();
 
-    return () => clearInterval(timer);
-  }, []);
+    const update = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min((elapsed / AUTOPLAY_TOTAL_MS) * 100, 100);
+      setProgressPercent(progress);
+
+      if (elapsed < AUTOPLAY_TOTAL_MS) {
+        animFrame = requestAnimationFrame(update);
+      }
+    };
+
+    animFrame = requestAnimationFrame(update);
+
+    const timeout = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % DAMEZ_HERO_SLIDES.length);
+      setProgressPercent(0);
+    }, AUTOPLAY_TOTAL_MS);
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      clearTimeout(timeout);
+    };
+  }, [currentIndex]);
 
   return (
     <section
