@@ -26,11 +26,13 @@ export type SlotStateDefinition = {
 };
 
 const PUNCHED = "bg-[repeating-linear-gradient(135deg,var(--color-hold)_0_5px,var(--color-hold-2)_5px_10px)] border-t border-[#3d3420]";
+/** Satu baris, dipotong dengan elipsis: sel tidak pernah meluber keluar bingkai. */
+const ONE_LINE = "truncate whitespace-nowrap overflow-hidden";
 
 export const SLOT_STATES: Record<SlotState, SlotStateDefinition> = {
   scheduled: {
     label: "Kursi terjadwal",
-    shape: `${PUNCHED} flex-1 self-stretch px-2.5 font-mono text-xs text-punched`,
+    shape: `${PUNCHED} ${ONE_LINE} flex-1 self-stretch px-2.5 font-mono text-xs text-punched`,
     defaultText: "",
   },
   free: {
@@ -45,18 +47,18 @@ export const SLOT_STATES: Record<SlotState, SlotStateDefinition> = {
   },
   chosen: {
     label: "Pilihan Anda",
-    shape: "flex-1 h-7 mx-2 rounded-[2px] border border-brass bg-brass/10 font-mono text-xs text-brass",
+    shape: `flex-1 h-7 mx-2 rounded-[2px] border border-brass bg-brass/10 font-mono text-xs text-brass ${ONE_LINE}`,
     defaultText: "",
   },
   held: {
     label: "Kursi sedang ditahan",
     shape:
-      "flex-1 h-7 mx-2 rounded-[2px] border border-dashed border-brass bg-brass/5 font-mono text-xs text-brass",
+      `flex-1 h-7 mx-2 rounded-[2px] border border-dashed border-brass bg-brass/5 font-mono text-xs text-brass ${ONE_LINE}`,
     defaultText: "",
   },
   done: {
     label: "Selesai",
-    shape: PUNCHED + " flex-1 self-stretch px-2.5 font-mono text-xs text-ghost",
+    shape: `${PUNCHED} ${ONE_LINE} flex-1 self-stretch px-2.5 font-mono text-xs text-ghost`,
     defaultText: "",
   },
   no_show: {
@@ -78,8 +80,10 @@ export function SlotCell({
   className = "",
 }: {
   state: SlotState;
-  text?: string;
-  className?: string;
+  // `| undefined` wajib: tsconfig memakai exactOptionalPropertyTypes, dan pemanggil
+  // yang mencari slot bisa tidak menemukannya.
+  text?: string | undefined;
+  className?: string | undefined;
 }) {
   const definition = SLOT_STATES[state];
   const shown = text ?? definition.defaultText;

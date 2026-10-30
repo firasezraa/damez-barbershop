@@ -1,81 +1,77 @@
-// Katalog dibaca dari database saat request, bukan saat build: build produksi
-// (termasuk preview di Vercel) tidak boleh bergantung pada ketersediaan database.
-// Cache/ISR menyusul di R5 bersama pengukuran LCP.
+// Katalog dan papan hari dibaca saat request: papan menampilkan keadaan kursi
+// hari ini, jadi tidak boleh dibekukan saat build.
 export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { formatRupiah, listActiveBarbers, listActiveServices } from "@/features/catalogue/queries";
-import { DOWN_PAYMENT_IDR } from "@/lib/config/constants";
+import { ACTION_CLASSES, MonoLabel } from "@/components/ui/plate";
+import { SlotCell } from "@/components/ui/slot-cell";
+import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
+import { formatRupiah, listActiveServices } from "@/features/catalogue/queries";
+import { CANCEL_CUTOFF_HOURS, DOWN_PAYMENT_IDR, LATE_TOLERANCE_MINUTES } from "@/lib/config/constants";
 
+/**
+ * Beranda (IDEA.md §17.7.1). Pembukanya bukan hero bergambar melainkan papan hari
+ * gerai: baris jam, kolom kursi, dan daftar layanan. Grid berlubang ini memakai
+ * bahasa keadaan yang sama dengan dasbor kasir.
+ */
 export const metadata: Metadata = {
-  title: "Damez Barbershop Senopati: Booking Kursi Tanpa Antre",
+  title: "Damez Barbershop Jakarta Selatan: Kunci Kursi Pangkas",
   description:
-    "Barbershop pria di Senopati, Jakarta Selatan. Pilih barber, tentukan jam, dan langsung duduk di kursi pangkas. DP flat Rp 20.000 via QRIS.",
+    "Tiga kursi, tiga barber, satu gerai di Jakarta Selatan. Lihat jam yang masih kosong hari ini, kunci dengan DP Rp 20.000, buka 10:00-21:00 WIB.",
   openGraph: {
-    title: "Damez Barbershop Senopati",
-    description: "Tampil rapi tanpa mengantre. Booking kursi pangkas dengan kepastian jam.",
+    title: "Damez Barbershop Jakarta Selatan",
+    description: "Lihat kursi yang masih bebas hari ini, lalu kunci jamnya.",
     type: "website",
   },
 };
 
-const VALUE_POINTS = [
+const STEPS = [
   {
-    title: "Tanpa Perlu Daftar Akun",
-    body: "Cukup masukkan nama dan nomor WhatsApp aktif. Tidak ada kewajiban mengunduh aplikasi atau mengingat kata sandi baru.",
+    title: "Pilih jam yang masih bebas",
+    body: "Papan di sebelah memperlihatkan keadaan sebenarnya hari ini, bukan contoh.",
   },
   {
-    title: "Kursi Terkunci Pasti",
-    body: "Slot pilihan Anda diamankan selama 15 menit lewat uang muka. Kursi Anda tidak akan diserahkan ke pelanggan lain.",
+    title: "Kunci dengan DP",
+    body: `DP ${formatRupiah(DOWN_PAYMENT_IDR)} lewat QRIS atau virtual account; kursi ditahan 15 menit.`,
   },
   {
-    title: "Konfirmasi Tiket WhatsApp Seketika",
-    body: "Begitu pembayaran DP diverifikasi sistem, tiket digital dengan rincian jadwal dikirim ke ponsel Anda.",
-  },
-];
-
-const PILLARS = [
-  {
-    title: "Bebas Antrean Fisik",
-    body: "Setiap sesi punya alokasi waktu jelas ditambah jeda pembersihan 10 menit. Anda datang sesuai jam yang dipilih dan langsung dilayani.",
-  },
-  {
-    title: "Tiga Master Barber",
-    body: "Anda memegang kendali penuh atas siapa yang menangani rambut Anda, dari potongan klasik sampai fade presisi tinggi.",
-  },
-  {
-    title: "Transparansi Harga",
-    body: "Tarif setiap paket tertulis sejak awal. DP flat Rp 20.000 memotong nota Anda saat pelunasan di kasir.",
+    title: "Datang, duduk, selesai",
+    body: `Kasir memotong DP dari total nota. Toleransi ${LATE_TOLERANCE_MINUTES} menit.`,
   },
 ];
 
 const FAQ = [
   {
     question: "Apakah harus membuat akun?",
-    answer: "Tidak. Cukup nama dan nomor WhatsApp aktif saat mengunci slot.",
+    answer: "Tidak. Cukup nama dan nomor WhatsApp aktif saat mengunci kursi.",
   },
   {
     question: "Bagaimana cara kerja DP Rp 20.000?",
     answer:
-      "DP dibayar saat booking untuk mengunci kursi selama 15 menit, lalu dipotong dari total nota ketika Anda melunasi di kasir.",
+      "DP dibayar saat booking untuk mengunci kursi selama 15 menit, lalu dipotong dari total nota saat Anda melunasi di kasir.",
   },
   {
     question: "Bisa batal atau ubah jadwal?",
-    answer: "Bisa sampai 3 jam sebelum jadwal. Lewat dari itu DP hangus karena kursi sudah dikunci untuk Anda.",
+    answer: `Bisa sampai ${CANCEL_CUTOFF_HOURS} jam sebelum jadwal. Lewat dari itu DP hangus karena kursinya sudah ditahan untuk Anda.`,
+  },
+  {
+    question: "Kalau saya datang terlambat?",
+    answer: `Toleransi ${LATE_TOLERANCE_MINUTES} menit. Lewat itu barber mulai melayani tamu berikutnya dan kursi Anda dilepas.`,
   },
 ];
 
 export default async function LandingPage() {
-  const [services, barbers] = await Promise.all([listActiveServices(), listActiveBarbers()]);
+  const [board, services] = await Promise.all([buildDayBoard(), listActiveServices()]);
+  const prices = services.map((service) => service.priceIdr);
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "HairSalon",
     name: "Damez Barbershop",
-    description: "Barbershop pria di Senopati, Jakarta Selatan. Booking kursi tanpa antre.",
+    description: "Barbershop pria di Jakarta Selatan dengan reservasi kursi tanpa antre.",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Senopati",
       addressLocality: "Jakarta Selatan",
       addressRegion: "DKI Jakarta",
       addressCountry: "ID",
@@ -89,156 +85,237 @@ export default async function LandingPage() {
         closes: "21:00",
       },
     ],
-    priceRange: "Rp 40.000 - Rp 95.000",
+    priceRange:
+      prices.length === 0
+        ? undefined
+        : `Rp ${Math.min(...prices).toLocaleString("id-ID")} - Rp ${Math.max(...prices).toLocaleString("id-ID")}`,
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-6 py-12">
+    <main className="flex flex-col">
       <script
         type="application/ld+json"
         // Data terstruktur statis, bukan masukan pengguna.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <header className="flex flex-col gap-6">
-        <div className="flex items-center justify-between gap-4">
-          <span className="font-display text-lg tracking-[0.2em] text-brass uppercase">Damez</span>
-          <Link
-            href="/booking"
-            className="rounded-card bg-brass px-4 py-3 text-sm font-medium text-ink transition hover:brightness-110"
-          >
-            Booking Sekarang
-          </Link>
-        </div>
+      <div className="grid gap-10 px-6 py-10 lg:grid-cols-[392px_1fr] lg:gap-0 lg:px-0 lg:py-0">
+        {/* Kiri: identitas gerai, aturan, satu tindakan */}
+        <section className="flex flex-col gap-5 lg:h-full lg:justify-between lg:border-r lg:border-line lg:px-9 lg:py-9">
+          <h1 className="font-display text-[52px] leading-[0.94] font-extrabold tracking-[-0.02em]">
+            DAMEZ
+            <span className="mt-2.5 block font-mono text-[13px] font-medium tracking-[0.14em] text-muted uppercase">
+              Tiga kursi. Tiga barber. Satu gerai.
+            </span>
+          </h1>
 
-        <p className="text-sm text-muted">
-          4.9 dari 5 bintang, lebih dari 320 ulasan terverifikasi di Google Maps
-        </p>
-
-        <h1 className="font-display text-4xl leading-tight text-text sm:text-5xl">
-          Tampil Rapi Tanpa Mengantre
-        </h1>
-        <p className="max-w-2xl text-base text-muted">
-          Dapatkan potongan rambut presisi dan perawatan pria yang bersih di kawasan Senopati.
-          Pilih barber andalan Anda, tentukan jam kedatangan, dan langsung duduk di kursi pangkas
-          saat tiba.
-        </p>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link
-            href="/booking"
-            className="rounded-card bg-brass px-5 py-4 text-base font-medium text-ink transition hover:brightness-110"
-          >
-            Booking Kursi Sekarang
-          </Link>
-          <Link
-            href="#layanan"
-            className="rounded-card border border-surface-2 px-5 py-4 text-base text-text transition hover:border-brass"
-          >
-            Lihat Paket Layanan &amp; Tarif
-          </Link>
-        </div>
-        <p className="text-sm text-muted">
-          DP Flat {formatRupiah(DOWN_PAYMENT_IDR)} via QRIS. Biaya DP memotong nota saat pelunasan di kasir.
-        </p>
-      </header>
-
-      <section aria-labelledby="jaminan" className="flex flex-col gap-6">
-        <h2 id="jaminan" className="font-display text-2xl text-text">
-          Tiga jaminan layanan
-        </h2>
-        <ul className="grid gap-4 sm:grid-cols-3">
-          {VALUE_POINTS.map((point) => (
-            <li key={point.title} className="rounded-card border border-surface-2 bg-surface p-5">
-              <h3 className="font-display text-lg text-text">{point.title}</h3>
-              <p className="mt-2 text-sm text-muted">{point.body}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section aria-labelledby="pilar" className="flex flex-col gap-6">
-        <h2 id="pilar" className="font-display text-2xl text-text">
-          Mengapa memilih reservasi Damez
-        </h2>
-        <ul className="grid gap-4 sm:grid-cols-3">
-          {PILLARS.map((pillar) => (
-            <li key={pillar.title} className="rounded-card bg-surface-2/40 p-5">
-              <h3 className="font-display text-lg text-text">{pillar.title}</h3>
-              <p className="mt-2 text-sm text-muted">{pillar.body}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section aria-labelledby="layanan" className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 id="layanan" className="font-display text-2xl text-text">
-            Paket layanan dan tarif
-          </h2>
-          <p className="text-sm text-muted">
-            Harga sudah termasuk konsultasi gaya, cuci rambut, dan styling.
+          <p className="max-w-md text-[16.5px] leading-[1.52] text-text/90">
+            Pilih kursi dan jamnya, kunci dengan DP {formatRupiah(DOWN_PAYMENT_IDR)}. Kursi
+            ditahan 15 menit. Terlambat lebih dari {LATE_TOLERANCE_MINUTES} menit, DP hangus.
           </p>
-        </div>
-        <ul className="grid gap-3">
-          {services.map((service) => (
-            <li
-              key={service.id}
-              className="flex flex-col gap-2 rounded-card border border-surface-2 bg-surface p-5 sm:flex-row sm:items-center sm:justify-between"
+
+          <Link href="/booking" className={ACTION_CLASSES}>
+            <span>Kunci kursi saya</span>
+            <span className="font-mono text-xs font-semibold opacity-70">
+              {formatRupiah(DOWN_PAYMENT_IDR)}
+            </span>
+          </Link>
+
+          <dl className="grid gap-2 font-mono text-[13px] text-muted">
+            <div>
+              Buka <b className="font-semibold text-text">10:00 – 21:00 WIB</b>
+            </div>
+            <div>
+              Batal/reschedule <b className="font-semibold text-text">H-{CANCEL_CUTOFF_HOURS} jam</b>
+            </div>
+            <div>
+              Pelunasan <b className="font-semibold text-text">di kasir</b>, DP dipotong
+            </div>
+            <div>
+              Gerai <b className="font-semibold text-text">Jakarta Selatan</b>
+            </div>
+          </dl>
+
+          <p className="font-mono text-[12.5px] text-muted">
+            Tanpa akun · nomor WhatsApp untuk tiket dan pengingat
+          </p>
+
+          {/* Di layar lebar langkah-langkah ini mengisi rail supaya kolom kiri tidak
+              menggantung; di ponsel ia muncul sebagai seksi sendiri di bawah papan. */}
+          <ol className="mt-2 hidden flex-col gap-4 border-t border-line pt-5 lg:flex">
+            {STEPS.map((step, index) => (
+              <li key={step.title} className="flex flex-col gap-1.5">
+                <MonoLabel tone="brass">{`${String(index + 1).padStart(2, "0")}`}</MonoLabel>
+                <h3 className="font-display text-sm font-bold">{step.title}</h3>
+                <p className="font-mono text-[12.5px] leading-relaxed text-muted">{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Kanan: papan hari */}
+        <section aria-labelledby="papan-hari" className="flex flex-col lg:px-15 lg:py-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-3">
+            <h2
+              id="papan-hari"
+              className="font-display text-sm font-semibold tracking-[0.14em] uppercase"
             >
-              <div className="flex flex-col gap-1">
-                <h3 className="font-display text-lg text-text">{service.name}</h3>
-                <p className="text-sm text-muted">
-                  {service.durationMinutes} menit, {service.category}
-                </p>
-                {service.description === null ? null : (
-                  <p className="max-w-2xl text-sm text-muted">{service.description}</p>
-                )}
+              Papan hari ini — {board.label} · {formatHour(board.startHour)}–{formatHour(board.endHour)}
+            </h2>
+            <span className="font-mono text-[12.5px] text-brass">
+              {Math.floor(board.nowMinutes / 60)
+                .toString()
+                .padStart(2, "0")}
+              :
+              {(board.nowMinutes % 60).toString().padStart(2, "0")}{" "}
+              WIB sekarang · {board.scheduledCount} slot terjadwal hari ini
+            </span>
+          </div>
+
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-ghost">
+            <li className="whitespace-nowrap">arsir = kursi terjadwal</li>
+            <li className="whitespace-nowrap">garis putus = kursi bebas</li>
+            <li className="whitespace-nowrap">ISTIRAHAT = barber istirahat</li>
+            <li className="whitespace-nowrap">bingkai brass = jam yang Anda pilih</li>
+          </ul>
+
+          {/* Desktop & tablet lebar: grid jam × kursi */}
+          <div className="mt-2 hidden sm:block">
+            <div className="grid grid-cols-[72px_repeat(3,1fr)] lg:grid-cols-[96px_repeat(3,1fr)]">
+              <div aria-hidden="true" />
+              {board.chairs.map((chair) => (
+                <div
+                  key={chair.chairNumber}
+                  className="flex h-[72px] flex-col justify-center border-l border-line pl-3 lg:pl-4"
+                >
+                  <MonoLabel tone="brass">Kursi {chair.chairNumber}</MonoLabel>
+                  <span className="mt-0.5 font-display text-[17px] font-bold lg:text-lg">
+                    {chair.barberName}
+                  </span>
+                  {chair.barberTitle === null ? null : (
+                    <span className="mt-0.5 font-mono text-xs text-muted">{chair.barberTitle}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-line">
+              {Array.from({ length: board.endHour - board.startHour }, (_, index) => {
+                const hour = board.startHour + index;
+
+                return (
+                  <div
+                    key={hour}
+                    className="grid h-11 grid-cols-[72px_repeat(3,1fr)] border-b border-line-2 lg:grid-cols-[96px_repeat(3,1fr)]"
+                  >
+                    <div className="flex items-center pl-1 font-mono text-[12.5px] text-muted">
+                      {formatHour(hour)}
+                    </div>
+                    {board.chairs.map((chair) => {
+                      const slot = chair.slots.find((item) => item.hour === hour);
+                      return (
+                        <div
+                          key={chair.chairNumber}
+                          className="flex items-center border-l border-line-2 px-0 py-1"
+                        >
+                          <SlotCell
+                            state={slot?.state ?? "free"}
+                            text={slot?.text}
+                            className="justify-self-stretch"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Ponsel: satu blok per kursi, karena tiga kolom tidak terbaca di 390 px */}
+          <div className="mt-2 flex flex-col gap-6 sm:hidden">
+            {board.chairs.map((chair) => (
+              <div key={chair.chairNumber} className="flex flex-col">
+                <div className="flex items-baseline justify-between border-b border-line pb-2">
+                  <MonoLabel tone="brass">Kursi {chair.chairNumber}</MonoLabel>
+                  <span className="font-display text-base font-bold">{chair.barberName}</span>
+                </div>
+                <ul className="flex flex-col">
+                  {chair.slots.map((slot) => (
+                    <li
+                      key={slot.hour}
+                      className="flex h-10 items-center gap-3 border-b border-line-2"
+                    >
+                      <span className="w-14 font-mono text-[12.5px] text-muted">
+                        {formatHour(slot.hour)}
+                      </span>
+                      <SlotCell state={slot.state} text={slot.text} />
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="font-display text-lg text-brass whitespace-nowrap">
-                {formatRupiah(service.priceIdr)}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
+            ))}
+          </div>
 
-      <section aria-labelledby="barber" className="flex flex-col gap-6">
-        <h2 id="barber" className="font-display text-2xl text-text">
-          Tiga master barber
+          {/* Gulungan layanan: delapan alat di slotnya */}
+          <div className="mt-4 border-t border-line pt-px sm:pl-[72px] lg:pl-24">
+          <ul className="grid grid-cols-2 gap-px bg-line-2 lg:grid-cols-4">
+            {services.map((service) => (
+              <li
+                key={service.id}
+                className={`flex min-h-[104px] flex-col gap-1 bg-surface px-3.5 py-3 ${
+                  service.recommended ? "shadow-[inset_0_2px_0_var(--color-brass)]" : ""
+                }`}
+              >
+                <h3 className="font-display text-[13px] leading-snug font-semibold sm:line-clamp-2 sm:min-h-[34px]">
+                  {service.name}
+                </h3>
+                <p className="font-mono text-xs text-muted">
+                  {service.durationMinutes} menit · {service.category}
+                </p>
+                <p className="mt-auto font-mono text-sm text-brass">
+                  {formatRupiah(service.priceIdr)}
+                </p>
+              </li>
+            ))}
+          </ul>
+          </div>
+        </section>
+      </div>
+
+      <section aria-labelledby="cara" className="border-t border-line px-6 py-10 sm:block lg:hidden">
+        <h2 id="cara" className="font-display text-2xl font-bold">
+          Cara mengunci kursi
         </h2>
-        <ul className="grid gap-4 sm:grid-cols-3">
-          {barbers.map((barber) => (
-            <li key={barber.id} className="rounded-card border border-surface-2 bg-surface p-5">
-              <p className="text-sm text-brass">Kursi {barber.chairNumber}</p>
-              <h3 className="font-display text-lg text-text">{barber.fullName}</h3>
-              {barber.title === null ? null : <p className="text-sm text-muted">{barber.title}</p>}
-              {barber.specialty === null ? null : (
-                <p className="mt-2 text-sm text-muted">{barber.specialty}</p>
-              )}
+        <ol className="mt-6 grid gap-6 sm:grid-cols-3">
+          {STEPS.map((step, index) => (
+            <li key={step.title} className="flex flex-col gap-2">
+              <MonoLabel tone="brass">{`0${index + 1}`}</MonoLabel>
+              <h3 className="font-display text-lg font-bold">{step.title}</h3>
+              <p className="text-sm leading-relaxed text-muted">{step.body}</p>
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
 
-      <section aria-labelledby="faq" className="flex flex-col gap-4">
-        <h2 id="faq" className="font-display text-2xl text-text">
+      <section aria-labelledby="faq" className="border-t border-line px-6 py-10 lg:pr-16 lg:pl-[440px]">
+        <h2 id="faq" className="font-display text-2xl font-bold">
           Pertanyaan yang sering diajukan
         </h2>
-        <dl className="flex flex-col gap-4">
+        <dl className="mt-6 grid gap-6 sm:grid-cols-2">
           {FAQ.map((item) => (
-            <div key={item.question} className="rounded-card bg-surface p-5">
-              <dt className="font-display text-base text-text">{item.question}</dt>
-              <dd className="mt-2 text-sm text-muted">{item.answer}</dd>
+            <div key={item.question} className="border-l border-line pl-4">
+              <dt className="font-display text-base font-bold">{item.question}</dt>
+              <dd className="mt-1.5 text-sm leading-relaxed text-muted">{item.answer}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <footer className="flex flex-col gap-3 border-t border-surface-2 pt-8 text-sm text-muted">
-        <p>Damez Barbershop, Senopati, Jakarta Selatan. Buka setiap hari 10.00 sampai 21.00 WIB.</p>
+      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-8 font-mono text-[12.5px] text-muted lg:pr-16 lg:pl-[440px]">
+        <p>Damez Barbershop · Jakarta Selatan · buka 10:00–21:00 WIB</p>
         <Link href="/booking" className="text-brass underline underline-offset-4">
-          Booking kursi sekarang
+          Kunci kursi sekarang
         </Link>
       </footer>
     </main>

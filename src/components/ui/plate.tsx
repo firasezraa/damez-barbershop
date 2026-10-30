@@ -49,6 +49,10 @@ export function MonoLabel({
  * Aksi utama: brass penuh, teks ink, satu nilai mono di sisi kanan (IDEA.md
  * §17.3). Satu tombol per permukaan; tidak ada tombol sekunder berwarna brass.
  */
+/** Kelas aksi utama, dipakai tombol dan tautan supaya keduanya identik. */
+export const ACTION_CLASSES =
+  "flex h-[58px] w-full items-center justify-between rounded-[3px] bg-brass px-5 font-display text-[19px] font-bold text-ink transition-colors duration-150 hover:brightness-105 disabled:opacity-50";
+
 export function ActionButton({
   children,
   value,
@@ -63,11 +67,7 @@ export function ActionButton({
   className?: string;
 }) {
   return (
-    <button
-      type={type}
-      disabled={disabled}
-      className={`flex h-[58px] w-full items-center justify-between rounded-[3px] bg-brass px-5 font-display text-[19px] font-bold text-ink transition-colors duration-150 hover:brightness-105 disabled:opacity-50 ${className}`}
-    >
+    <button type={type} disabled={disabled} className={`${ACTION_CLASSES} ${className}`}>
       <span>{children}</span>
       {value === undefined ? null : (
         <span className="font-mono text-xs font-semibold opacity-70">{value}</span>
