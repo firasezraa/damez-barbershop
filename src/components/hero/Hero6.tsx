@@ -12,10 +12,6 @@ export interface HeroSlide {
   titlePrimary: string;
   titleAccent: string;
   description: string;
-  ctaText: string;
-  ctaHref: string;
-  secondaryCtaText: string;
-  secondaryCtaHref: string;
   image: string;
   imageAlt: string;
   badge: string;
@@ -30,10 +26,6 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
     titleAccent: "Ruang Tenang Pria Modern.",
     description:
       "Kami hadir untuk mengakhiri kompromi antara potongan tergesa-gesa dan antrean panjang yang membuang waktu. Tiga kursi vintage, tiga master barber, dan komitmen penuh menghormati ritme hidup Anda.",
-    ctaText: "Kunci Kursi Sekarang",
-    ctaHref: "/booking",
-    secondaryCtaText: "Lihat Ketersediaan Hari Ini ↓",
-    secondaryCtaHref: "#papan-jadwal",
     image:
       "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Master Barber memotong rambut pria dengan teknik gunting presisi di kursi vintage",
@@ -47,10 +39,6 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
     titleAccent: "Garis Tepi Tajam & Anatomis.",
     description:
       "Menggunakan clipper nirkabel terkalibrasi nol milimeter dan gunting baja tempa Jepang. Perpindahan helai demi helai menciptakan siluet yang menyatu sempurna dengan rahang Anda.",
-    ctaText: "Pilih Barber Anda",
-    ctaHref: "/barber",
-    secondaryCtaText: "Jelajahi 8 Katalog Layanan →",
-    secondaryCtaHref: "/layanan",
     image:
       "https://images.unsplash.com/photo-1541533848490-bc8115cd6522?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Proses pangkas rambut gradasi skin fade tajam menggunakan clipper nirkabel profesional",
@@ -64,10 +52,6 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
     titleAccent: "Pisau Silet 100% Sekali Pakai.",
     description:
       "Setiap alat disterilisasi ganda dengan cairan antiseptik medis dan kabinet sinar UV-C. Silet baru bersegel selalu dibuka langsung di hadapan Anda sebelum sesi cukur jenggot dimulai.",
-    ctaText: "Standar Higienis Kami",
-    ctaHref: "/kebersihan",
-    secondaryCtaText: "Reservasi Kursi Steril →",
-    secondaryCtaHref: "/booking",
     image:
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Proses cukur tradisional dengan silet higienis dan detailing garis rambut",
@@ -209,19 +193,19 @@ export function Hero6() {
             </div>
           </div>
 
-          {/* CTA Buttons - Tetap berada di garis Y yang sama, lega dan menonjol */}
+          {/* CTA Buttons - Statis permanen di semua slide: hanya direct ke booking & ketersediaan hari ini */}
           <div className="flex flex-wrap items-center gap-4 pt-8">
             <Link
-              href={currentSlide.ctaHref}
+              href="/booking"
               className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink shadow-lg shadow-brass/10 transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
             >
-              {currentSlide.ctaText}
+              Kunci Kursi Sekarang
             </Link>
             <a
-              href={currentSlide.secondaryCtaHref}
+              href="#papan-jadwal"
               className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
             >
-              {currentSlide.secondaryCtaText}
+              Lihat Ketersediaan Hari Ini ↓
             </a>
           </div>
         </div>
