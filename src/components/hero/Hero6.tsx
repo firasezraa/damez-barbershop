@@ -118,30 +118,33 @@ export function Hero6() {
       className="relative overflow-hidden border-b border-line px-6 py-14 lg:px-16 lg:py-20"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
-        {/* Kolom Kiri: Teks Narasi & CTA */}
+        {/* Kolom Kiri: Teks Narasi & CTA. Semua blok diberi tinggi minimum tetap
+            supaya pergantian slide tidak mengubah tinggi hero sama sekali. */}
         <div className="flex flex-1 flex-col gap-6">
-          <div className="flex flex-col gap-3">
+          <div className="flex min-h-[188px] flex-col gap-3 sm:min-h-[248px] lg:min-h-[288px]">
             <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
-            <h1 className="font-display text-4xl font-extrabold tracking-tight text-text transition-all duration-300 sm:text-6xl lg:text-7xl">
-              {currentSlide.titlePrimary}
+            <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+              <span className="block">{currentSlide.titlePrimary}</span>
               <span className="block text-brass">{currentSlide.titleAccent}</span>
             </h1>
           </div>
 
-          <p className="max-w-xl text-base leading-relaxed text-muted transition-opacity duration-300 sm:text-lg">
+          <p className="min-h-[96px] max-w-xl text-base leading-relaxed text-muted sm:min-h-[84px] sm:text-lg">
             {currentSlide.description}
           </p>
 
+          {/* Dua tombol punya lebar tetap per posisi dan tidak pernah membungkus,
+              jadi baris aksi identik di semua slide. */}
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Link
               href={currentSlide.ctaHref}
-              className="inline-flex h-13 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98]"
+              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
             >
               {currentSlide.ctaText}
             </Link>
             <a
               href={currentSlide.secondaryCtaHref}
-              className="inline-flex h-13 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs uppercase tracking-wider text-text transition-colors hover:border-brass/60"
+              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
             >
               {currentSlide.secondaryCtaText}
             </a>
