@@ -37,7 +37,13 @@ async function openSlotStep(page: import("@playwright/test").Page, date: string)
   await page.getByRole("radio").first().check();
   await page.getByRole("button", { name: /Lanjut Pilih Tanggal/i }).click();
   await page.getByLabel("Tanggal").fill(date);
+  const menungguJawaban = page.waitForResponse(
+    (response) => response.url().includes("/api/slots/available") && response.request().method() === "POST",
+    { timeout: 15_000 },
+  );
   await page.getByRole("button", { name: /Tampilkan jadwal tersedia/i }).click();
+  const jawaban = await menungguJawaban;
+  expect(jawaban.status()).toBe(200);
   await expect(page.getByRole("button", { name: slotButtons }).first()).toBeVisible();
 }
 
@@ -84,18 +90,20 @@ test("a slot already held disappears for the next customer", async ({ page }, te
   // Pelanggan kedua membuka tanggal yang sama: slot tadi tidak lagi ditawarkan.
   await openSlotStep(page, date);
 
+  const papanTerlihat = await page.getByRole("button", { name: slotButtons }).allInnerTexts();
+  console.log(`[diagnostik] tanggal=${date} slot=${takenLabel} papan=${JSON.stringify(papanTerlihat)}`);
+
   try {
     await expect(page.getByRole("button", { name: takenLabel, exact: true })).toHaveCount(0);
   } catch (error) {
-    // Kegagalan ini pernah muncul sekali di CI dan lolos saat retry, tanpa bukti
-    // apa pun. Kalau terulang, log CI harus memuat jawaban API-nya.
-    const barberId = await page.getByRole("radio").first().getAttribute("value").catch(() => null);
-    const balasan = await page.request.post("/api/slots/available", {
-      data: { date, serviceIds: [], barberId },
-    });
-    console.log(
-      `[diagnostik] tanggal=${date} barber=${String(barberId)} status=${balasan.status()} muatan=${(await balasan.text()).slice(0, 800)}`,
-    );
+    // Diagnostik sebelumnya ikut menggantung 30 s sehingga tidak pernah tercetak.
+    // Sekarang: batas 3 s, tidak menunggu badan jawaban, dan galat asli selalu
+    // dilempar ulang supaya pesannya tidak tertimpa.
+    const balasan = await page.request
+      .post("/api/slots/available", { data: { date, serviceIds: [], barberId: null }, timeout: 3_000 })
+      .then((response) => `status=${response.status()}`)
+      .catch((galat) => `gagal: ${String(galat).slice(0, 120)}`);
+    console.log(`[diagnostik] panggilan ulang availability ${balasan}`);
     throw error;
   }
 });
