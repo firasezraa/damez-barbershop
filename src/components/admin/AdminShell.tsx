@@ -39,6 +39,8 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "dmz_admin_sidebar_collapsed";
+
 interface AdminShellProps {
   role: string;
   today: string;
@@ -47,8 +49,29 @@ interface AdminShellProps {
 
 export function AdminShell({ role, today, children }: AdminShellProps) {
   const pathname = usePathname();
-  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const handleToggleDesktopSidebar = () => {
+    setIsDesktopCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(next));
+      } catch {
+        // Ignore localStorage error
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-ink text-text">
@@ -226,7 +249,7 @@ export function AdminShell({ role, today, children }: AdminShellProps) {
           {/* Desktop Collapse/Expand Toggle Button at bottom of sidebar */}
           <button
             type="button"
-            onClick={() => setIsDesktopCollapsed((prev) => !prev)}
+            onClick={handleToggleDesktopSidebar}
             title={isDesktopCollapsed ? "Perlebar Sidebar" : "Ciutkan Sidebar"}
             className="hidden lg:flex min-h-9 w-full items-center justify-center gap-2 rounded-[3px] border border-line-2 bg-ink/60 font-mono text-[11px] text-ghost hover:text-text hover:bg-surface-2 transition-colors"
           >
@@ -252,7 +275,7 @@ export function AdminShell({ role, today, children }: AdminShellProps) {
           role={role}
           today={today}
           onToggleMobileMenu={() => setIsMobileOpen((prev) => !prev)}
-          onToggleDesktopSidebar={() => setIsDesktopCollapsed((prev) => !prev)}
+          onToggleDesktopSidebar={handleToggleDesktopSidebar}
           isDesktopCollapsed={isDesktopCollapsed}
         />
 
