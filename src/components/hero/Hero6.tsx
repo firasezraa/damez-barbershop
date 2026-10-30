@@ -49,8 +49,8 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
     secondaryCtaText: "Jelajahi 8 Katalog Layanan →",
     secondaryCtaHref: "/layanan",
     image:
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1200&auto=format&fit=crop",
-    imageAlt: "Alat pangkas rambut steril dan razor berkualitas tinggi di meja kerja barber",
+      "https://images.unsplash.com/photo-1541533848490-bc8115cd6522?q=80&w=1200&auto=format&fit=crop",
+    imageAlt: "Proses pangkas rambut gradasi skin fade tajam menggunakan clipper nirkabel profesional",
     badge: "Kursi 2 — Fade & Taper",
   },
   {
@@ -66,7 +66,7 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
     secondaryCtaHref: "/booking",
     image:
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1200&auto=format&fit=crop",
-    imageAlt: "Proses cukur tradisional dengan handuk hangat aromaterapi dan silet higienis",
+    imageAlt: "Proses cukur tradisional dengan silet higienis dan detailing garis rambut",
     badge: "Kursi 3 — Shave & Scalp Therapy",
   },
 ];
@@ -202,15 +202,23 @@ export function Hero6() {
           {/* Frame Gambar Carousel */}
           <div className="relative z-10 w-full overflow-hidden rounded-[4px] border border-line bg-surface shadow-2xl transition-all duration-500">
             <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/11]">
-              <Image
-                key={currentSlide.image}
-                src={currentSlide.image}
-                alt={currentSlide.imageAlt}
-                fill
-                priority={currentIndex === 0}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover object-center transition-all duration-700 animate-in fade-in zoom-in-95"
-              />
+              {DAMEZ_HERO_SLIDES.map((slide, idx) => (
+                <div
+                  key={slide.id}
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  }`}
+                >
+                  <Image
+                    src={slide.image}
+                    alt={slide.imageAlt}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover object-center"
+                  />
+                </div>
+              ))}
 
               {/* Gradient Overlay bawah gambar */}
               <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink via-ink/60 to-transparent pointer-events-none z-10" />
