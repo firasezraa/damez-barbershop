@@ -129,39 +129,76 @@ export function Hero6() {
               return (
                 <div
                   key={slide.id}
-                  style={{
-                    transitionDuration: "500ms",
-                    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-                    willChange: "transform, opacity, filter",
-                    transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 8px, 0)",
-                    filter: active ? "blur(0px)" : "blur(4px)",
-                    backfaceVisibility: "hidden",
-                    WebkitBackfaceVisibility: "hidden",
-                  }}
-                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-all ${
-                    active
-                      ? "opacity-100 z-10"
-                      : "opacity-0 z-0 pointer-events-none"
+                  className={`col-start-1 row-start-1 flex flex-col justify-between ${
+                    active ? "z-10" : "z-0 pointer-events-none"
                   }`}
                   aria-hidden={!active}
                 >
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3">
-                      <div>
+                      {/* Eyebrow Label: Blur & Float Reveal */}
+                      <div
+                        style={{
+                          transitionDuration: "600ms",
+                          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                          transitionDelay: active ? "60ms" : "0ms",
+                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, -8px, 0)",
+                          filter: active ? "blur(0px)" : "blur(6px)",
+                          opacity: active ? 1 : 0,
+                          willChange: "transform, opacity, filter",
+                        }}
+                      >
                         <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
                       </div>
-                      <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+
+                      {/* Heading H1: Blur & Float Reveal */}
+                      <h1
+                        style={{
+                          transitionDuration: "700ms",
+                          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                          transitionDelay: active ? "120ms" : "0ms",
+                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 12px, 0)",
+                          filter: active ? "blur(0px)" : "blur(8px)",
+                          opacity: active ? 1 : 0,
+                          willChange: "transform, opacity, filter",
+                        }}
+                        className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl"
+                      >
                         <span className="block">{slide.titlePrimary}</span>
                         <span className="block text-brass">{slide.titleAccent}</span>
                       </h1>
                     </div>
 
-                    <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+                    {/* Deskripsi: Blur & Float Reveal */}
+                    <p
+                      style={{
+                        transitionDuration: "700ms",
+                        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                        transitionDelay: active ? "180ms" : "0ms",
+                        transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 10px, 0)",
+                        filter: active ? "blur(0px)" : "blur(8px)",
+                        opacity: active ? 1 : 0,
+                        willChange: "transform, opacity, filter",
+                      }}
+                      className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
+                    >
                       {slide.description}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-4 pt-6">
+                  {/* Tombol CTA: Blur & Pop Reveal */}
+                  <div
+                    style={{
+                      transitionDuration: "750ms",
+                      transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                      transitionDelay: active ? "240ms" : "0ms",
+                      transform: active ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 12px, 0) scale(0.97)",
+                      filter: active ? "blur(0px)" : "blur(6px)",
+                      opacity: active ? 1 : 0,
+                      willChange: "transform, opacity, filter",
+                    }}
+                    className="flex flex-wrap items-center gap-4 pt-6"
+                  >
                     <Link
                       href={slide.ctaHref}
                       tabIndex={active ? 0 : -1}
