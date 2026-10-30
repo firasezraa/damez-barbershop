@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Damez — kartu 1: Meja kerja &amp; gulungan alat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0b0c; --surface:#141417; --surface-2:#1d1d21;
+    --brass:#c8a24a; --text:#f5f1e8; --muted:#9a958c;
+    --brass-deep:#c2a25c; --ghost:#aba69c;
+    --display:'Archivo',system-ui,sans-serif; --mono:'Spline Sans Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{overflow:hidden}
+  body{background:var(--ink);color:var(--text);font-family:var(--display);width:1440px;height:900px}
+  .screen{display:grid;grid-template-columns:392px 1fr;height:900px}
+
+  /* kiri: identitas gerai, aturan, aksi */
+  .grip{border-right:1px solid #26262b;padding:38px 36px;display:flex;flex-direction:column;gap:19px}
+  .wordmark{font-size:52px;font-weight:800;font-stretch:112%;letter-spacing:-.02em;line-height:.94}
+  .wordmark small{display:block;font-size:13px;font-weight:500;font-stretch:100%;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-top:10px}
+  .lede{font-size:16.5px;line-height:1.52;color:#ded8cb}
+  .rules{font-family:var(--mono);font-size:13px;color:var(--muted);display:grid;gap:8px}
+  .rules b{color:var(--text);font-weight:600}
+  .cta{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+  .btn{background:var(--brass);color:#141416;border:0;font-family:var(--display);font-weight:700;font-stretch:108%;
+       font-size:19px;height:58px;border-radius:3px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+  .btn span{font-family:var(--mono);font-size:12.5px;font-weight:600;opacity:.72}
+  .micro{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+
+  /* kanan: papan hari — tinggi baris eksplisit supaya tidak pernah meluber */
+  .bench{padding:28px 60px 16px 46px;display:grid;grid-template-rows:30px 88px 30px 1fr 196px;height:900px;overflow:hidden}
+  .benchhead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #26262b}
+  .benchhead h2{font-size:14px;font-weight:600;font-stretch:118%;letter-spacing:.14em;text-transform:uppercase}
+  .benchhead .now{font-family:var(--mono);font-size:12.5px;color:var(--brass)}
+  .plates{display:grid;grid-template-columns:96px repeat(3,1fr);padding-top:16px}
+  .platecell{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:flex-end;padding-bottom:9px}
+  .plate{height:72px;border-left:1px solid #26262b;padding-left:16px;display:flex;flex-direction:column;justify-content:center}
+  .plate .chair{font-family:var(--mono);font-size:12px;color:var(--brass)}
+  .plate .who{font-size:18px;font-weight:700;font-stretch:110%;margin-top:3px}
+  .plate .role{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:3px}
+  .legend{font-family:var(--mono);font-size:12px;color:var(--ghost);display:flex;align-items:center;letter-spacing:.02em}
+  .grid{border-top:1px solid #26262b;align-self:start;min-height:0;overflow:hidden}
+  .row{display:grid;grid-template-columns:96px repeat(3,1fr);height:44px;border-bottom:1px solid #232329}
+  .hour{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;align-items:center;padding-left:4px}
+  .cell{border-left:1px solid #232329;display:flex;align-items:center;padding:4px 0}
+  .punched{flex:1;align-self:stretch;margin:0 8px;display:flex;align-items:center;padding-left:10px;
+    background:repeating-linear-gradient(135deg,#2a2416 0 5px,#1d1a10 5px 10px);border-top:1px solid #3d3420;
+    font-family:var(--mono);font-size:12px;color:#b79546}
+  .ghost{flex:1;margin:0 8px;height:28px;border:1px dashed #3d3d46;border-radius:2px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:12px;color:var(--ghost)}
+  .ghost.rest{color:var(--brass-deep);border-color:#4a3f22}
+  .yours{flex:1;margin:0 8px;height:28px;border:1px solid var(--brass);border-radius:2px;background:rgba(200,162,74,.08);
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--brass)}
+
+  /* gulungan alat: delapan layanan di slotnya */
+  .roll{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:1px;background:#1c1c20;border-top:1px solid #26262b}
+  .tool{background:var(--surface);padding:11px 14px 12px;display:flex;flex-direction:column;gap:5px}
+  .tool h3{font-size:13px;font-weight:600;font-stretch:105%;line-height:1.22}
+  .tool .meta{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:9px}
+  .tool .price{font-family:var(--mono);font-size:14.5px;color:var(--brass);margin-top:auto}
+  .tool.recommended{box-shadow:inset 0 2px 0 var(--brass)}
+</style>
+</head>
+<body>
+<div class="screen">
+  <section class="grip">
+    <h1 class="wordmark">DAMEZ<small>Tiga kursi. Tiga barber. Satu gerai.</small></h1>
+    <p class="lede">Pilih kursi dan jamnya, kunci dengan DP Rp 20.000. Kursi ditahan 15 menit. Terlambat lebih dari 15 menit, DP hangus.</p>
+    <div class="rules">
+      <div>Buka <b>10:00 – 21:00 WIB</b></div>
+      <div>Batal/reschedule <b>H-3 jam</b></div>
+      <div>Pelunasan <b>di kasir</b>, DP dipotong</div>
+      <div>Gerai <b>Jakarta Selatan</b> · tiga kursi</div>
+    </div>
+    <div class="cta">
+      <button class="btn">Kunci kursi saya <span>DP 20.000</span></button>
+      <p class="micro">Tanpa akun · nomor WhatsApp untuk tiket dan jadwal</p>
+    </div>
+  </section>
+
+  <section class="bench">
+    <div class="benchhead">
+      <h2>Papan hari ini — Kamis, 30 Okt · 10:00–14:00</h2>
+      <span class="now">14:20 WIB · 5 slot terjadwal</span>
+    </div>
+
+    <div class="plates">
+      <div class="platecell">JAM</div>
+      <div class="plate"><span class="chair">KURSI 01</span><span class="who">Rian Pratama</span><span class="role">Senior Master Barber</span></div>
+      <div class="plate"><span class="chair">KURSI 02</span><span class="who">Dimas Arisandi</span><span class="role">Clipper &amp; Fade Specialist</span></div>
+      <div class="plate"><span class="chair">KURSI 03</span><span class="who">Kevin Sanjaya</span><span class="role">Master of Shave &amp; Scalp</span></div>
+    </div>
+
+    <p class="legend">▮ terjadwal · ▯ bebas · ▨ istirahat · ▣ pilihan Anda</p>
+
+    <div class="grid">
+      <div class="row"><div class="hour">10:00</div><div class="cell"><div class="punched">DMZ-1030-0007</div></div><div class="cell"><div class="ghost">BEBAS</div></div><div class="cell"><div class="punched">DMZ-1030-0008</div></div></div>
+      <div class="row"><div class="hour">11:00</div><div class="cell"><div class="ghost">BEBAS</div></div><div class="cell"><div class="punched">SRV-02 · 50′</div></div><div class="cell"><div class="ghost">BEBAS</div></div></div>
+      <div class="row"><div class="hour">12:00</div><div class="cell"><div class="ghost rest">ISTIRAHAT</div></div><div class="cell"><div class="ghost">BEBAS</div></div><div class="cell"><div class="ghost">BEBAS</div></div></div>
+      <div class="row"><div class="hour">13:00</div><div class="cell"><div class="ghost">BEBAS</div></div><div class="cell"><div class="ghost rest">ISTIRAHAT</div></div><div class="cell"><div class="ghost">BEBAS</div></div></div>
+      <div class="row"><div class="hour">14:00</div><div class="cell"><div class="punched">SRV-08 · 60′</div></div><div class="cell"><div class="ghost">BEBAS</div></div><div class="cell"><div class="yours">PILIHAN ANDA · 14:00–14:50</div></div></div>
+    </div>
+
+    <div class="roll">
+      <div class="tool recommended"><h3>Gentlemen Classic Haircut</h3><div class="meta"><span>45 menit</span><span>Core</span></div><div class="price">Rp 50.000</div></div>
+      <div class="tool recommended"><h3>Premium Fade &amp; Taper Cut</h3><div class="meta"><span>50 menit</span><span>Core</span></div><div class="price">Rp 65.000</div></div>
+      <div class="tool"><h3>Junior / Kids Haircut</h3><div class="meta"><span>35 menit</span><span>Anak &lt;12</span></div><div class="price">Rp 40.000</div></div>
+      <div class="tool"><h3>Beard Sculpting &amp; Hot Towel Shave</h3><div class="meta"><span>35 menit</span><span>Grooming</span></div><div class="price">Rp 45.000</div></div>
+      <div class="tool"><h3>Relaxing Hair Spa &amp; Anti-Dandruff</h3><div class="meta"><span>40 menit</span><span>Treatment</span></div><div class="price">Rp 55.000</div></div>
+      <div class="tool"><h3>Black Hair Color Revival</h3><div class="meta"><span>45 menit</span><span>Coloring</span></div><div class="price">Rp 65.000</div></div>
+      <div class="tool"><h3>Express Clean Cut &amp; Wash</h3><div class="meta"><span>30 menit</span><span>Cepat</span></div><div class="price">Rp 40.000</div></div>
+      <div class="tool recommended"><h3>The Damez Signature Executive Combo</h3><div class="meta"><span>60 menit</span><span>Paket</span></div><div class="price">Rp 95.000</div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

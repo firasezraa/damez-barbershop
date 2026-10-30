@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Damez — kartu 3: Papan harga gerai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0b0c; --surface:#141417; --surface-2:#1d1d21;
+    --brass:#c8a24a; --text:#f5f1e8; --muted:#9a958c;
+    --display:'Archivo',system-ui,sans-serif; --mono:'Spline Sans Mono',ui-monospace,monospace;
+    --daylight:rgba(200,162,74,.055);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{overflow:hidden}
+  body{background:var(--ink);color:var(--text);font-family:var(--display);width:1440px;height:900px;position:relative}
+  /* band cahaya: posisi = jam berjalan, satu-satunya gerak di halaman */
+      .wrap{position:relative;z-index:1;padding:42px 52px 0;height:900px;display:flex;flex-direction:column}
+  /* kepala papan */
+  .masthead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #26262b;padding-bottom:30px}
+  .masthead h1{font-size:52px;font-weight:800;font-stretch:118%;letter-spacing:-.025em;line-height:.95}
+  .masthead h1 small{display:block;font-family:var(--mono);font-size:11.5px;font-weight:400;letter-spacing:.24em;color:var(--brass);text-transform:uppercase;margin-bottom:10px}
+  .clock{width:216px;margin-left:auto;margin-top:14px;position:relative}
+  .clock .scale{height:20px;border-bottom:1px solid rgba(200,162,74,.45);
+    background:repeating-linear-gradient(90deg,rgba(200,162,74,.45) 0 1px,transparent 1px 21.6px)}
+  .clock .mark{position:absolute;left:39%;bottom:-5px;width:3px;height:12px;background:var(--brass)}
+  .clock .lab{position:absolute;right:0;bottom:-24px;font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.04em;white-space:nowrap}
+  .states{display:flex;gap:30px;font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+  .states b{display:block;color:var(--text);font-weight:600;font-size:15px}
+  .states .free b{color:var(--brass)}
+  /* papan: tiap layanan satu baris, jurang di tengah memisah tawaran dari aksi */
+  .board{flex:1;display:flex;flex-direction:column;justify-content:center;gap:0}
+  .row{display:grid;grid-template-columns:1fr 1px 296px;align-items:stretch;border-bottom:1px solid #1c1c20;padding:0}
+  .row:first-child{border-top:1px solid #1c1c20}
+  .row .name{padding:20px 24px 20px 0;font-size:31px;font-weight:700;font-stretch:104%;letter-spacing:-.012em;line-height:1.06}
+  .row .name em{display:block;font-family:var(--mono);font-size:12px;font-style:normal;color:#aba69c;letter-spacing:.04em;text-transform:uppercase;margin-top:7px}
+  .row .gutter{background:#2b2b31;height:100%;align-self:stretch}
+  .row .side{padding:16px 0 16px 26px;display:grid;grid-template-columns:64px 1fr;gap:4px 18px;align-items:center;align-content:center}
+  .row .dur{font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .row .price{font-family:var(--mono);font-size:21px;font-weight:600;text-align:right;color:var(--text)}
+  .row .pick{grid-column:1 / -1;font-family:var(--mono);font-size:12.5px;color:var(--brass);text-align:right;letter-spacing:.02em}
+  .row.hot{box-shadow:inset 3px 0 0 var(--brass)}
+  .row.hot .name{color:#fff8e8}
+  .row.hot .price{color:var(--brass)}
+  .row .name .tag{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--brass);border:1px solid rgba(200,162,74,.45);
+    border-radius:2px;padding:3px 7px;margin-left:12px;vertical-align:middle}
+  /* kaki: jam + aksi utama */
+  .foot{margin:0 -52px;border-top:1px solid #26262b;padding:16px 52px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+  .hours{display:flex;gap:24px;white-space:nowrap;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .hours b{color:var(--text);font-weight:600}
+  .act{display:flex;align-items:center;gap:18px}
+  .act .note{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.6;white-space:nowrap}
+  .act button{background:var(--brass);color:#15151a;border:0;border-radius:3px;font-weight:700;font-stretch:108%;font-size:18px;padding:17px 26px;font-family:var(--display);white-space:nowrap}
+</style>
+</head>
+<body>
+  
+  <div class="wrap">
+    <header class="masthead">
+      <h1><small>Damez · Jakarta Selatan · sejak 2019</small>Papan harga &amp; kursi hari ini</h1>
+      <div>
+        <div class="states">
+          <div class="free"><b>Kursi 02</b>Bebas 14:30</div>
+          <div><b>Kursi 01</b>Terisi s/d 15:05</div>
+          <div><b>Kursi 03</b>Bebas 14:30</div>
+        </div>
+        <div class="clock"><div class="scale"></div><div class="mark"></div><div class="lab">SEKARANG 14:20 WIB · skala 10:00–21:00</div></div>
+      </div>
+    </header>
+
+    <main class="board">
+      <div class="row hot">
+        <div class="name">Gentlemen Classic Haircut<span class="tag">PALING SERING</span><em>Konsultasi gaya · potong presisi · cuci · pijat bahu · pomade</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">45 menit</span><span class="price">Rp 50.000</span><span class="pick">Kunci 14:30 di kursi 02 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">Premium Fade &amp; Taper Cut<em>Skin fade · drop fade · taper · razor detailing</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">50 menit</span><span class="price">Rp 65.000</span><span class="pick">Kunci 15:00 di kursi 03 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">Beard Sculpting &amp; Hot Towel Shave<em>Perapian jenggot · handuk hangat · silet steril · balm</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">35 menit</span><span class="price">Rp 45.000</span><span class="pick">Kunci 15:45 di kursi 01 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">Relaxing Hair Spa &amp; Anti-Dandruff<em>Scrub kulit kepala · creambath mint · pijat 20 menit</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">40 menit</span><span class="price">Rp 55.000</span><span class="pick">Kunci 16:30 di kursi 03 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">Junior / Kids Haircut<em>Usia di bawah 12 tahun · penanganan sabar</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">35 menit</span><span class="price">Rp 40.000</span><span class="pick">Kunci 17:00 di kursi 01 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">The Damez Signature Executive Combo<span class="tag">PAKET</span><em>Fade · jenggot · handuk hangat · pijat kepala &amp; bahu · minuman dingin</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">60 menit</span><span class="price">Rp 95.000</span><span class="pick">Kunci 18:00 di kursi 02 →</span></div>
+      </div>
+      <div class="row">
+        <div class="name">Express Clean Cut &amp; Wash<em>Samping dan belakang saja · untuk kebutuhan mendesak</em></div>
+        <div class="gutter"></div>
+        <div class="side"><span class="dur">30 menit</span><span class="price">Rp 40.000</span><span class="pick">Kunci 19:00 di kursi 03 →</span></div>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="hours">
+        <div>Buka <b>10:00 – 21:00 WIB</b></div>
+        <div style="white-space:nowrap">DP <b>Rp 20.000</b>, dipotong di kasir</div>
+        <div style="white-space:nowrap">Batal <b>H-3 jam</b></div>
+        <div style="white-space:nowrap">Toleransi <b>15 menit</b></div>
+      </div>
+      <div class="act">
+        <p class="note">Tanpa akun · nomor WhatsApp untuk tiket &amp; pengingat</p>
+        <button>Pilih jam &amp; kunci kursi</button>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

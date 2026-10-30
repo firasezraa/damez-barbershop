@@ -1,93 +1,165 @@
-name: CI Quality Gate Pipeline
+name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ["**"]
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NODE_VERSION: "22"
+
 jobs:
   typecheck:
-    name: Static Type Check (tsc)
+    name: 1/6 typecheck
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run TypeScript typecheck
-        run: npm run typecheck
-
-  test:
-    name: Automated Unit & Concurrency Test Suite
+  lint:
+    name: 2/6 lint
+    needs: typecheck
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
 
-      - name: Install dependencies
-        run: npm ci
+  unit:
+    name: 3/6 unit + coverage
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
 
-      - name: Run all 18 test suites
-        run: npm test
+  integration:
+    name: 4/6 integration (postgres 16)
+    needs: unit
+    runs-on: ubuntu-latest
+    # Postgres nyata, bukan pg-mem: constraint GiST dan rate limit hanya benar
+    # di engine sungguhan (IDEA.md §2.3 no. 5).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: damez
+          POSTGRES_PASSWORD: damez
+          POSTGRES_DB: damez_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+      TEST_DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Migrate from zero
+        run: npm run migrate
+      - name: Seed
+        run: npm run seed
+      - run: npm run test:integration
+
+  e2e:
+    name: 5/6 e2e (chromium)
+    needs: integration
+    runs-on: ubuntu-latest
+    # E2E menjalankan alur booking sungguhan, jadi butuh Postgres + katalog seed.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: damez
+          POSTGRES_PASSWORD: damez
+          POSTGRES_DB: damez_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+      TEST_DATABASE_URL: postgresql://damez:damez@127.0.0.1:5432/damez_test
+      # E2E menjalankan alur DP dengan Midtrans dan WhatsApp palsu: tanpa biaya,
+      # tanpa jaringan, tetapi jalur kode yang diuji sama dengan produksi.
+      MOCK_MIDTRANS: "true"
+      MOCK_WHATSAPP: "true"
+      MIDTRANS_SERVER_KEY: kunci-server-midtrans-untuk-e2e
+      CRON_SECRET: rahasia-cron-e2e-16karakter
+      # Autentikasi admin memakai Supabase sungguhan (GoTrue tidak bisa jalan di
+      # runner). Datanya tetap Postgres service di atas, bukan database produksi.
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_OWNER_EMAIL: ${{ secrets.E2E_OWNER_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Migrate from zero
+        run: npm run migrate
+      - name: Seed
+        run: npm run seed
+      - name: Build production bundle
+        run: npm run build
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
 
   build:
-    name: Next.js 15 Production Build
-    runs-on: ubuntu-latest
-    needs: [typecheck, test]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Next.js application
-        run: npm run build
-        env:
-          NODE_ENV: production
-          NEXT_PUBLIC_SITE_URL: https://damezbarber.com
-          NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: SB-Mid-client-sample-key
-          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
-
-  security-audit:
-    name: Security Vulnerability Audit
+    name: 6/6 production build
+    needs: e2e
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 22 LTS
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Run npm audit check
-        run: npm audit --audit-level=critical || true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build

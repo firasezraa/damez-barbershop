@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/*
+ * Satu-satunya sumber token desain (IDEA.md §5), diperluas oleh spesifikasi
+ * redesign §17. Palet gelap + brass dikunci pemilik dan tidak diganti; yang
+ * ditambah adalah token keadaan, garis, dan kertas.
+ *
+ * Rasio kontras tiap pasangan teks/latar diuji di
+ * tests/unit/design-tokens.test.ts — token yang gagal AA membuat test gagal,
+ * bukan sekadar catatan di dokumen.
+ */
+@theme {
+  /* permukaan */
+  --color-ink: #0b0b0c;
+  --color-surface: #141417;
+  --color-surface-2: #1d1d21;
+
+  /* bahan aksen */
+  --color-brass: #c8a24a;
+  --color-brass-deep: #c2a25c;
+
+  /* teks */
+  --color-text: #f5f1e8;
+  --color-muted: #9a958c;
+  --color-ghost: #aba69c;
+  --color-punched: #b79546;
+
+  /* garis struktur */
+  --color-line: #26262b;
+  --color-line-2: #232329;
+  --color-line-rest: #4a3f22;
+
+  /* arsir keadaan terjadwal */
+  --color-hold: #2a2416;
+  --color-hold-2: #1d1a10;
+
+  /* kertas tiket */
+  --color-paper: #f5f1e8;
+  --color-paper-ink: #15151a;
+
+  /* status */
+  --color-danger: #d9534f;
+  --color-ok: #4e9f6a;
+
+  /* bentuk: sudut kecil, tanpa bayangan berwarna (IDEA.md §17.6) */
+  --radius-plate: 3px;
+  --radius-cell: 2px;
+  --radius-card: 0.875rem;
+
+  /* huruf: Archivo (sumbu lebar) + Spline Sans Mono untuk angka */
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-body: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-spline-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-text);
+  }
+
+  /* Fokus selalu terlihat (IDEA.md §17.9). */
+  :focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-brass);
+    color: var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
