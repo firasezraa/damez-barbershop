@@ -8,10 +8,12 @@ export function Plate({
   children,
   className = "",
   tone = "surface",
+  id,
 }: {
   children: ReactNode;
   className?: string;
   tone?: "surface" | "surface-2" | "paper";
+  id?: string;
 }) {
   const tones = {
     surface: "bg-surface border-line text-text",
@@ -20,7 +22,7 @@ export function Plate({
   } as const;
 
   return (
-    <div className={`rounded-[3px] border ${tones[tone]} ${className}`}>{children}</div>
+    <div id={id} className={`rounded-[3px] border ${tones[tone]} ${className}`}>{children}</div>
   );
 }
 

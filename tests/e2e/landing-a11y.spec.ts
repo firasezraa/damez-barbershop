@@ -9,6 +9,10 @@ import { expect, test } from "@playwright/test";
 const PAGES = [
   { path: "/", name: "landing" },
   { path: "/booking", name: "booking" },
+  { path: "/layanan", name: "layanan" },
+  { path: "/barber", name: "barber" },
+  { path: "/kisah-kami", name: "kisah-kami" },
+  { path: "/kebersihan", name: "kebersihan" },
   { path: "/kebijakan-privasi", name: "kebijakan privasi" },
   { path: "/halaman-yang-tidak-ada", name: "404" },
 ];
