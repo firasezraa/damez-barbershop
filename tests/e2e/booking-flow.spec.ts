@@ -75,6 +75,26 @@ test("a customer books a chair without creating an account", async ({ page }, te
 test("a slot already held disappears for the next customer", async ({ page }, testInfo) => {
   const date = dateFor(testInfo, 0);
 
+  // Rekaman jawaban ketersediaan yang benar-benar diterima halaman ini. Kalau
+  // asersi gagal, inilah buktinya: permintaan apa yang dikirim dan apa jawabannya,
+  // bukan probe terpisah yang mudah salah bentuk.
+  const rekaman: string[] = [];
+  page.on("response", (response) => {
+    if (!response.url().includes("/api/slots/available")) {
+      return;
+    }
+    const permintaan = response.request().postData() ?? "(tanpa muatan)";
+    void response
+      .text()
+      .then((badan) => {
+        const isi = badan.length > 400 ? `${badan.slice(0, 400)}…` : badan;
+        rekaman.push(`status=${response.status()} minta=${permintaan} jawab=${isi}`);
+      })
+      .catch(() => {
+        rekaman.push(`status=${response.status()} minta=${permintaan} jawab=(tidak terbaca)`);
+      });
+  });
+
   await openSlotStep(page, date);
   const firstSlot = page.getByRole("button", { name: slotButtons }).first();
   const takenLabel = ((await firstSlot.textContent()) ?? "").trim();
@@ -91,19 +111,16 @@ test("a slot already held disappears for the next customer", async ({ page }, te
   await openSlotStep(page, date);
 
   const papanTerlihat = await page.getByRole("button", { name: slotButtons }).allInnerTexts();
-  console.log(`[diagnostik] tanggal=${date} slot=${takenLabel} papan=${JSON.stringify(papanTerlihat)}`);
+  const kodeBooking = (await page.getByText(/^DMZ-\d{8}-\d{4}$/).first().textContent().catch(() => null)) ?? "?";
+  console.log(
+    `[diagnostik] tanggal=${date} slot=${takenLabel} booking=${kodeBooking.trim()} papan=${JSON.stringify(papanTerlihat)}`,
+  );
 
   try {
     await expect(page.getByRole("button", { name: takenLabel, exact: true })).toHaveCount(0);
   } catch (error) {
-    // Diagnostik sebelumnya ikut menggantung 30 s sehingga tidak pernah tercetak.
-    // Sekarang: batas 3 s, tidak menunggu badan jawaban, dan galat asli selalu
-    // dilempar ulang supaya pesannya tidak tertimpa.
-    const balasan = await page.request
-      .post("/api/slots/available", { data: { date, serviceIds: [], barberId: null }, timeout: 3_000 })
-      .then((response) => `status=${response.status()}`)
-      .catch((galat) => `gagal: ${String(galat).slice(0, 120)}`);
-    console.log(`[diagnostik] panggilan ulang availability ${balasan}`);
+    await page.waitForTimeout(300);
+    console.log(`[diagnostik] jawaban ketersediaan halaman ini:\n  ${rekaman.join("\n  ")}`);
     throw error;
   }
 });
