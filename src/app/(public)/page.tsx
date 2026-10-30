@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero6 } from "@/components/hero/Hero6";
-import { BlurHighlight } from "@/components/ui/BlurHighlight";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 import { SlotCell } from "@/components/ui/slot-cell";
 import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
@@ -144,13 +144,13 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-4 sm:grid-cols-3">
             {VALUES.map((v, i) => (
-              <BlurHighlight key={v.number} blurDelay={i * 0.12} blurDuration={0.8}>
+              <ScrollReveal key={v.number} delay={i * 0.12} duration={0.8}>
                 <Plate className="flex h-full flex-col gap-2 p-5">
                   <MonoLabel tone="brass">{v.number}</MonoLabel>
                   <h2 className="font-display text-base font-bold text-text">{v.title}</h2>
                   <p className="text-sm leading-relaxed text-muted">{v.desc}</p>
                 </Plate>
-              </BlurHighlight>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -162,14 +162,14 @@ export default async function LandingPage() {
           {/* Kolom kiri: ringkasan booking & aturan */}
           <div className="flex flex-col gap-5 lg:h-full lg:justify-between lg:border-r lg:border-line lg:px-9 lg:py-9">
             <div className="flex flex-col gap-4">
-              <BlurHighlight blurDuration={0.8}>
+              <ScrollReveal duration={0.8}>
                 <h2 className="font-display text-2xl font-extrabold tracking-tight text-text">
                   Reservasi Kursi
                   <span className="mt-1 block font-mono text-xs font-normal uppercase tracking-wider text-muted">
                     Tiga kursi · Tiga barber · Satu gerai
                   </span>
                 </h2>
-              </BlurHighlight>
+              </ScrollReveal>
 
               <p className="text-sm leading-relaxed text-text/90">
                 Pilih kursi dan jamnya di papan samping, kunci dengan DP{" "}
@@ -349,7 +349,7 @@ export default async function LandingPage() {
       {/* 3. PROFIL MASTER BARBER (CRAFTSMANSHIP) */}
       <section className="border-b border-line px-6 py-16 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-10">
-          <BlurHighlight blurDuration={0.8}>
+          <ScrollReveal duration={0.8}>
             <div className="flex flex-col gap-2">
               <MonoLabel tone="brass">Tim & Dedikasi Keahlian</MonoLabel>
               <h2 className="font-display text-3xl font-extrabold text-text sm:text-4xl">
@@ -360,11 +360,11 @@ export default async function LandingPage() {
                 yang memahami geometri kepala, jenis rambut, dan kebiasaan styling Anda.
               </p>
             </div>
-          </BlurHighlight>
+          </ScrollReveal>
 
           <div className="grid gap-6 sm:grid-cols-3">
             {barbers.map((b, i) => (
-              <BlurHighlight key={b.id} blurDelay={i * 0.12} blurDuration={0.8}>
+              <ScrollReveal key={b.id} delay={i * 0.12} duration={0.8}>
                 <Plate className="flex h-full flex-col justify-between p-6">
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between border-b border-line pb-3">
@@ -390,7 +390,7 @@ export default async function LandingPage() {
                     Spesialisasi: <span className="text-text">{b.specialty ?? "All-around Cut"}</span>
                   </div>
                 </Plate>
-              </BlurHighlight>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -415,22 +415,22 @@ export default async function LandingPage() {
       {/* 5. FAQ SEPUTAR ATURAN GERAI */}
       <section aria-labelledby="faq" className="border-b border-line px-6 py-14 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-8">
-          <BlurHighlight blurDuration={0.8}>
+          <ScrollReveal duration={0.8}>
             <div>
               <MonoLabel tone="brass">Ketentuan & Kebijakan</MonoLabel>
               <h2 id="faq" className="mt-1 font-display text-3xl font-bold text-text">
                 Pertanyaan yang sering diajukan
               </h2>
             </div>
-          </BlurHighlight>
+          </ScrollReveal>
           <dl className="grid gap-6 sm:grid-cols-2">
             {FAQ.map((item, idx) => (
-              <BlurHighlight key={item.question} blurDelay={idx * 0.08} blurDuration={0.8}>
+              <ScrollReveal key={item.question} delay={idx * 0.08} duration={0.8}>
                 <Plate className="flex h-full flex-col gap-2 p-5">
                   <dt className="font-display text-base font-semibold text-text">{item.question}</dt>
                   <dd className="text-sm leading-relaxed text-muted">{item.answer}</dd>
                 </Plate>
-              </BlurHighlight>
+              </ScrollReveal>
             ))}
           </dl>
         </div>

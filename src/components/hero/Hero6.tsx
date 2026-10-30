@@ -106,95 +106,111 @@ export function Hero6() {
   return (
     <section
       aria-label="Hero Spotlight Carousel"
-      className="relative overflow-hidden border-b border-line px-6 py-14 lg:px-16 lg:py-20"
+      className="relative overflow-hidden border-b border-line px-6 py-14 lg:h-[620px] lg:flex lg:items-center lg:px-16 lg:py-0"
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
-        {/* Kolom Kiri: Teks Narasi & CTA persis animasi React Bits Pro (AnimatePresence mode="wait") */}
-        <div className="flex flex-1 flex-col justify-center min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlideIndex}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.15 },
-                },
-                exit: {
-                  opacity: 0,
-                  transition: { duration: 0.2 },
-                },
-              }}
-              className="space-y-6"
-            >
-              <motion.div
-                variants={{
-                  hidden: { y: 20, opacity: 0 },
-                  visible: {
-                    y: 0,
-                    opacity: 1,
-                    transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
-                  },
-                }}
-              >
-                <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
-              </motion.div>
-
-              <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
-                <motion.span
-                  variants={{
-                    hidden: { y: 30, opacity: 0 },
-                    visible: {
-                      y: 0,
-                      opacity: 1,
-                      transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
-                    },
-                  }}
-                  className="block"
-                >
-                  {currentSlide.titlePrimary}
-                </motion.span>
-                <motion.span
-                  variants={{
-                    hidden: { y: 30, opacity: 0 },
-                    visible: {
-                      y: 0,
-                      opacity: 1,
-                      transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
-                    },
-                  }}
-                  className="block text-brass"
-                >
-                  {currentSlide.titleAccent}
-                </motion.span>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
+        {/* Kolom Kiri: Teks Narasi & CTA. Menggunakan CSS Grid Stack
+            sehingga kontainer teks terkunci permanen pada tinggi slide tertinggi.
+            Zero layout shift saat pergantian slide! */}
+        <div className="flex flex-1 flex-col justify-between">
+          <div className="relative grid">
+            {/* 1. Sizer statis permanen yang mengukur slide tertinggi tanpa pernah unmount */}
+            <div className="col-start-1 row-start-1 space-y-6 invisible pointer-events-none select-none" aria-hidden="true">
+              <div>
+                <MonoLabel tone="brass">{slides[1]?.eyebrow ?? ""}</MonoLabel>
+              </div>
+              <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+                <span className="block">{slides[1]?.titlePrimary ?? ""}</span>
+                <span className="block">{slides[1]?.titleAccent ?? ""}</span>
               </h1>
+              <p className="max-w-xl text-base leading-relaxed sm:text-lg">
+                {slides[1]?.description ?? ""}
+              </p>
+            </div>
 
-              <motion.p
-                variants={{
-                  hidden: { y: 30, opacity: 0 },
-                  visible: {
-                    y: 0,
-                    opacity: 1,
-                    transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
-                  },
-                }}
-                className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
-              >
-                {currentSlide.description}
-              </motion.p>
-            </motion.div>
-          </AnimatePresence>
+            {/* 2. Container Animasi Aktif */}
+            <div className="col-start-1 row-start-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide.id}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: { staggerChildren: 0.15 },
+                    },
+                    exit: {
+                      opacity: 0,
+                      transition: { duration: 0.2 },
+                    },
+                  }}
+                  className="space-y-6"
+                >
+                  <motion.div
+                    variants={{
+                      hidden: { y: 20, opacity: 0 },
+                      visible: {
+                        y: 0,
+                        opacity: 1,
+                        transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                      },
+                    }}
+                  >
+                    <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
+                  </motion.div>
 
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            className="flex flex-wrap items-center gap-4 pt-6"
-          >
+                  <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                    <motion.span
+                      variants={{
+                        hidden: { y: 30, opacity: 0 },
+                        visible: {
+                          y: 0,
+                          opacity: 1,
+                          transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                        },
+                      }}
+                      className="block"
+                    >
+                      {currentSlide.titlePrimary}
+                    </motion.span>
+                    <motion.span
+                      variants={{
+                        hidden: { y: 30, opacity: 0 },
+                        visible: {
+                          y: 0,
+                          opacity: 1,
+                          transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                        },
+                      }}
+                      className="block text-brass"
+                    >
+                      {currentSlide.titleAccent}
+                    </motion.span>
+                  </h1>
+
+                  <motion.p
+                    variants={{
+                      hidden: { y: 30, opacity: 0 },
+                      visible: {
+                        y: 0,
+                        opacity: 1,
+                        transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                      },
+                    }}
+                    className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
+                  >
+                    {currentSlide.description}
+                  </motion.p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* CTA Buttons - Tetap berada di garis Y yang sama */}
+          <div className="flex flex-wrap items-center gap-4 pt-6">
             <Link
               href={currentSlide.ctaHref}
               className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
@@ -207,7 +223,7 @@ export function Hero6() {
             >
               {currentSlide.secondaryCtaText}
             </a>
-          </motion.div>
+          </div>
         </div>
 
         {/* Kolom Tengah (Desktop): Garis Progres Vertikal persis React Bits Pro */}
