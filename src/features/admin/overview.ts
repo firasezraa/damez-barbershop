@@ -60,8 +60,26 @@ export async function getOverallStats(pool: Pool = bookingPool()): Promise<Overa
 
 export async function listRecentBookings(
   limit = 20,
-  pool: Pool = bookingPool()
+  queryOrPool?: string | Pool,
+  maybePool?: Pool
 ): Promise<BookingListItem[]> {
+  const query = typeof queryOrPool === "string" ? queryOrPool : undefined;
+  const pool = (typeof queryOrPool === "object" ? queryOrPool : maybePool) ?? bookingPool();
+  const trimmed = query?.trim() ?? "";
+  const filterClause = trimmed
+    ? `AND (
+        b.booking_code ILIKE '%' || $2 || '%'
+        OR c.full_name ILIKE '%' || $2 || '%'
+        OR c.phone_e164 ILIKE '%' || $2 || '%'
+        OR bar.full_name ILIKE '%' || $2 || '%'
+      )`
+    : "";
+
+  const params: unknown[] = [limit];
+  if (trimmed) {
+    params.push(trimmed);
+  }
+
   const result = await pool.query<{
     id: string;
     booking_code: string;
@@ -95,10 +113,11 @@ export async function listRecentBookings(
        JOIN public.barbers bar ON bar.id = b.barber_id
        LEFT JOIN public.booking_services bs ON bs.booking_id = b.id
        LEFT JOIN public.services s ON s.id = bs.service_id
+      WHERE 1=1 ${filterClause}
       GROUP BY b.id, c.full_name, c.phone_e164, bar.full_name, bar.chair_number
       ORDER BY b.start_time DESC
       LIMIT $1`,
-    [limit]
+    params
   );
 
   return result.rows.map((row) => ({

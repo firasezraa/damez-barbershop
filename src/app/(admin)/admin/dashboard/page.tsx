@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminTopNav } from "@/components/admin/AdminTopNav";
 import { ChairBoard } from "@/components/admin/ChairBoard";
 import { MonoLabel, Plate } from "@/components/ui/plate";
 import { listChairMatrix, summarizeDay } from "@/features/admin/day-view";
@@ -45,8 +46,11 @@ export default async function CashierDashboardPage() {
     <div className="flex min-h-screen flex-col bg-ink lg:flex-row">
       <AdminSidebar role={session.session.role} today={today} />
 
-      <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8">
+      <div className="flex flex-1 flex-col overflow-x-hidden">
+        <AdminTopNav role={session.session.role} today={today} />
+
+        <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <header className="flex flex-col gap-2">
             <MonoLabel tone="brass">Kasir & Meja Kerja</MonoLabel>
             <h1 className="font-display text-3xl font-bold text-text">Matriks kursi hari ini</h1>
@@ -82,6 +86,7 @@ export default async function CashierDashboardPage() {
           />
         </div>
       </main>
+      </div>
     </div>
   );
 }

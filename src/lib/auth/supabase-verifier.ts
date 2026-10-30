@@ -45,6 +45,15 @@ function readRole(user: { app_metadata?: Record<string, unknown> }): string | nu
 
 /** Verifikator produksi: token dicek ke Supabase Auth (GoTrue). */
 export const verifySupabaseToken: SessionVerifier = async (accessToken) => {
+  if (process.env.MOCK_ADMIN === "true" && accessToken.startsWith("mock-admin-")) {
+    const role = accessToken.replace("mock-admin-", "");
+    return {
+      userId: "00000000-0000-0000-0000-000000000001",
+      email: `${role}@damez.test`,
+      role,
+    };
+  }
+
   const { data, error } = await authClient().auth.getUser(accessToken);
 
   if (error !== null || data.user === null) {

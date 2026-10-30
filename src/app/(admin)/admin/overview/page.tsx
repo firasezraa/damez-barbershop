@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminTopNav } from "@/components/admin/AdminTopNav";
 import { MonoLabel, Plate } from "@/components/ui/plate";
 import { getOverallStats, listRecentBookings } from "@/features/admin/overview";
 import { formatRupiah } from "@/features/catalogue/types";
@@ -36,7 +37,12 @@ function formatJakartaTime(date: Date): string {
   });
 }
 
-export default async function AdminOverviewPage() {
+interface AdminOverviewPageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function AdminOverviewPage({ searchParams }: AdminOverviewPageProps) {
+  const { q } = await searchParams;
   const cookieHeader = (await cookies())
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
@@ -52,14 +58,17 @@ export default async function AdminOverviewPage() {
   }
 
   const today = jakartaDateString(new Date());
-  const [stats, bookings] = await Promise.all([getOverallStats(), listRecentBookings(25)]);
+  const [stats, bookings] = await Promise.all([getOverallStats(), listRecentBookings(25, q)]);
 
   return (
     <div className="flex min-h-screen flex-col bg-ink lg:flex-row">
       <AdminSidebar role={session.session.role} today={today} />
 
-      <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8">
+      <div className="flex flex-1 flex-col overflow-x-hidden">
+        <AdminTopNav role={session.session.role} today={today} />
+
+        <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <header className="flex flex-col gap-2">
             <MonoLabel tone="brass">Laporan & Basis Tamu</MonoLabel>
             <h1 className="font-display text-3xl font-bold text-text">
@@ -186,6 +195,7 @@ export default async function AdminOverviewPage() {
           </section>
         </div>
       </main>
+      </div>
     </div>
   );
 }

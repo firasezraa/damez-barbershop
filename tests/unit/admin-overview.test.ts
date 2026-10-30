@@ -15,7 +15,7 @@ describe("overview queries", () => {
   });
 
   it("listRecentBookings returns an array with valid shapes", async () => {
-    const list = await listRecentBookings(10, bookingPool());
+    const list = await listRecentBookings(10, undefined, bookingPool());
 
     expect(Array.isArray(list)).toBe(true);
     for (const item of list) {
@@ -24,5 +24,10 @@ describe("overview queries", () => {
       expect(item.totalIdr).toBeGreaterThanOrEqual(0);
       expect(Array.isArray(item.services)).toBe(true);
     }
+  });
+
+  it("listRecentBookings filters results when query is supplied", async () => {
+    const list = await listRecentBookings(5, "NON_EXISTENT_NAME_XYZ", bookingPool());
+    expect(list).toEqual([]);
   });
 });
