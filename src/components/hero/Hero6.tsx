@@ -71,7 +71,7 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
-const AUTOPLAY_TOTAL_MS = 3500; // 3.5 detik per slide (lebih dinamis dan gesit)
+const AUTOPLAY_TOTAL_MS = 5000; // 5.0 detik per slide (waktu baca lebih tenang dan transisi terasa bernapas)
 
 export function Hero6() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -139,11 +139,11 @@ export function Hero6() {
                       {/* Eyebrow Label: Blur & Float Reveal */}
                       <div
                         style={{
-                          transitionDuration: "600ms",
+                          transitionDuration: "850ms",
                           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-                          transitionDelay: active ? "60ms" : "0ms",
-                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, -8px, 0)",
-                          filter: active ? "blur(0px)" : "blur(6px)",
+                          transitionDelay: active ? "100ms" : "0ms",
+                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, -6px, 0)",
+                          filter: active ? "blur(0px)" : "blur(5px)",
                           opacity: active ? 1 : 0,
                           willChange: "transform, opacity, filter",
                         }}
@@ -154,11 +154,11 @@ export function Hero6() {
                       {/* Heading H1: Blur & Float Reveal */}
                       <h1
                         style={{
-                          transitionDuration: "700ms",
+                          transitionDuration: "1000ms",
                           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-                          transitionDelay: active ? "120ms" : "0ms",
-                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 12px, 0)",
-                          filter: active ? "blur(0px)" : "blur(8px)",
+                          transitionDelay: active ? "180ms" : "0ms",
+                          transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 10px, 0)",
+                          filter: active ? "blur(0px)" : "blur(6px)",
                           opacity: active ? 1 : 0,
                           willChange: "transform, opacity, filter",
                         }}
@@ -172,11 +172,11 @@ export function Hero6() {
                     {/* Deskripsi: Blur & Float Reveal */}
                     <p
                       style={{
-                        transitionDuration: "700ms",
+                        transitionDuration: "1000ms",
                         transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-                        transitionDelay: active ? "180ms" : "0ms",
-                        transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 10px, 0)",
-                        filter: active ? "blur(0px)" : "blur(8px)",
+                        transitionDelay: active ? "260ms" : "0ms",
+                        transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 8px, 0)",
+                        filter: active ? "blur(0px)" : "blur(6px)",
                         opacity: active ? 1 : 0,
                         willChange: "transform, opacity, filter",
                       }}
@@ -189,11 +189,11 @@ export function Hero6() {
                   {/* Tombol CTA: Blur & Pop Reveal */}
                   <div
                     style={{
-                      transitionDuration: "750ms",
+                      transitionDuration: "1050ms",
                       transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-                      transitionDelay: active ? "240ms" : "0ms",
-                      transform: active ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 12px, 0) scale(0.97)",
-                      filter: active ? "blur(0px)" : "blur(6px)",
+                      transitionDelay: active ? "340ms" : "0ms",
+                      transform: active ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 8px, 0) scale(0.98)",
+                      filter: active ? "blur(0px)" : "blur(5px)",
                       opacity: active ? 1 : 0,
                       willChange: "transform, opacity, filter",
                     }}
@@ -292,7 +292,7 @@ export function Hero6() {
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                   }}
-                  className={`absolute inset-0 transition-all duration-700 ease-out ${
+                  className={`absolute inset-0 transition-all duration-1000 ease-out ${
                     idx === currentIndex
                       ? "opacity-100 scale-100 z-10"
                       : "opacity-0 scale-105 z-0 pointer-events-none"

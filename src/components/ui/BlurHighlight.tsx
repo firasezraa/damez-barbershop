@@ -25,10 +25,10 @@ export interface BlurHighlightProps {
  */
 export function BlurHighlight({
   children,
-  blurAmount = 4,
-  inactiveOpacity = 0.4,
+  blurAmount = 5,
+  inactiveOpacity = 0.35,
   blurDelay = 0,
-  blurDuration = 0.5,
+  blurDuration = 0.8,
   viewportOptions = { once: true, amount: 0.2 },
   trigger = "viewport",
   as = "div",

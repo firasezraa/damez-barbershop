@@ -144,7 +144,7 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-4 sm:grid-cols-3">
             {VALUES.map((v, i) => (
-              <BlurHighlight key={v.number} blurDelay={i * 0.08} blurDuration={0.5}>
+              <BlurHighlight key={v.number} blurDelay={i * 0.12} blurDuration={0.8}>
                 <Plate className="flex h-full flex-col gap-2 p-5">
                   <MonoLabel tone="brass">{v.number}</MonoLabel>
                   <h2 className="font-display text-base font-bold text-text">{v.title}</h2>
@@ -349,7 +349,7 @@ export default async function LandingPage() {
       {/* 3. PROFIL MASTER BARBER (CRAFTSMANSHIP) */}
       <section className="border-b border-line px-6 py-16 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-10">
-          <BlurHighlight blurDuration={0.5}>
+          <BlurHighlight blurDuration={0.8}>
             <div className="flex flex-col gap-2">
               <MonoLabel tone="brass">Tim & Dedikasi Keahlian</MonoLabel>
               <h2 className="font-display text-3xl font-extrabold text-text sm:text-4xl">
@@ -364,7 +364,7 @@ export default async function LandingPage() {
 
           <div className="grid gap-6 sm:grid-cols-3">
             {barbers.map((b, i) => (
-              <BlurHighlight key={b.id} blurDelay={i * 0.08} blurDuration={0.5}>
+              <BlurHighlight key={b.id} blurDelay={i * 0.12} blurDuration={0.8}>
                 <Plate className="flex h-full flex-col justify-between p-6">
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between border-b border-line pb-3">
@@ -415,7 +415,7 @@ export default async function LandingPage() {
       {/* 5. FAQ SEPUTAR ATURAN GERAI */}
       <section aria-labelledby="faq" className="border-b border-line px-6 py-14 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-8">
-          <BlurHighlight blurDuration={0.5}>
+          <BlurHighlight blurDuration={0.8}>
             <div>
               <MonoLabel tone="brass">Ketentuan & Kebijakan</MonoLabel>
               <h2 id="faq" className="mt-1 font-display text-3xl font-bold text-text">
@@ -425,7 +425,7 @@ export default async function LandingPage() {
           </BlurHighlight>
           <dl className="grid gap-6 sm:grid-cols-2">
             {FAQ.map((item, idx) => (
-              <BlurHighlight key={item.question} blurDelay={idx * 0.05} blurDuration={0.5}>
+              <BlurHighlight key={item.question} blurDelay={idx * 0.08} blurDuration={0.8}>
                 <Plate className="flex h-full flex-col gap-2 p-5">
                   <dt className="font-display text-base font-semibold text-text">{item.question}</dt>
                   <dd className="text-sm leading-relaxed text-muted">{item.answer}</dd>
