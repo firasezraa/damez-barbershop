@@ -48,21 +48,23 @@ export function ScrollReveal({
 
   const translateClass =
     direction === "up"
-      ? "translate-y-8"
+      ? "translate-y-12"
       : direction === "down"
-      ? "-translate-y-8"
-      : "scale-[0.98]";
+      ? "-translate-y-12"
+      : "scale-[0.96]";
 
   return (
     <div
       ref={elementRef}
       style={{
+        transitionDuration: "950ms",
+        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
         transitionDelay: `${delayMs}ms`,
       }}
-      className={`transition-all duration-700 ease-out ${
+      className={`transition-all ${
         isVisible
-          ? "opacity-100 translate-y-0 scale-100"
-          : `opacity-0 ${translateClass}`
+          ? "opacity-100 translate-y-0 scale-100 blur-none"
+          : `opacity-0 ${translateClass} blur-[4px]`
       } ${className}`}
     >
       {children}

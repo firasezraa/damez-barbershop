@@ -129,25 +129,37 @@ export function Hero6() {
               return (
                 <div
                   key={slide.id}
-                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-all duration-700 ease-out ${
+                  style={{
+                    transitionDuration: "850ms",
+                    transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                  }}
+                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-all ${
                     active
-                      ? "opacity-100 z-10 translate-y-0"
-                      : "opacity-0 z-0 pointer-events-none translate-y-4"
+                      ? "opacity-100 z-10 translate-y-0 filter-none"
+                      : "opacity-0 z-0 pointer-events-none translate-y-6 blur-[3px]"
                   }`}
                   aria-hidden={!active}
                 >
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3">
                       <div
-                        className={`transition-all duration-500 delay-100 ${
-                          active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                        style={{
+                          transitionDuration: "750ms",
+                          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
+                        className={`transition-all delay-75 ${
+                          active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                         }`}
                       >
                         <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
                       </div>
                       <h1
-                        className={`font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl transition-all duration-600 delay-150 ${
-                          active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                        style={{
+                          transitionDuration: "850ms",
+                          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                        }}
+                        className={`font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl transition-all delay-120 ${
+                          active ? "opacity-100 translate-y-0 blur-none" : "opacity-0 translate-y-5 blur-[2px]"
                         }`}
                       >
                         <span className="block">{slide.titlePrimary}</span>
@@ -156,8 +168,12 @@ export function Hero6() {
                     </div>
 
                     <p
-                      className={`max-w-xl text-base leading-relaxed text-muted sm:text-lg transition-all duration-600 delay-200 ${
-                        active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                      style={{
+                        transitionDuration: "850ms",
+                        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                      }}
+                      className={`max-w-xl text-base leading-relaxed text-muted sm:text-lg transition-all delay-180 ${
+                        active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                       }`}
                     >
                       {slide.description}
@@ -165,8 +181,12 @@ export function Hero6() {
                   </div>
 
                   <div
-                    className={`flex flex-wrap items-center gap-4 pt-6 transition-all duration-600 delay-300 ${
-                      active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                    style={{
+                      transitionDuration: "900ms",
+                      transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                    }}
+                    className={`flex flex-wrap items-center gap-4 pt-6 transition-all delay-240 ${
+                      active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                     }`}
                   >
                     <Link
@@ -257,8 +277,10 @@ export function Hero6() {
               {DAMEZ_HERO_SLIDES.map((slide, idx) => (
                 <div
                   key={slide.id}
-                  className={`absolute inset-0 transition-opacity duration-700 ${
-                    idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  className={`absolute inset-0 transition-all duration-1000 ease-out ${
+                    idx === currentIndex
+                      ? "opacity-100 scale-100 z-10"
+                      : "opacity-0 scale-105 z-0 pointer-events-none"
                   }`}
                 >
                   <Image
