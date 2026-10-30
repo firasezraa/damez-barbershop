@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ChairBoard } from "@/components/admin/ChairBoard";
+import { MonoLabel, Plate } from "@/components/ui/plate";
 import { listChairMatrix, summarizeDay } from "@/features/admin/day-view";
 import { listActiveServices } from "@/features/catalogue/queries";
 import { formatRupiah } from "@/features/catalogue/types";
@@ -47,27 +48,28 @@ export default async function CashierDashboardPage() {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10">
       <header className="flex flex-col gap-2">
-        <p className="font-display text-sm tracking-[0.2em] text-brass uppercase">Kasir</p>
-        <h1 className="font-display text-3xl text-text">Matriks kursi hari ini</h1>
-        <p className="text-sm text-muted">
+        <MonoLabel tone="brass">Kasir</MonoLabel>
+        <h1 className="font-display text-3xl font-bold text-text">Matriks kursi hari ini</h1>
+        <p className="font-mono text-xs text-muted">
           {today} WIB · masuk sebagai {session.session.role}
         </p>
         {session.session.role === "owner" ? (
           <a
             href={`/api/admin/reports/daily-csv?date=${today}`}
-            className="min-h-11 self-start rounded-card border border-brass px-4 py-3 text-sm text-brass"
+            className="inline-flex min-h-12 items-center self-start rounded-[3px] border border-brass px-5 font-mono text-xs tracking-[0.08em] text-brass uppercase transition-colors duration-150 hover:bg-brass/10"
           >
             Unduh rekap kas hari ini (CSV)
           </a>
         ) : null}
       </header>
 
-      <section aria-label="Rekap hari ini" className="grid gap-3 sm:grid-cols-4">
-        <SummaryCard label="Booking hari ini" value={`${summary.bookings}`} />
-        <SummaryCard label="DP terkumpul" value={formatRupiah(summary.dpiTotalIdr)} />
-        <SummaryCard label="Tunai/QRIS masuk" value={formatRupiah(summary.cashTotalIdr)} />
-        <SummaryCard label="Tidak hadir" value={`${summary.noShow}`} />
-      </section>
+      {/* Strip angka mono di atas papan: kasir membaca uang masuk lebih dulu daripada daftar. */}
+      <Plate className="grid gap-px overflow-hidden bg-line sm:grid-cols-4">
+        <SummaryCell label="Booking hari ini" value={`${summary.bookings}`} />
+        <SummaryCell label="DP terkumpul" value={formatRupiah(summary.dpiTotalIdr)} />
+        <SummaryCell label="Tunai/QRIS masuk" value={formatRupiah(summary.cashTotalIdr)} />
+        <SummaryCell label="Tidak hadir" value={`${summary.noShow}`} />
+      </Plate>
 
       <ChairBoard
         chairs={chairs}
@@ -82,11 +84,11 @@ export default async function CashierDashboardPage() {
   );
 }
 
-function SummaryCard({ label, value }: { label: string; value: string }) {
+function SummaryCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-card border border-surface-2 bg-surface p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="font-display text-xl text-text">{value}</p>
+    <div className="flex flex-col gap-1 bg-surface px-4 py-3">
+      <MonoLabel>{label}</MonoLabel>
+      <p className="font-mono text-xl font-semibold text-text">{value}</p>
     </div>
   );
 }
