@@ -1,17 +1,25 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Archivo, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
 
-const display = Plus_Jakarta_Sans({
+/*
+ * Archivo dipilih karena punya sumbu lebar: satu keluarga bisa membentang seperti
+ * huruf papan toko (display) tanpa membeli keluarga kedua (IDEA.md §17.5).
+ * Spline Sans Mono memegang semua angka supaya kolom jam dan harga bisa
+ * dibandingkan secara vertikal.
+ */
+const display = Archivo({
   subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
-const body = Inter({
+const mono = Spline_Sans_Mono({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "600"],
+  variable: "--font-spline-mono",
   display: "swap",
 });
 
@@ -23,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="id" className={`${display.variable} ${body.variable}`}>
+    <html lang="id" className={`${display.variable} ${mono.variable}`}>
       <body className="bg-ink font-body text-text antialiased">{children}</body>
     </html>
   );
