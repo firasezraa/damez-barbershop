@@ -106,9 +106,9 @@ export function Hero6() {
   return (
     <section
       aria-label="Hero Spotlight Carousel"
-      className="relative overflow-hidden border-b border-line px-6 py-14 lg:h-[620px] lg:flex lg:items-center lg:px-16 lg:py-0"
+      className="relative overflow-hidden border-b border-line px-6 pt-12 pb-16 lg:min-h-[720px] lg:flex lg:items-center lg:px-16 lg:pt-16 lg:pb-20"
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-14 lg:flex-row lg:items-center lg:gap-16 xl:gap-20">
         {/* Kolom Kiri: Teks Narasi & CTA. Menggunakan CSS Grid Stack
             sehingga kontainer teks terkunci permanen pada tinggi slide tertinggi.
             Zero layout shift saat pergantian slide! */}
@@ -119,7 +119,7 @@ export function Hero6() {
               <div>
                 <MonoLabel tone="brass">{slides[1]?.eyebrow ?? ""}</MonoLabel>
               </div>
-              <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="font-display text-4xl leading-[1.08] font-extrabold tracking-tight sm:text-5xl lg:text-6xl xl:text-7xl">
                 <span className="block">{slides[1]?.titlePrimary ?? ""}</span>
                 <span className="block">{slides[1]?.titleAccent ?? ""}</span>
               </h1>
@@ -162,7 +162,7 @@ export function Hero6() {
                     <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
                   </motion.div>
 
-                  <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                  <h1 className="font-display text-4xl leading-[1.08] font-extrabold tracking-tight text-text sm:text-5xl lg:text-6xl xl:text-7xl">
                     <motion.span
                       variants={{
                         hidden: { y: 30, opacity: 0 },
@@ -209,11 +209,11 @@ export function Hero6() {
             </div>
           </div>
 
-          {/* CTA Buttons - Tetap berada di garis Y yang sama */}
-          <div className="flex flex-wrap items-center gap-4 pt-6">
+          {/* CTA Buttons - Tetap berada di garis Y yang sama, lega dan menonjol */}
+          <div className="flex flex-wrap items-center gap-4 pt-8">
             <Link
               href={currentSlide.ctaHref}
-              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
+              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink shadow-lg shadow-brass/10 transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
             >
               {currentSlide.ctaText}
             </Link>
@@ -227,7 +227,7 @@ export function Hero6() {
         </div>
 
         {/* Kolom Tengah (Desktop): Garis Progres Vertikal persis React Bits Pro */}
-        <div className="hidden flex-col items-center justify-center gap-4 h-[420px] lg:flex">
+        <div className="hidden flex-col items-center justify-center gap-4 h-[480px] lg:flex">
           {slides.map((_, idx) => (
             <div
               key={idx}
@@ -261,12 +261,12 @@ export function Hero6() {
               animate={{ opacity: 0.35, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.8 }}
-              className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(circle_at_center,rgba(200,162,74,0.3)_0%,rgba(194,162,92,0.15)_45%,transparent_70%)] blur-3xl"
+              className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(circle_at_center,rgba(200,162,74,0.3)_0%,rgba(194,162,92,0.15)_45%,transparent_70%)] blur-3xl"
             />
           </AnimatePresence>
 
           {/* Frame Gambar Carousel */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:aspect-[16/11] lg:max-w-md lg:h-[420px]">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:aspect-[16/11] lg:max-w-lg lg:h-[480px]">
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={currentSlideIndex}

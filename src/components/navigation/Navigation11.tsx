@@ -228,11 +228,11 @@ export function Navigation11() {
   const activeCategory = NAVIGATION_DATA.find((c) => c.id === activeTab);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-ink/80 px-4 pt-3 pb-2 backdrop-blur-md transition-all">
+    <header className="sticky top-0 z-50 w-full bg-ink/80 px-4 pt-5 pb-4 backdrop-blur-md transition-all">
       <div
         ref={navRef}
         onMouseLeave={handleMouseLeave}
-        className="relative mx-auto max-w-6xl"
+        className="relative mx-auto max-w-7xl"
       >
         {/* Dark Top Nav Capsule (Pill Shape) */}
         <nav
