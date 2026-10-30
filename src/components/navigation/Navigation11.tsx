@@ -188,6 +188,28 @@ export function Navigation11() {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clear hover timeout helper
+  const cancelClose = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  // Schedule close on mouse leave with gentle delay to avoid accidental flickers
+  const handleMouseLeave = () => {
+    cancelClose();
+    closeTimeoutRef.current = setTimeout(() => {
+      setActiveTab(null);
+    }, 180);
+  };
+
+  const handleTabMouseEnter = (id: string) => {
+    cancelClose();
+    setActiveTab(id);
+  };
 
   // Close mega menu when clicking outside
   useEffect(() => {
@@ -197,20 +219,27 @@ export function Navigation11() {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      cancelClose();
+    };
   }, []);
 
   const activeCategory = NAVIGATION_DATA.find((c) => c.id === activeTab);
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-3 pb-2 transition-all">
-      <div ref={navRef} className="mx-auto max-w-6xl">
+      <div
+        ref={navRef}
+        onMouseLeave={handleMouseLeave}
+        className="mx-auto max-w-6xl"
+      >
         {/* Dark Top Nav Capsule (Pill Shape) */}
         <nav
           aria-label="Navigasi Utama Damez"
           className="relative flex h-14 w-full items-center justify-between rounded-full border border-line-2 bg-surface px-4 py-2 shadow-2xl backdrop-blur-md transition-all lg:px-6"
         >
-          {/* Sisi Kiri: Menu Tabs Desktop */}
+          {/* Sisi Kiri: Menu Tabs Desktop with Hover & Click */}
           <div className="hidden items-center gap-1 lg:flex">
             {NAVIGATION_DATA.map((tab) => {
               const isOpen = activeTab === tab.id;
@@ -218,6 +247,7 @@ export function Navigation11() {
                 <button
                   key={tab.id}
                   type="button"
+                  onMouseEnter={() => handleTabMouseEnter(tab.id)}
                   onClick={() => setActiveTab(isOpen ? null : tab.id)}
                   aria-expanded={isOpen}
                   className={`rounded-full px-3.5 py-1.5 font-display text-xs font-semibold tracking-wide transition-all ${
@@ -285,6 +315,7 @@ export function Navigation11() {
         {activeCategory ? (
           <div
             id="mega-menu-panel"
+            onMouseEnter={cancelClose}
             className="mt-2 w-full overflow-hidden rounded-[4px] border border-stone-300 bg-[#FAF8F5] p-6 text-[#1A1816] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2"
           >
             <div className="flex flex-col gap-6">
