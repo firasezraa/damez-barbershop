@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { AdminTopNav } from "@/components/admin/AdminTopNav";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { MonoLabel, Plate } from "@/components/ui/plate";
 import { getOverallStats, listRecentBookings } from "@/features/admin/overview";
 import { formatRupiah } from "@/features/catalogue/types";
@@ -61,14 +60,9 @@ export default async function AdminOverviewPage({ searchParams }: AdminOverviewP
   const [stats, bookings] = await Promise.all([getOverallStats(), listRecentBookings(25, q)]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-ink lg:flex-row">
-      <AdminSidebar role={session.session.role} today={today} />
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <AdminTopNav role={session.session.role} today={today} />
-
-        <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
-          <div className="mx-auto flex max-w-6xl flex-col gap-8">
+    <AdminShell role={session.session.role} today={today}>
+      <main className="flex-1 px-6 py-8 lg:px-10 lg:py-10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-8">
           <header className="flex flex-col gap-2">
             <MonoLabel tone="brass">Laporan & Basis Tamu</MonoLabel>
             <h1 className="font-display text-3xl font-bold text-text">
@@ -195,7 +189,6 @@ export default async function AdminOverviewPage({ searchParams }: AdminOverviewP
           </section>
         </div>
       </main>
-      </div>
-    </div>
+    </AdminShell>
   );
 }
