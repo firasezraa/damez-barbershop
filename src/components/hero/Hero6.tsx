@@ -1,11 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { MonoLabel } from "@/components/ui/plate";
 
-export type HeroSlide = {
+export interface HeroSlide {
   id: string;
   eyebrow: string;
   titlePrimary: string;
@@ -18,7 +19,8 @@ export type HeroSlide = {
   image: string;
   imageAlt: string;
   badge: string;
-};
+  color: string;
+}
 
 const DAMEZ_HERO_SLIDES: HeroSlide[] = [
   {
@@ -36,6 +38,7 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
       "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Master Barber memotong rambut pria dengan teknik gunting presisi di kursi vintage",
     badge: "Kursi 1 — Classic Cuts",
+    color: "bg-brass/20",
   },
   {
     id: "craftsmanship",
@@ -52,6 +55,7 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
       "https://images.unsplash.com/photo-1541533848490-bc8115cd6522?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Proses pangkas rambut gradasi skin fade tajam menggunakan clipper nirkabel profesional",
     badge: "Kursi 2 — Fade & Taper",
+    color: "bg-brass/20",
   },
   {
     id: "kebersihan",
@@ -68,49 +72,36 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1200&auto=format&fit=crop",
     imageAlt: "Proses cukur tradisional dengan silet higienis dan detailing garis rambut",
     badge: "Kursi 3 — Shave & Scalp Therapy",
+    color: "bg-brass/20",
   },
 ];
 
-const AUTOPLAY_TOTAL_MS = 5000; // 5.0 detik per slide (waktu baca lebih tenang dan transisi terasa bernapas)
-
 export function Hero6() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [progressPercent, setProgressPercent] = useState(0);
 
-  const currentSlide = DAMEZ_HERO_SLIDES[currentIndex] ?? DAMEZ_HERO_SLIDES[0]!;
+  const slides = DAMEZ_HERO_SLIDES;
+  const slideCount = slides.length;
+  const currentSlide = slides[currentSlideIndex] ?? slides[0]!;
 
-  const goToSlide = useCallback((idx: number) => {
-    setCurrentIndex(idx);
-    setProgressPercent(0);
-  }, []);
-
-  // Single master timer per slide: guaranteed 1 -> 2 -> 3 -> 1 sequence
+  // Persis logika React Bits Pro Hero 6:
+  // Timer akumulasi progress: 5000ms per slide, update tiap 50ms
   useEffect(() => {
-    let animFrame: number;
-    const startTime = performance.now();
+    const timer = setInterval(() => {
+      setProgressPercent((prev) => {
+        const next = prev >= 100 ? 0 : prev + 100 / ((5000 * slideCount) / 50);
+        const nextIdx = Math.min(Math.floor((next / 100) * slideCount), slideCount - 1);
+        setCurrentSlideIndex((current) => (current !== nextIdx ? nextIdx : current));
+        return next;
+      });
+    }, 50);
+    return () => clearInterval(timer);
+  }, [slideCount]);
 
-    const update = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min((elapsed / AUTOPLAY_TOTAL_MS) * 100, 100);
-      setProgressPercent(progress);
-
-      if (elapsed < AUTOPLAY_TOTAL_MS) {
-        animFrame = requestAnimationFrame(update);
-      }
-    };
-
-    animFrame = requestAnimationFrame(update);
-
-    const timeout = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % DAMEZ_HERO_SLIDES.length);
-      setProgressPercent(0);
-    }, AUTOPLAY_TOTAL_MS);
-
-    return () => {
-      cancelAnimationFrame(animFrame);
-      clearTimeout(timeout);
-    };
-  }, [currentIndex]);
+  const handleSelectSlide = (idx: number) => {
+    setProgressPercent((idx / slideCount) * 100);
+    setCurrentSlideIndex(idx);
+  };
 
   return (
     <section
@@ -118,208 +109,206 @@ export function Hero6() {
       className="relative overflow-hidden border-b border-line px-6 py-14 lg:px-16 lg:py-20"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
-        {/* Kolom Kiri: Teks Narasi & CTA. Menggunakan CSS Grid Stack
-            (seluruh slide menempati sel grid yang sama) sehingga tinggi kontainer
-            otomatis mengikuti slide tertinggi secara absolut, dan 100% stabil
-            tanpa layout shift di resolusi layar berapa pun! */}
-        <div className="flex flex-1 flex-col justify-between">
-          <div className="grid">
-            {DAMEZ_HERO_SLIDES.map((slide, idx) => {
-              const active = idx === currentIndex;
-              return (
-                <div
-                  key={slide.id}
-                  className={`col-start-1 row-start-1 flex flex-col justify-between ${
-                    active ? "z-10" : "z-0 pointer-events-none"
-                  }`}
-                  aria-hidden={!active}
-                >
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-3">
-                      {/* Eyebrow Label: Pure Dissolve Transition */}
-                      <div
-                        style={{
-                          transitionDuration: "850ms",
-                          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-                          transitionDelay: active ? "100ms" : "0ms",
-                          opacity: active ? 1 : 0,
-                          willChange: "opacity",
-                        }}
-                      >
-                        <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
-                      </div>
-
-                      {/* Heading H1: Pure Dissolve Transition */}
-                      <h1
-                        style={{
-                          transitionDuration: "1000ms",
-                          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-                          transitionDelay: active ? "180ms" : "0ms",
-                          opacity: active ? 1 : 0,
-                          willChange: "opacity",
-                        }}
-                        className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl"
-                      >
-                        <span className="block">{slide.titlePrimary}</span>
-                        <span className="block text-brass">{slide.titleAccent}</span>
-                      </h1>
-                    </div>
-
-                    {/* Deskripsi: Pure Dissolve Transition */}
-                    <p
-                      style={{
-                        transitionDuration: "1000ms",
-                        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-                        transitionDelay: active ? "260ms" : "0ms",
-                        opacity: active ? 1 : 0,
-                        willChange: "opacity",
-                      }}
-                      className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
-                    >
-                      {slide.description}
-                    </p>
-                  </div>
-
-                  {/* Tombol CTA: Pure Dissolve Transition */}
-                  <div
-                    style={{
-                      transitionDuration: "1050ms",
-                      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-                      transitionDelay: active ? "340ms" : "0ms",
-                      opacity: active ? 1 : 0,
-                      willChange: "opacity",
-                    }}
-                    className="flex flex-wrap items-center gap-4 pt-6"
-                  >
-                    <Link
-                      href={slide.ctaHref}
-                      tabIndex={active ? 0 : -1}
-                      className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
-                    >
-                      {slide.ctaText}
-                    </Link>
-                    <a
-                      href={slide.secondaryCtaHref}
-                      tabIndex={active ? 0 : -1}
-                      className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
-                    >
-                      {slide.secondaryCtaText}
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Indikator Progres Baris (Bawah Teks pada Layar Mobile/Tablet) */}
-          <div className="mt-8 flex items-center gap-2 lg:hidden">
-            {DAMEZ_HERO_SLIDES.map((slide, idx) => {
-              const active = idx === currentIndex;
-              return (
-                <button
-                  key={slide.id}
-                  type="button"
-                  onClick={() => goToSlide(idx)}
-                  className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-surface-2"
-                  aria-label={`Pindah ke slide ${idx + 1}`}
-                >
-                  <div
-                    className="h-full bg-brass transition-all duration-75"
-                    style={{
-                      width: active ? `${progressPercent}%` : "0%",
-                    }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Kolom Tengah (Desktop): Garis Progres Vertikal (Progress Line Indicator) */}
-        <div className="hidden flex-col items-center justify-center gap-3 lg:flex">
-          {DAMEZ_HERO_SLIDES.map((slide, idx) => {
-            const active = idx === currentIndex;
-            return (
-              <button
-                key={slide.id}
-                type="button"
-                onClick={() => goToSlide(idx)}
-                className="group relative flex h-24 w-1.5 flex-col items-center justify-start overflow-hidden rounded-full bg-surface-2 transition-all hover:w-2"
-                aria-label={`Slide ${idx + 1}: ${slide.titlePrimary}`}
+        {/* Kolom Kiri: Teks Narasi & CTA persis animasi React Bits Pro (AnimatePresence mode="wait") */}
+        <div className="flex flex-1 flex-col justify-center min-h-[340px] sm:min-h-[380px] lg:min-h-[420px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlideIndex}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 },
+                },
+                exit: {
+                  opacity: 0,
+                  transition: { duration: 0.2 },
+                },
+              }}
+              className="space-y-6"
+            >
+              <motion.div
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                  },
+                }}
               >
-                {/* Background track */}
-                <div
-                  className="w-full bg-brass transition-all duration-75"
-                  style={{
-                    height: active ? `${progressPercent}%` : "0%",
+                <MonoLabel tone="brass">{currentSlide.eyebrow}</MonoLabel>
+              </motion.div>
+
+              <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                <motion.span
+                  variants={{
+                    hidden: { y: 30, opacity: 0 },
+                    visible: {
+                      y: 0,
+                      opacity: 1,
+                      transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                    },
                   }}
-                />
-              </button>
-            );
-          })}
+                  className="block"
+                >
+                  {currentSlide.titlePrimary}
+                </motion.span>
+                <motion.span
+                  variants={{
+                    hidden: { y: 30, opacity: 0 },
+                    visible: {
+                      y: 0,
+                      opacity: 1,
+                      transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                    },
+                  }}
+                  className="block text-brass"
+                >
+                  {currentSlide.titleAccent}
+                </motion.span>
+              </h1>
+
+              <motion.p
+                variants={{
+                  hidden: { y: 30, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] },
+                  },
+                }}
+                className="max-w-xl text-base leading-relaxed text-muted sm:text-lg"
+              >
+                {currentSlide.description}
+              </motion.p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="flex flex-wrap items-center gap-4 pt-6"
+          >
+            <Link
+              href={currentSlide.ctaHref}
+              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] bg-brass px-8 font-display text-base font-bold whitespace-nowrap text-ink transition-transform hover:scale-[1.02] hover:brightness-105 active:scale-[0.98] sm:w-[240px]"
+            >
+              {currentSlide.ctaText}
+            </Link>
+            <a
+              href={currentSlide.secondaryCtaHref}
+              className="inline-flex h-13 w-full shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface px-6 font-mono text-xs tracking-wider whitespace-nowrap text-text uppercase transition-colors hover:border-brass/60 sm:w-[268px]"
+            >
+              {currentSlide.secondaryCtaText}
+            </a>
+          </motion.div>
         </div>
 
-        {/* Kolom Kanan: Rotating Carousel Frame & Brass Glow Light */}
-        <div className="relative flex flex-1 items-center justify-center">
-          {/* Ambient Glow Light di belakang gambar (Warna brass #C8A24A disesuaikan tema website) */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(circle_at_center,rgba(200,162,74,0.25)_0%,rgba(194,162,92,0.12)_45%,transparent_70%)] blur-3xl transition-opacity duration-700"
-          />
+        {/* Kolom Tengah (Desktop): Garis Progres Vertikal persis React Bits Pro */}
+        <div className="hidden flex-col items-center justify-center gap-4 h-[420px] lg:flex">
+          {slides.map((_, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleSelectSlide(idx)}
+              className="group relative w-1 flex-1 cursor-pointer overflow-hidden rounded-full bg-surface-2"
+              aria-label={`Slide ${idx + 1}`}
+            >
+              <div className="absolute inset-0 bg-surface-2/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {idx === currentSlideIndex && (
+                <motion.div
+                  className="absolute top-0 left-0 w-full bg-brass origin-top"
+                  initial={{ height: "0%" }}
+                  animate={{
+                    height: `${((progressPercent - (100 * idx) / slideCount) / (100 / slideCount)) * 100}%`,
+                  }}
+                  transition={{ duration: 0.05, ease: "linear" }}
+                />
+              )}
+              {idx < currentSlideIndex && <div className="absolute inset-0 bg-brass" />}
+            </div>
+          ))}
+        </div>
 
-          {/* Sekunder Glow Light sudut untuk kedalaman atmosferik */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-10 -right-10 h-64 w-64 rounded-full bg-brass/10 blur-2xl"
-          />
+        {/* Kolom Kanan: Foto Carousel & Glow Ambient persis React Bits Pro Hero 6 */}
+        <div className="relative flex flex-1 items-center justify-center">
+          {/* Ambient Glow di belakang gambar (React Bits Pro pattern) */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlideIndex}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.35, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.8 }}
+              className="pointer-events-none absolute -inset-4 rounded-full bg-[radial-gradient(circle_at_center,rgba(200,162,74,0.3)_0%,rgba(194,162,92,0.15)_45%,transparent_70%)] blur-3xl"
+            />
+          </AnimatePresence>
 
           {/* Frame Gambar Carousel */}
-          <div className="relative z-10 w-full overflow-hidden rounded-[4px] border border-line bg-surface shadow-2xl transition-all duration-500">
-            <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/11]">
-              {DAMEZ_HERO_SLIDES.map((slide, idx) => (
-                <div
-                  key={slide.id}
-                  style={{
-                    transitionDuration: "1000ms",
-                    transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-                    willChange: "opacity",
-                    backfaceVisibility: "hidden",
-                    WebkitBackfaceVisibility: "hidden",
-                  }}
-                  className={`absolute inset-0 transition-opacity ${
-                    idx === currentIndex
-                      ? "opacity-100 z-10"
-                      : "opacity-0 z-0 pointer-events-none"
-                  }`}
-                >
-                  <Image
-                    src={slide.image}
-                    alt={slide.imageAlt}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover object-center"
-                  />
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:aspect-[16/11] lg:max-w-md lg:h-[420px]">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={currentSlideIndex}
+                initial={{ opacity: 0, scale: 0.95, y: "100%" }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: "-100%" }}
+                transition={{ duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] }}
+                className="absolute inset-0 w-full h-full"
+              >
+                <Image
+                  src={currentSlide.image}
+                  alt={currentSlide.imageAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-center"
+                />
+
+                {/* Gradient Overlay bawah gambar */}
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink via-ink/60 to-transparent pointer-events-none z-10" />
+
+                {/* Badge Informasi di atas gambar */}
+                <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between">
+                  <span className="rounded-[2px] border border-line bg-surface/90 px-3 py-1 font-mono text-[11px] font-bold text-brass backdrop-blur-md">
+                    {currentSlide.badge}
+                  </span>
+
+                  <div className="flex items-center gap-1 font-mono text-[11px] text-muted">
+                    <span className="font-bold text-text">0{currentSlideIndex + 1}</span>
+                    <span>/</span>
+                    <span>0{slides.length}</span>
+                  </div>
                 </div>
-              ))}
-
-              {/* Gradient Overlay bawah gambar */}
-              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink via-ink/60 to-transparent pointer-events-none z-10" />
-
-              {/* Badge Informasi di atas gambar */}
-              <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between">
-                <span className="rounded-[2px] border border-line bg-surface/90 px-3 py-1 font-mono text-[11px] font-bold text-brass backdrop-blur-md">
-                  {currentSlide.badge}
-                </span>
-
-                <div className="flex items-center gap-1 font-mono text-[11px] text-muted">
-                  <span className="font-bold text-text">0{currentIndex + 1}</span>
-                  <span>/</span>
-                  <span>0{DAMEZ_HERO_SLIDES.length}</span>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
+        </div>
+
+        {/* Indikator Progres Baris (Bawah Teks pada Layar Mobile/Tablet) persis React Bits Pro */}
+        <div className="flex lg:hidden justify-center gap-2 mt-4">
+          {slides.map((_, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleSelectSlide(idx)}
+              className="relative w-16 h-1 bg-surface-2 rounded-full overflow-hidden cursor-pointer"
+            >
+              {idx === currentSlideIndex && (
+                <motion.div
+                  className="absolute inset-0 bg-brass origin-left"
+                  style={{
+                    scaleX: (progressPercent - (100 * idx) / slideCount) / (100 / slideCount),
+                  }}
+                  transition={{ duration: 0.05, ease: "linear" }}
+                />
+              )}
+              {idx < currentSlideIndex && <div className="absolute inset-0 bg-brass" />}
+            </div>
+          ))}
         </div>
       </div>
     </section>
