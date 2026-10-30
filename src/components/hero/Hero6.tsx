@@ -129,26 +129,46 @@ export function Hero6() {
               return (
                 <div
                   key={slide.id}
-                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-opacity duration-500 ${
-                    active ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  className={`col-start-1 row-start-1 flex flex-col justify-between transition-all duration-700 ease-out ${
+                    active
+                      ? "opacity-100 z-10 translate-y-0"
+                      : "opacity-0 z-0 pointer-events-none translate-y-4"
                   }`}
                   aria-hidden={!active}
                 >
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-3">
-                      <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
-                      <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                      <div
+                        className={`transition-all duration-500 delay-100 ${
+                          active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                        }`}
+                      >
+                        <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
+                      </div>
+                      <h1
+                        className={`font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl transition-all duration-600 delay-150 ${
+                          active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                        }`}
+                      >
                         <span className="block">{slide.titlePrimary}</span>
                         <span className="block text-brass">{slide.titleAccent}</span>
                       </h1>
                     </div>
 
-                    <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+                    <p
+                      className={`max-w-xl text-base leading-relaxed text-muted sm:text-lg transition-all duration-600 delay-200 ${
+                        active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                      }`}
+                    >
                       {slide.description}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-4 pt-6">
+                  <div
+                    className={`flex flex-wrap items-center gap-4 pt-6 transition-all duration-600 delay-300 ${
+                      active ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+                    }`}
+                  >
                     <Link
                       href={slide.ctaHref}
                       tabIndex={active ? 0 : -1}

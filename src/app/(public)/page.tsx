@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero6 } from "@/components/hero/Hero6";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 import { SlotCell } from "@/components/ui/slot-cell";
 import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
@@ -142,12 +143,14 @@ export default async function LandingPage() {
       <section className="border-b border-line px-6 py-12 lg:px-16">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-4 sm:grid-cols-3">
-            {VALUES.map((v) => (
-              <Plate key={v.number} className="flex flex-col gap-2 p-5">
-                <MonoLabel tone="brass">{v.number}</MonoLabel>
-                <h2 className="font-display text-base font-bold text-text">{v.title}</h2>
-                <p className="text-sm leading-relaxed text-muted">{v.desc}</p>
-              </Plate>
+            {VALUES.map((v, i) => (
+              <ScrollReveal key={v.number} delayMs={i * 120} direction="up">
+                <Plate className="flex h-full flex-col gap-2 p-5">
+                  <MonoLabel tone="brass">{v.number}</MonoLabel>
+                  <h2 className="font-display text-base font-bold text-text">{v.title}</h2>
+                  <p className="text-sm leading-relaxed text-muted">{v.desc}</p>
+                </Plate>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -344,44 +347,48 @@ export default async function LandingPage() {
       {/* 3. PROFIL MASTER BARBER (CRAFTSMANSHIP) */}
       <section className="border-b border-line px-6 py-16 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-10">
-          <div className="flex flex-col gap-2">
-            <MonoLabel tone="brass">Tim & Dedikasi Keahlian</MonoLabel>
-            <h2 className="font-display text-3xl font-extrabold text-text sm:text-4xl">
-              Tiga Master Barber. Karakter Unik di Setiap Kursi.
-            </h2>
-            <p className="max-w-xl text-base text-muted">
-              Di Damez, Anda tidak sekadar dipotong rambutnya. Anda berkonsultasi dengan barber
-              yang memahami geometri kepala, jenis rambut, dan kebiasaan styling Anda.
-            </p>
-          </div>
+          <ScrollReveal direction="up">
+            <div className="flex flex-col gap-2">
+              <MonoLabel tone="brass">Tim & Dedikasi Keahlian</MonoLabel>
+              <h2 className="font-display text-3xl font-extrabold text-text sm:text-4xl">
+                Tiga Master Barber. Karakter Unik di Setiap Kursi.
+              </h2>
+              <p className="max-w-xl text-base text-muted">
+                Di Damez, Anda tidak sekadar dipotong rambutnya. Anda berkonsultasi dengan barber
+                yang memahami geometri kepala, jenis rambut, dan kebiasaan styling Anda.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid gap-6 sm:grid-cols-3">
-            {barbers.map((b) => (
-              <Plate key={b.id} className="flex flex-col justify-between p-6">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between border-b border-line pb-3">
-                    <span className="font-mono text-xs uppercase text-brass">
-                      Kursi {b.chairNumber}
-                    </span>
-                    {b.nickname ? (
-                      <span className="rounded-[2px] bg-surface-2 px-2 py-0.5 font-mono text-[10px] text-muted">
-                        &quot;{b.nickname}&quot;
+            {barbers.map((b, i) => (
+              <ScrollReveal key={b.id} delayMs={i * 120} direction="up">
+                <Plate className="flex h-full flex-col justify-between p-6">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between border-b border-line pb-3">
+                      <span className="font-mono text-xs uppercase text-brass">
+                        Kursi {b.chairNumber}
                       </span>
-                    ) : null}
+                      {b.nickname ? (
+                        <span className="rounded-[2px] bg-surface-2 px-2 py-0.5 font-mono text-[10px] text-muted">
+                          &quot;{b.nickname}&quot;
+                        </span>
+                      ) : null}
+                    </div>
+                    <div>
+                      <h3 className="font-display text-xl font-bold text-text">{b.fullName}</h3>
+                      <p className="font-mono text-xs text-brass">{b.title ?? "Master Barber"}</p>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted">
+                      {b.bio ?? "Berpengalaman tinggi dalam potongan pria klasik dan modern."}
+                    </p>
                   </div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold text-text">{b.fullName}</h3>
-                    <p className="font-mono text-xs text-brass">{b.title ?? "Master Barber"}</p>
-                  </div>
-                  <p className="text-sm leading-relaxed text-muted">
-                    {b.bio ?? "Berpengalaman tinggi dalam potongan pria klasik dan modern."}
-                  </p>
-                </div>
 
-                <div className="mt-6 border-t border-line pt-3 font-mono text-xs text-ghost">
-                  Spesialisasi: <span className="text-text">{b.specialty ?? "All-around Cut"}</span>
-                </div>
-              </Plate>
+                  <div className="mt-6 border-t border-line pt-3 font-mono text-xs text-ghost">
+                    Spesialisasi: <span className="text-text">{b.specialty ?? "All-around Cut"}</span>
+                  </div>
+                </Plate>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -406,18 +413,22 @@ export default async function LandingPage() {
       {/* 5. FAQ SEPUTAR ATURAN GERAI */}
       <section aria-labelledby="faq" className="border-b border-line px-6 py-14 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-8">
-          <div>
-            <MonoLabel tone="brass">Ketentuan & Kebijakan</MonoLabel>
-            <h2 id="faq" className="mt-1 font-display text-3xl font-bold text-text">
-              Pertanyaan yang sering diajukan
-            </h2>
-          </div>
+          <ScrollReveal direction="up">
+            <div>
+              <MonoLabel tone="brass">Ketentuan & Kebijakan</MonoLabel>
+              <h2 id="faq" className="mt-1 font-display text-3xl font-bold text-text">
+                Pertanyaan yang sering diajukan
+              </h2>
+            </div>
+          </ScrollReveal>
           <dl className="grid gap-6 sm:grid-cols-2">
-            {FAQ.map((item) => (
-              <div key={item.question} className="border-l border-line pl-4">
-                <dt className="font-display text-base font-bold text-text">{item.question}</dt>
-                <dd className="mt-1.5 text-sm leading-relaxed text-muted">{item.answer}</dd>
-              </div>
+            {FAQ.map((item, idx) => (
+              <ScrollReveal key={item.question} delayMs={idx * 80} direction="up">
+                <Plate className="flex h-full flex-col gap-2 p-5">
+                  <dt className="font-display text-base font-semibold text-text">{item.question}</dt>
+                  <dd className="text-sm leading-relaxed text-muted">{item.answer}</dd>
+                </Plate>
+              </ScrollReveal>
             ))}
           </dl>
         </div>
