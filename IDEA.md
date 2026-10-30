@@ -557,6 +557,14 @@ papan hari (kepala, plat barber, grid jam × kursi, legenda); gulungan delapan l
 privasi. Yang **dihapus**: hero foto besar, kartu layanan seragam, testimoni karangan, badge
 "terbaik di Jakarta".
 
+Catatan pelaksanaan (2026-10-30): FAQ di beranda hanya memuat aturan yang benar-benar
+dijalankan sistem — DP flat Rp 20.000, hold 15 menit, batal > H-3 jam, toleransi 15 menit,
+DP kembali penuh bila gerai yang membatalkan. `content/faq-and-microcopy.md` bawaan v1
+menjanjikan beberapa hal yang belum ada di kode (penjadwalan ulang mandiri lewat tautan di
+pesan tiket, pengembalian dana otomatis 1x24 jam, biaya QRIS diserap gerai); janji itu tidak
+dipindahkan ke halaman sampai fiturnya ada. Kontak WhatsApp juga belum dicantumkan karena
+semua nomor di `content/` masih contoh (`081234567890`), bukan nomor gerai.
+
 **17.7.2 Wizard booking `/booking` (Persuade→Operate).** Empat langkah tetap, tetapi diringkas
 jadi satu layar per langkah dengan kemajuan mono `01/04 … 04/04`. Langkah 3 memakai grid yang sama
 dengan beranda, bukan pemilih waktu terpisah. Ringkasan langkah 4 memakai bentuk struk: layanan

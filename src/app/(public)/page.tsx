@@ -8,7 +8,16 @@ import { ACTION_CLASSES, MonoLabel } from "@/components/ui/plate";
 import { SlotCell } from "@/components/ui/slot-cell";
 import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
 import { formatRupiah, listActiveServices } from "@/features/catalogue/queries";
-import { CANCEL_CUTOFF_HOURS, DOWN_PAYMENT_IDR, LATE_TOLERANCE_MINUTES } from "@/lib/config/constants";
+import {
+  CANCEL_CUTOFF_HOURS,
+  DOWN_PAYMENT_IDR,
+  HOLD_TTL_SECONDS,
+  LATE_TOLERANCE_MINUTES,
+} from "@/lib/config/constants";
+
+/** Lama hold dalam kata, diambil dari konstanta supaya angkanya tidak hidup dua kali. */
+const HOLD_LABEL = `${Math.round(HOLD_TTL_SECONDS / 60)} menit`;
+
 
 /**
  * Beranda (IDEA.md §17.7.1). Pembukanya bukan hero bergambar melainkan papan hari
@@ -33,7 +42,7 @@ const STEPS = [
   },
   {
     title: "Kunci dengan DP",
-    body: `DP ${formatRupiah(DOWN_PAYMENT_IDR)} lewat QRIS atau virtual account; kursi ditahan 15 menit.`,
+    body: `DP ${formatRupiah(DOWN_PAYMENT_IDR)} lewat QRIS atau virtual account; kursi ditahan ${HOLD_LABEL}.`,
   },
   {
     title: "Datang, duduk, selesai",
@@ -41,6 +50,12 @@ const STEPS = [
   },
 ];
 
+/**
+ * FAQ hanya memuat aturan yang benar-benar dijalankan sistem. Dokumen
+ * `content/faq-and-microcopy.md` dari v1 menjanjikan hal yang tidak ada di kode —
+ * penjadwalan ulang mandiri lewat tautan, misalnya — jadi janji itu tidak
+ * dipindahkan ke sini sampai fiturnya ada.
+ */
 const FAQ = [
   {
     question: "Apakah harus membuat akun?",
@@ -48,16 +63,23 @@ const FAQ = [
   },
   {
     question: "Bagaimana cara kerja DP Rp 20.000?",
-    answer:
-      "DP dibayar saat booking untuk mengunci kursi selama 15 menit, lalu dipotong dari total nota saat Anda melunasi di kasir.",
+    answer: `DP dibayar saat booking untuk mengunci kursi, lalu dipotong dari total nota ketika Anda melunasi di kasir. Sisa tagihan dibayar tunai atau QRIS di gerai.`,
+  },
+  {
+    question: "Berapa lama kursi ditahan setelah saya memesan?",
+    answer: `Kursi ditahan ${HOLD_LABEL}. Kalau DP belum masuk sampai batas itu, slot dilepas otomatis dan bisa diambil orang lain.`,
   },
   {
     question: "Bisa batal atau ubah jadwal?",
-    answer: `Bisa sampai ${CANCEL_CUTOFF_HOURS} jam sebelum jadwal. Lewat dari itu DP hangus karena kursinya sudah ditahan untuk Anda.`,
+    answer: `Bisa selama masih lebih dari ${CANCEL_CUTOFF_HOURS} jam sebelum jadwal. Lewat dari itu DP hangus karena kursinya sudah ditahan untuk Anda. Perubahan diurus lewat balasan pesan tiket WhatsApp Anda — belum ada pembatalan mandiri di situs.`,
   },
   {
-    question: "Kalau saya datang terlambat?",
-    answer: `Toleransi ${LATE_TOLERANCE_MINUTES} menit. Lewat itu barber mulai melayani tamu berikutnya dan kursi Anda dilepas.`,
+    question: "Kalau saya terlambat?",
+    answer: `Ada toleransi ${LATE_TOLERANCE_MINUTES} menit. Lewat dari itu kedatangan dicatat sebagai tidak hadir dan DP hangus; Anda tetap bisa minta didaftarkan sebagai tamu walk-in di kasir bila masih ada kursi kosong.`,
+  },
+  {
+    question: "Kalau barber tidak bisa hadir, DP saya bagaimana?",
+    answer: "DP dikembalikan penuh. Tim gerai menghubungi Anda lebih dulu untuk menawarkan jadwal pengganti atau barber lain pada jam yang sama.",
   },
 ];
 
@@ -111,7 +133,8 @@ export default async function LandingPage() {
 
           <p className="max-w-md text-[16.5px] leading-[1.52] text-text/90">
             Pilih kursi dan jamnya, kunci dengan DP {formatRupiah(DOWN_PAYMENT_IDR)}. Kursi
-            ditahan 15 menit. Terlambat lebih dari {LATE_TOLERANCE_MINUTES} menit, DP hangus.
+            ditahan {HOLD_LABEL}. Terlambat lebih dari {LATE_TOLERANCE_MINUTES} menit, DP
+            hangus.
           </p>
 
           <Link href="/booking" className={ACTION_CLASSES}>
@@ -314,11 +337,43 @@ export default async function LandingPage() {
         </dl>
       </section>
 
-      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-8 font-mono text-[12.5px] text-muted lg:pr-16 lg:pl-[440px]">
-        <p>Damez Barbershop · Jakarta Selatan · buka 10:00–21:00 WIB</p>
-        <Link href="/booking" className="text-brass underline underline-offset-4">
-          Kunci kursi sekarang
-        </Link>
+      {/* Kontak: nomor WhatsApp gerai tidak ditulis di sini karena belum ada nomor
+          asli yang diverifikasi pemilik — semua nomor di content/ masih contoh.
+          Tiap tautan duduk di selnya sendiri supaya tidak ada tautan yang menggantung
+          di depan kalimat orang lain. */}
+      <footer className="border-t border-line lg:pr-16 lg:pl-[440px]">
+        <div className="grid gap-px bg-line sm:grid-cols-3">
+          <div className="flex flex-col gap-1.5 bg-surface px-6 py-6">
+            <MonoLabel>Jam buka</MonoLabel>
+            <p className="font-mono text-[12.5px] text-muted">
+              10:00–21:00 WIB · Jakarta Selatan
+            </p>
+          </div>
+          <div className="flex flex-col gap-1.5 bg-surface px-6 py-6">
+            <MonoLabel>Aturan</MonoLabel>
+            <p className="font-mono text-[12.5px] text-muted">
+              Telat lebih dari {LATE_TOLERANCE_MINUTES} menit dihitung tidak hadir.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2 bg-surface px-6 py-6">
+            <MonoLabel>Bantuan</MonoLabel>
+            <Link
+              href="/booking"
+              className="font-mono text-[12.5px] text-brass underline underline-offset-4"
+            >
+              Kunci kursi sekarang
+            </Link>
+            <Link
+              href="/kebijakan-privasi"
+              className="font-mono text-[12.5px] text-muted underline underline-offset-4"
+            >
+              Kebijakan privasi
+            </Link>
+            <p className="font-mono text-[12.5px] text-muted">
+              Balas pesan tiket WhatsApp Anda untuk batal, ubah jadwal, atau minta hapus data.
+            </p>
+          </div>
+        </div>
       </footer>
     </main>
   );

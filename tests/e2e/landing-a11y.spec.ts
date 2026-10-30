@@ -9,6 +9,7 @@ import { expect, test } from "@playwright/test";
 const PAGES = [
   { path: "/", name: "landing" },
   { path: "/booking", name: "booking" },
+  { path: "/kebijakan-privasi", name: "kebijakan privasi" },
 ];
 
 for (const page of PAGES) {
