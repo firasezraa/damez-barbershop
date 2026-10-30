@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 
 /**
  * Panel pembayaran DP di halaman tiket. Nominal tidak dikirim klien; server
@@ -57,20 +58,25 @@ export function PaymentPanel({ bookingCode }: { bookingCode: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <Plate className="flex flex-col gap-3 p-4">
+      <MonoLabel>Pembayaran</MonoLabel>
+
+      {/* Satu aksi utama per permukaan (§17.3): nilai DP ditulis mono di sisi kanan,
+          bukan direpetisi di dalam kalimat tombol. */}
       <button
         type="button"
         onClick={() => void startPayment()}
         disabled={busy}
-        className="min-h-11 rounded-card bg-brass px-5 py-3 text-sm font-medium text-ink disabled:opacity-50"
+        className={`${ACTION_CLASSES} gap-6`}
       >
-        {busy ? "Menyiapkan pembayaran..." : "Bayar DP Rp 20.000"}
+        <span>{busy ? "Menyiapkan pembayaran..." : "Bayar DP"}</span>
+        <span className="font-mono text-xs font-semibold opacity-70">Rp 20.000</span>
       </button>
 
       <button
         type="button"
         onClick={() => router.refresh()}
-        className="min-h-11 rounded-card border border-surface-2 px-5 py-3 text-sm text-text"
+        className="min-h-11 rounded-[3px] border border-line px-5 py-3 font-mono text-xs tracking-[0.08em] text-muted uppercase transition-colors duration-150 hover:text-text"
       >
         Cek status pembayaran
       </button>
@@ -78,6 +84,6 @@ export function PaymentPanel({ bookingCode }: { bookingCode: string }) {
       <div aria-live="polite" role="status" className="text-sm text-muted">
         {note}
       </div>
-    </div>
+    </Plate>
   );
 }

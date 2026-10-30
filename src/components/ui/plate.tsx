@@ -51,7 +51,7 @@ export function MonoLabel({
  */
 /** Kelas aksi utama, dipakai tombol dan tautan supaya keduanya identik. */
 export const ACTION_CLASSES =
-  "flex h-[58px] w-full items-center justify-between rounded-[3px] bg-brass px-5 font-display text-[19px] font-bold text-ink transition-colors duration-150 hover:brightness-105 disabled:opacity-50";
+  "flex h-[58px] w-full items-center justify-between rounded-[3px] bg-brass px-5 font-display text-[19px] font-bold text-ink transition-colors duration-150 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40 disabled:saturate-50";
 
 export function ActionButton({
   children,
