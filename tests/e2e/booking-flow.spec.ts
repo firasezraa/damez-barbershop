@@ -110,10 +110,12 @@ test("a slot already held disappears for the next customer", async ({ page }, te
   // Pelanggan kedua membuka tanggal yang sama: slot tadi tidak lagi ditawarkan.
   await openSlotStep(page, date);
 
+  // Hanya hal yang PASTI ada di papan. Percobaan mencetak kode booking di sini
+  // menunggu elemen yang tidak pernah muncul (pelanggan kedua belum memesan),
+  // menghabiskan seluruh jatah 30 s, dan menjatuhkan tes yang asersinya lulus.
   const papanTerlihat = await page.getByRole("button", { name: slotButtons }).allInnerTexts();
-  const kodeBooking = (await page.getByText(/^DMZ-\d{8}-\d{4}$/).first().textContent().catch(() => null)) ?? "?";
   console.log(
-    `[diagnostik] tanggal=${date} slot=${takenLabel} booking=${kodeBooking.trim()} papan=${JSON.stringify(papanTerlihat)}`,
+    `[diagnostik] tanggal=${date} slot=${takenLabel} papan=${JSON.stringify(papanTerlihat)}`,
   );
 
   try {
