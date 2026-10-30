@@ -25,11 +25,11 @@ export interface BlurHighlightProps {
  */
 export function BlurHighlight({
   children,
-  blurAmount = 8,
-  inactiveOpacity = 0.3,
+  blurAmount = 4,
+  inactiveOpacity = 0.4,
   blurDelay = 0,
-  blurDuration = 0.8,
-  viewportOptions = { once: true, amount: 0.3 },
+  blurDuration = 0.5,
+  viewportOptions = { once: true, amount: 0.2 },
   trigger = "viewport",
   as = "div",
   className = "",
@@ -84,7 +84,7 @@ export function BlurHighlight({
   const dynamicStyles: CSSProperties = {
     filter: inView ? "blur(0px)" : `blur(${blurAmount}px)`,
     opacity: inView ? 1 : inactiveOpacity,
-    transform: inView ? "translate3d(0, 0, 0)" : "translate3d(0, 8px, 0)",
+    transform: inView ? "translate3d(0, 0, 0)" : "translate3d(0, 6px, 0)",
     transitionProperty: "filter, opacity, transform",
     transitionDuration: `${blurDuration}s`,
     transitionDelay: `${blurDelay}s`,
@@ -92,8 +92,6 @@ export function BlurHighlight({
     willChange: "filter, opacity, transform",
     backfaceVisibility: "hidden",
     WebkitBackfaceVisibility: "hidden",
-    transformStyle: "preserve-3d",
-    contain: "layout style paint",
     ...style,
   };
 

@@ -8,10 +8,8 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       {/* React Bits Pro Navigation 11 Component */}
       <Navigation11 />
 
-      {/* Main Page Content dengan Animasi Reveal Blur Saat Pertama Landing */}
-      <BlurHighlight trigger="mount" blurAmount={10} blurDuration={0.9} className="flex-1">
-        {children}
-      </BlurHighlight>
+      {/* Main Page Content */}
+      <div className="flex-1">{children}</div>
     </div>
   );
 }
