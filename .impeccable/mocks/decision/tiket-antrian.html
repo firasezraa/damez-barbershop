@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Damez — kartu 2: Tiket antrian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0b0c; --surface:#141417; --surface-2:#1d1d21;
+    --brass:#c8a24a; --text:#f5f1e8; --muted:#9a958c;
+    --display:'Archivo',system-ui,sans-serif; --mono:'Spline Sans Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--text);font-family:var(--display);width:1440px;height:900px;overflow:hidden;padding:40px 48px}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #26262b;padding-bottom:18px}
+  .head h1{font-size:46px;font-weight:800;font-stretch:112%;letter-spacing:-.02em;line-height:1}
+  .head h1 span{display:block;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.22em;color:var(--brass);text-transform:uppercase;margin-bottom:10px}
+  .head .shift{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-align:right;line-height:1.7}
+  /* badan: dispenser + tiket yang diambil */
+  .body{display:grid;grid-template-columns:1fr 604px;gap:48px;margin-top:34px;height:614px}
+  /* dispenser */
+  .dispenser{display:flex;flex-direction:column}
+  .counter{position:relative;background:var(--surface);border:1px solid #2b2b31;border-radius:4px;padding:30px 34px;display:flex;align-items:flex-end;justify-content:space-between}
+  .counter .label{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+  .counter .digits{font-family:var(--mono);font-size:120px;font-weight:600;line-height:.86;letter-spacing:-.03em;color:#8c7333}
+  .counter .digits lit{color:var(--brass)}
+  .counter .sub{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-align:right;line-height:1.7}
+  .counter .sub b{color:var(--text);font-weight:600}
+  .slots{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .slotrow{background:var(--surface);border:1px solid #232329;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+  .slotrow .chair{font-family:var(--mono);font-size:11px;color:var(--brass);letter-spacing:.16em}
+  .slotrow .who{font-size:15.5px;font-weight:600;font-stretch:106%}
+  .slotrow .state{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .slotrow .dot{width:8px;height:8px;border-radius:50%;background:var(--brass);display:inline-block;margin-right:8px;vertical-align:middle}
+  /* antrean: baris mengecil seperti daftar nama di poster tanding */
+  .queue{margin-top:24px;border-top:1px solid #26262b;padding-top:14px;display:flex;flex-direction:column;gap:0}
+  .queue .q{display:grid;grid-template-columns:78px 1fr auto;align-items:baseline;padding:9px 0;border-bottom:1px solid #1c1c20;font-family:var(--mono)}
+  .queue .n{font-size:13px;color:var(--brass)}
+  .queue .m{font-size:13.5px;color:var(--text);font-stretch:100%}
+  .queue .t{font-size:12px;color:var(--muted)}
+  .queue .q:nth-child(3) .m{font-size:12.5px;color:#cfc9bd}
+  .queue .q:nth-child(n+4) .m{font-size:11.5px;color:#a8a397}
+  /* tiket */
+  .stub{background:var(--text);color:#15151a;border-radius:4px;padding:28px 34px 0;height:100%;display:flex;flex-direction:column;
+}
+  .stub .top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid #15151a;padding-bottom:12px}
+  .stub .top h2{font-size:24px;font-weight:800;font-stretch:112%;letter-spacing:-.01em}
+  .stub .top .no{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+  .fields{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px 26px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field .k{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#5c584c}
+  .field .v{font-size:19px;font-weight:600;font-stretch:105%}
+  .field .v em{font-style:normal;font-family:var(--mono);font-size:15px;color:#3b3a34}
+  .lines{margin-top:22px;border-top:1px solid rgba(21,21,26,.25);padding-top:14px;display:flex;flex-direction:column;gap:9px}
+  .line{display:flex;justify-content:space-between;font-family:var(--mono);font-size:13.5px}
+  .line.total{font-size:16px;font-weight:600;border-top:2px solid #15151a;margin-top:6px;padding-top:12px}
+  .line .k{color:#5c584c}
+  /* perforasi + aksi */
+  .code{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:#6a6558;display:flex;justify-content:space-between;align-items:baseline}
+  .code b{font-size:19px;letter-spacing:.04em;color:#15151a}
+  .tear{margin-top:16px;border-top:2px dashed rgba(21,21,26,.5);position:relative;height:34px}
+  .tear::before,.tear::after{content:"";position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;background:var(--ink)}
+  .tear::before{left:-28px}
+  .tear::after{right:-28px}
+  .stubfoot{background:#15151a;color:var(--text);margin:auto -34px 0;padding:20px 34px;display:flex;justify-content:space-between;align-items:center}
+  .stubfoot .hold{font-family:var(--mono);font-size:12.5px;color:var(--brass)}
+  .stubfoot .take{background:var(--brass);color:#15151a;border:0;border-radius:3px;font-family:var(--display);font-weight:700;
+    font-stretch:108%;font-size:17px;padding:14px 22px}
+</style>
+</head>
+<body>
+  <header class="head">
+    <h1><span>Damez · Barber &amp; Grooming Jakarta Selatan</span>Ambil nomor, kursinya milik Anda.</h1>
+    <div class="shift">Kamis, 30 Okt<br>10:00 – 21:00 WIB · 3 kursi<br>DP Rp 20.000 · toleransi 15 menit</div>
+  </header>
+
+  <div class="body">
+    <section class="dispenser">
+      <div class="counter">
+        <div>
+          <p class="label">Nomor sedang dilayani</p>
+          <p class="digits">A<lit style="color:var(--brass)">17</lit></p>
+        </div>
+        <div class="sub">Antrean berjalan <b>4 orang</b><br>Estimasi kursi bebas <b>14:30</b><br>Terakhir masuk <b>20:00</b></div>
+      </div>
+
+      <div class="slots">
+        <div class="slotrow"><span class="chair">KURSI 01</span><span class="who">Rian Pratama</span><span class="state"><span class="dot"></span>Terisi · selesai 15:05</span></div>
+        <div class="slotrow"><span class="chair">KURSI 02</span><span class="who">Dimas Arisandi</span><span class="state"><span class="dot" style="background:#8b8781"></span>Bebas · 14:30</span></div>
+        <div class="slotrow"><span class="chair">KURSI 03</span><span class="who">Kevin Sanjaya</span><span class="state"><span class="dot"></span>Pilihan Anda · 14:30</span></div>
+      </div>
+
+      <div class="queue">
+        <div class="q"><span class="n">A-17</span><span class="m">beberapa menit lagi selesai</span><span class="t">kursi 01</span></div>
+        <div class="q"><span class="n">A-18</span><span class="m">milik Anda, kalau memilih jam ini</span><span class="t">14:30</span></div>
+        <div class="q"><span class="n">A-19</span><span class="m">sisa slot paling awal</span><span class="t">15:00</span></div>
+        <div class="q"><span class="n">A-20</span><span class="m">masih terbuka</span><span class="t">15:45</span></div>
+        <div class="q"><span class="n">A-21</span><span class="m">masih terbuka</span><span class="t">16:30</span></div>
+      </div>
+    </section>
+
+    <aside class="stub">
+      <div class="top">
+        <h2>Tiket Anda</h2>
+        <span class="no">A-18 · DMZ-20261030-0018</span>
+      </div>
+
+      <div class="fields">
+        <div class="field"><span class="k">Kursi</span><span class="v">03 · Kevin Sanjaya</span></div>
+        <div class="field"><span class="k">Mulai</span><span class="v">14:30 <em>WIB</em></span></div>
+        <div class="field"><span class="k">Layanan</span><span class="v">Premium Fade &amp; Taper Cut</span></div>
+        <div class="field"><span class="k">Durasi</span><span class="v">50 menit</span></div>
+      </div>
+
+      <div class="lines">
+        <div class="line"><span class="k">Premium Fade &amp; Taper Cut</span><span>Rp 65.000</span></div>
+        <div class="line"><span class="k">Perkiraan selesai 15:30</span><span>&nbsp;</span></div>
+        <div class="line"><span class="k">Bayar sekarang (DP)</span><span>Rp 20.000</span></div>
+        <div class="line total"><span>Dibayar di kasir nanti</span><span>Rp 45.000</span></div>
+      </div>
+
+      <p class="code">Tunjukkan kode ini di kasir<br><b>DMZ-20261030-0018</b></p>
+      <div class="tear"></div>
+
+      <div class="stubfoot">
+        <span class="hold">Kursi ditahan 15 menit<br>setelah tiket ini diambil</span>
+        <button class="take">Ambil nomor &amp; bayar DP</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

@@ -413,3 +413,252 @@ diisi owner langsung di `.env` — tidak pernah lewat chat.
    tombol bayar), bukan 401 dari Midtrans.
 4. **Autentikasi admin tetap di Supabase hosted**; data operasional tetap Postgres. E2E kasir
    memakai akun nyata lewat GitHub Actions secrets, bukan tiruan.
+
+
+---
+
+## 17. Redesign — arah, sistem visual, dan spesifikasi permukaan (2026-10-30)
+
+Menutup permintaan redesign. Bagian ini **spesifikasi, bukan kode**: implementasinya milestone R6,
+dijalankan setelah Firas menyetujui dokumen ini.
+
+### 17.1 Keputusan pemilik yang mengikat
+
+| # | Keputusan | Konsekuensi |
+|---|---|---|
+| 1 | Ruang lingkup: **semua permukaan** — beranda, wizard booking, halaman tiket, login admin, dasbor kasir | satu sistem, lima permukaan; tidak ada halaman yang "menyusul nanti" |
+| 2 | **Token gelap + brass dipertahankan** | palet lama jadi batas, bukan bahan perombakan; yang diganti komposisi, tipografi, dan bahasa keadaan |
+| 3 | **Belum ada aset** (logo, foto barber, foto gerai) | kekuatan pada tipografi, warna, komposisi; materi visual dibuat sendiri dan ditandai sintetis sampai foto asli ada |
+| 4 | Penyerahan: **spec dulu**, kode setelah disetujui | implementasi dipisah ke R6 |
+| 5 | Komposisi terpilih: **kartu 1 — meja kerja & gulungan alat** | grid berlubang jam × kursi jadi pembuka, dan bahasanya turun ke empat permukaan lain |
+
+Aturan lama yang tetap berlaku tanpa perubahan: tanpa emoji, bahasa Indonesia, DP Rp 20.000,
+hold 15 menit, toleransi 15 menit, batal H-3 jam, zona waktu Asia/Jakarta (§3), dan seluruh
+kontrol keamanan §8.
+
+### 17.2 Bagaimana arah ini dipilih (jejak keputusan)
+
+Dijalankan lewat alur redesign: fakta produk dikunci di `PRODUCT.md`, tujuh struktur grounded
+disusun, lalu undian membagikan tiga di antaranya ke meja. Undian: `seed:c8462c0e1d575567`,
+indeks **6, 7, 2** (indeks 6 memimpin). Tiga kartu dirender 1440×900, diperiksa dengan mata pada
+PNG hasil render, dan diperbaiki dalam dua putaran sebelum disodorkan.
+
+Yang diajukan, dalam urutan peringkat saya: (1) kursi hari ini sebagai pembuka, (2) papan harga
+gerai, (3) buku janji, (4) tiga lempeng kuningan, (5) struk panjang, **(6) meja kerja & gulungan
+alat**, (7) tiket antrian. Undian membagikan 6, 7, dan 2.
+
+Vonis penantang katalog, diputuskan sebelum meminjam apa pun:
+
+| Penantang | Vonis | Yang dipakai / sebab ditolak |
+|---|---|---|
+| jacquard punch-card | kompetitif | **naik**: baris instruksi berlubang yang membentuk pola → grid berlubang jam × kursi |
+| brodovitch spread | kompetitif | **naik**: jurang sebagai jahitan pose–jawaban → dipakai di papan harga (R6 lanjutan) |
+| daylight section | kompetitif | **naik**: skala jam posisi sekarang → kepala papan |
+| algorave floor | ditolak | tanpa panggung dan audio; satu disiplin tetap diambil: keadaan menunggu terlihat sebelum mengikat → dipetakan ke hold 15 menit dan `pending_payment` |
+| fight poster | ditolak | arena bukan dunia gerai ini; disiplin yang diambil: baris mengecil menurut kedekatan waktu |
+| seven-segment / skor papan | ditolak | membutuhkan LED dan konteks malam; tidak ada di gerai ini |
+| VU meter bridge | ditolak | butuh sinyal audio sebagai bahan; tidak ada |
+
+Catatan kejujuran: kartu yang dipilih adalah **kartu pimpinan undian**, bukan pilihan kedua
+terbaik. Itu memang yang saya susun sebagai struktur peringkat 6.
+
+### 17.3 Arah: grid berlubang
+
+**Tesis.** Satu layar menampilkan seluruh hari gerai seperti apa adanya — jam × kursi × layanan —
+dan susunannya menolak pola hero judul-lalu-tombol dengan deretan kartu seragam di bawahnya.
+
+**Pembuka (viewport pertama, 1440×900 dan 390×844).**
+- Kiri 392 px: plat gerai (nama, tiga kursi, satu gerai), aturan bisnis dalam baris mono, satu
+  tombol brass "Kunci kursi saya" berisi DP di sisi kanan.
+- Kanan: kepala papan (tanggal WIB, jam sekarang, jumlah slot terjadwal), tiga plat nama barber
+  sebagai kepala kolom, lalu grid jam × kursi. Baris jam 40 px, tiap baris punya tiga sel.
+- Bawah: gulungan delapan layanan — nama, durasi, kategori, harga; tiga penanda "paling sering".
+
+**Bahasa keadaan (inti sistem ini).** Setiap sel membawa satu dari keadaan berikut, dan
+**tidak pernah hanya lewat warna**:
+
+| Keadaan | Bentuk | Warna/teks |
+|---|---|---|
+| terjadwal | bidang arsir 135°, garis atas solid | `#2A2416`/`#1D1A10`, teks `#B79546` |
+| bebas | kotak garis putus 1 px | garis `#3D3D46`, teks `#ABA69C` |
+| istirahat | kotak garis putus, teks huruf besar | garis `#4A3F22`, teks `#C2A25C` |
+| pilihan Anda | bingkai solid 1 px + latar brass 8% | `#C8A24A` |
+| menahan (hold) | bidang arsip + garis putus berjalan (dash animation) + sisa waktu mono | brass |
+| selesai | bidang arsir penuh tanpa teks kode, hanya jam | teks `#8B8781` |
+| tidak hadir | bingkai solid `#D9534F` + label teks "TIDAK HADIR" | danger |
+| dibatalkan | bekas arsir redup + label "DIBATALKAN" | muted |
+
+**Interaksi tanda tangan.** Memilih satu sel bebas: sel itu berubah dari garis putus menjadi
+bingkai brass, waktu selesai muncul di dalamnya, dan tombol di kolom kiri berganti teks dari
+"Kunci kursi saya" menjadi "Kunci 14:00 di kursi 03" — satu gerakan 180 ms, tanpa perpindahan
+tata letak. Setelah hold dibuat, sel menampilkan hitung mundur 15 menit. Ini pemetaan langsung
+dari permintaan pelanggan: "kursi mana, jam berapa, berapa lama".
+
+**Risiko jujur.** Grid padat berarti di layar besar ruang harus dijaga disiplin; kalau jarak
+dilonggarkan sembarangan, bagian bawah (gulungan layanan) akan tenggelam dan halaman terbaca
+seperti tabel, bukan seperti papan gerai.
+
+### 17.4 Sistem warna (rasio kontras diukur, bukan dikira)
+
+Token tetap dari §15.3, ditambah empat token baru. Angka di bawah hasil perhitungan rumus WCAG
+terhadap `#0B0B0C` (kecuali dicatat lain):
+
+| Token | Nilai | Rasio | Pakai untuk |
+|---|---|---|---|
+| `--color-ink` | `#0B0B0C` | — | dinding halaman |
+| `--color-surface` | `#141417` | — | plat, kartu, panel |
+| `--color-surface-2` | `#1D1D21` | — | lapis kedua, kepala papan |
+| `--color-brass` | `#C8A24A` | 8,17 | bidang aksi, bingkai pilihan, angka penting |
+| `--color-text` | `#F5F1E8` | 17,45 | teks utama; juga *kertas* tiket (lawan teks `#15151A`, 16,3) |
+| `--color-muted` | `#9A958C` | 6,61 | label, keterangan |
+| `--color-danger` | `#D9534F` | 4,97 | tidak hadir, galat |
+| `--color-ok` | `#4E9F6A` | 6,08 | terkirim, lunas |
+| `--color-brass-deep` **(baru)** | `#C2A25C` | 8,07 | keadaan istirahat dan pasif — menggantikan `#7A6A3F` yang **gagal** AA (3,71) |
+| `--color-ghost` **(baru)** | `#ABA69C` | 8,12 | sel bebas, teks nonaktif |
+| `--color-punched` **(baru)** | `#B79546` | 7,3 | teks kode di dalam bidang arsir |
+| `--color-paper` **(baru)** | `#F5F1E8` | 16,3 vs `#15151A` | dasar tiket cetak |
+
+Temuan yang harus diperbaiki saat implementasi: sketsa keputusan memakai `#7A6A3F` untuk teks
+ISTIRAHAT dan `#8B8781` untuk sel bebas; keduanya di bawah ambang untuk teks kecil. Ganti ke
+`#C2A25C` dan `#ABA69C`. Brass **tidak** dipakai sebagai glow atau bayangan berwarna di mana pun —
+kedalaman datang dari bidang, arsir, dan garis.
+
+### 17.5 Tipografi
+
+| Peran | Huruf | Ukuran | Catatan |
+|---|---|---|---|
+| Papan & plat (display) | **Archivo** (variable, sumbu lebar 62–125) | 52 px / 800 / `wdth 112` | huruf papan toko; satu keluarga melayani display dan teks, jadi beban unduhan kecil |
+| Judul bagian | Archivo | 31 px / 700 / `wdth 104` | |
+| Teks isi | Archivo | 16,5 px / 400 | `line-height` 1,52 |
+| Label & keterangan | Archivo | 13 px / 500 | huruf besar 0,18em untuk label papan |
+| Data: jam, kode, harga, durasi | **Spline Sans Mono** | 11–15 px / 400–600 | angka tidak pernah proporsional; kolom harga rata kanan sehingga bisa dibandingkan |
+| Angka besar (nomor antrean, rekap) | Spline Sans Mono | 120 px / 600 | hanya di panel Operate |
+
+Mengganti `Plus Jakarta Sans` + `Inter` dari §15.3. Alasan: keduanya huruf antarmuka generik
+tanpa karakter papan/plat, dan keduanya adalah pilihan default yang muncul di mana-mana; Archivo
+punya sumbu lebar yang membuat huruf bisa "membentang" seperti huruf papan tanpa membeli keluarga
+kedua. Angka wajib mono karena kolom harga dan jam harus bisa dibandingkan secara vertikal.
+
+### 17.6 Ruang, sudut, garis
+
+- Satuan dasar 4 px; jarak antar blok 16 / 20 / 24 / 32 / 48.
+- Sudut: 3 px untuk tombol dan plat, 2 px untuk sel grid. Tidak ada sudut membulat besar.
+- Garis: 1 px `#26262B` sebagai pemisah struktur, 1 px `#232329` untuk baris grid, 1 px putus
+  untuk keadaan bebas. Tidak ada bayangan berwarna; bayangan hanya untuk mengangkat panel (satu
+  tingkat, hitam 40%).
+- Ikon: `lucide-react`, ukuran 20 px, ketebalan 1,5. Ikon tidak pernah menggantikan label teks.
+
+### 17.7 Spesifikasi per permukaan
+
+**17.7.1 Beranda `/` (Persuade).** Struktur: plat gerai + aturan + aksi (kolom kiri 392 px);
+papan hari (kepala, plat barber, grid jam × kursi, legenda); gulungan delapan layanan; blok
+"cara kerja" tiga langkah (pilih → kunci dengan DP → datang, toleransi 15 menit); FAQ dari
+`content/faq-and-microcopy.md`; kaki dengan jam buka, alamat, kontak WhatsApp, dan kebijakan
+privasi. Yang **dihapus**: hero foto besar, kartu layanan seragam, testimoni karangan, badge
+"terbaik di Jakarta".
+
+**17.7.2 Wizard booking `/booking` (Persuade→Operate).** Empat langkah tetap, tetapi diringkas
+jadi satu layar per langkah dengan kemajuan mono `01/04 … 04/04`. Langkah 3 memakai grid yang sama
+dengan beranda, bukan pemilih waktu terpisah. Ringkasan langkah 4 memakai bentuk struk: layanan
+per baris, subtotal, DP, sisa di kasir. Aturan hold terlihat sebagai hitung mundur, bukan pesan
+samping.
+
+**17.7.3 Tiket `/booking/success/[kode]` (Read).** Satu kartu kertas `#F5F1E8` di atas ink:
+kode booking, kursi, barber, jam WIB, daftar layanan, DP, sisa, dan aturan toleransi dalam
+kalimat. Keadaan pembayaran memakai bahasa §17.3. Tombol aksi tunggal: "Tunjukkan kode di kasir".
+Struk tidak memakai foto atau ilustrasi.
+
+**17.7.4 Masuk admin `/admin/login` (Operate).** Panel tengah 420 px, bidang `#141417`, judul
+Archivo, dua medan, satu tombol brass, dan kotak galat yang menyebut sebabnya
+(`credentials` / `config` / `rate` / `session` — lihat perilaku yang sudah jalan di §16.3).
+Tidak ada kredensial contoh, tidak ada ilustrasi.
+
+**17.7.5 Dasbor kasir `/admin/dashboard` (Operate).** Tiga kolom kursi dengan kepala plat nama,
+daftar booking hari ini di dalam kolomnya (bukan tabel terpisah), tombol aksi besar ≥ 48 px:
+Mulai, Selesai, Tidak hadir, Lunas tunai, Lunas QRIS. Rekap hari sebagai strip angka mono di
+atas, form walk-in di bawah kolom kursi. Kunci desain: keadaan sel yang sama dengan beranda
+sehingga kasir dan pelanggan melihat bahasa yang sama. Tautan unduh CSV hanya untuk owner.
+
+### 17.8 Gerak
+
+Satu gerakan tanda tangan saja: sel terisi saat dipilih (180 ms, `ease-out`), lalu hitung mundur
+hold menggantikannya. Transisi keadaan lain (mulai → selesai → lunas) memakai durasi 140 ms tanpa
+perpindahan tata letak. `prefers-reduced-motion: reduce` menghapus animasi dan menyisakan
+perubahan warna/bingkai instan. Tidak ada parallax, tidak ada kursor kustom, tidak ada animasi
+masuk per elemen.
+
+### 17.9 Aksesibilitas (target AA, diuji bukan diklaim)
+
+- Kontras: seluruh kombinasi teks di §17.4 lulus 4,5:1; `#7A6A3F` dan `#8B8781` dilarang untuk
+  teks kecil dan diganti.
+- Target sentuh ≥ 44×44 px, tombol kasir ≥ 48 px.
+- Fokus: `outline: 2px solid var(--color-brass)` dengan `outline-offset: 2px`; urutan fokus
+  mengikuti urutan visual; tidak ada `outline: none`.
+- Grid kursi dapat dioperasikan keyboard: satu `tabindex` per sel, Enter/Space memilih.
+- Keadaan tidak pernah hanya warna: selalu ada teks atau bentuk (lihat tabel §17.3).
+- Teks alternatif untuk SVG ikon; `aria-live="polite"` untuk pengumuman hold dan sisa waktu.
+- Uji: `@axe-core/playwright` 0 pelanggaran critical/serious; satu test unit kontras yang membaca
+  token dari `globals.css` dan menghitung rasio — jadi palet yang gagal tampil sebagai test gagal.
+
+### 17.10 Performa & materi
+
+- Tanpa raster di build pertama: seluruh materi dari tipografi, warna, dan CSS. Foto barber/gerai
+  masuk hanya bila owner memberi berkas asli; setiap raster yang dikirim wajib membawa asal
+  (provenance).
+- Dua keluarga huruf, empat berkas maksimum (Archivo variable + Spline Sans Mono 400/600),
+  `font-display: swap`, subset latin.
+- Target: LCP < 2,5 s (4G, mid-range), CLS < 0,05, INP < 200 ms.
+- Tidak ada ikon atau ilustrasi pihak ketiga yang diunduh saat runtime.
+
+### 17.11 Konten & nada
+
+Nama layanan tetap Inggris (katalog v1), semua label antarmuka Indonesia, sapaan "Anda", tanpa
+emoji. Angka yang tampil wajib berasal dari data nyata (harga katalog, jam operasional) — tidak
+ada klaim, testimoni, atau angka karangan. Materi yang dibuat sendiri dan bisa disalahartikan
+sebagai dokumentasi nyata diberi tanda.
+
+### 17.12 Rencana implementasi R6 dan kriteria terima
+
+Urutan yang saya usulkan (satu commit per langkah, seperti R0–R5):
+
+1. **R6.1 Sistem**: token baru di `globals.css`, huruf Archivo + Spline Sans Mono, komponen dasar
+   (plat, tombol, sel grid, label mono), test kontras yang membaca token.
+2. **R6.2 Beranda**: grid berlubang + gulungan layanan, data nyata dari `listChairMatrix` dan
+   katalog; a11y + performa dinilai.
+3. **R6.3 Wizard + tiket**: langkah diringkas, grid yang sama, ringkasan bentuk struk, hitung
+   mundur hold.
+4. **R6.4 Login + dasbor kasir**: bahasa keadaan yang sama, tombol ≥ 48 px, keyboard penuh.
+5. **R6.5 Verifikasi**: axe 0 critical/serious, screenshot 390 dan 1440 diperiksa, detector
+   desain dijalankan sekali, `DESIGN.md` + `.impeccable/design.json` ditulis dari hasil build.
+
+Kriteria terima: seluruh permukaan memakai satu bahasa keadaan; tidak ada teks di bawah 4,5:1;
+target sentuh terpenuhi; tidak ada raster tanpa provenance; suite hijau; dan `DESIGN.md` ada.
+
+### 17.13 Yang belum tertutup
+
+- Logo, foto barber, foto gerai: belum ada. Sampai dikirim, materi dibuat sendiri dan ditandai.
+- Sejarah gerai ("sejak 2019") belum diverifikasi owner — jangan dipakai sampai dikonfirmasi.
+- Nama layanan Inggris di antarmuka Indonesia: keputusan sementara, menunggu pendapat owner.
+- `DESIGN.md` baru ditulis di akhir R6, dari hasil build, bukan dari dokumen ini.
+
+### 17.14 Aturan yang lahir dari pemeriksaan mekanis
+
+Sketsa keputusan diperiksa dengan detektor desain (`impeccable detect`) sebelum disetujui. 33
+temuan awal, 31 diperbaiki; dua yang tersisa adalah keputusan sadar dan dicatat di sini. Aturan
+berikut masuk ke sistem, bukan hanya ke sketsa:
+
+1. **Tidak ada label kecil berhuruf jarang di atas judul.** Informasi seperti "Barber & Grooming ·
+   Jakarta Selatan" pindah ke baris aturan, bukan menggantung di atas wordmark.
+2. **Ukuran huruf minimum.** Teks fungsional (kode booking, label sel, keterangan) tidak pernah di
+   bawah 12 px; teks isi 14 px ke atas; label huruf besar boleh 12 px dengan `letter-spacing`
+   0,10–0,14em.
+3. **`letter-spacing` pada kalimat maksimum 0,04em.** Huruf jarang hanya untuk huruf besar.
+4. **Sel tidak menempel garis.** Tiap sel punya inset 4 px atas–bawah sehingga arsir dan bingkai
+   tidak menempel garis baris.
+5. **Arsir diagonal hanya menandai keadaan terjadwal**, tidak pernah dipakai sebagai hiasan.
+   Detektor menandai pola arsir sebagai dekorasi; di sini fungsinya menyatakan "terisi" dan selalu
+   disertai teks, jadi temuan itu **dikecualikan dengan alasan tertulis**. Kalau nanti arsir muncul
+   di tempat yang bukan keadaan kursi, aturan ini dilanggar.
+6. **Tinggi baris papan eksplisit.** Papan memakai tinggi baris tetap dan tidak boleh meluber dari
+   900 px pada 1440×900; verifikasi dilakukan dengan mengukur `getBoundingClientRect` tiap blok,
+   bukan dengan mata.
