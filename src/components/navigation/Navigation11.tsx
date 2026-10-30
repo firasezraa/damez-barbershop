@@ -232,12 +232,12 @@ export function Navigation11() {
       <div
         ref={navRef}
         onMouseLeave={handleMouseLeave}
-        className="mx-auto max-w-6xl"
+        className="relative mx-auto max-w-6xl"
       >
         {/* Dark Top Nav Capsule (Pill Shape) */}
         <nav
           aria-label="Navigasi Utama Damez"
-          className="relative flex h-14 w-full items-center justify-between rounded-full border border-line-2 bg-surface px-4 py-2 shadow-2xl backdrop-blur-md transition-all lg:px-6"
+          className="relative z-50 flex h-14 w-full items-center justify-between rounded-full border border-line-2 bg-surface px-4 py-2 shadow-2xl backdrop-blur-md transition-all lg:px-6"
         >
           {/* Sisi Kiri: Menu Tabs Desktop with Hover & Click */}
           <div className="hidden items-center gap-1 lg:flex">
@@ -316,7 +316,7 @@ export function Navigation11() {
           <div
             id="mega-menu-panel"
             onMouseEnter={cancelClose}
-            className="mt-2 w-full overflow-hidden rounded-[4px] border border-stone-300 bg-[#FAF8F5] p-6 text-[#1A1816] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2"
+            className="absolute top-full left-0 z-40 mt-2 w-full overflow-hidden rounded-[4px] border border-stone-300 bg-[#FAF8F5] p-6 text-[#1A1816] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2"
           >
             <div className="flex flex-col gap-6">
               {/* Header Mega Menu */}
@@ -397,7 +397,7 @@ export function Navigation11() {
 
         {/* Mobile Nav Accordion Menu */}
         {mobileOpen ? (
-          <div className="mt-2 flex w-full flex-col gap-3 rounded-[3px] border border-line bg-surface p-4 shadow-xl lg:hidden">
+          <div className="absolute top-full left-0 z-40 mt-2 flex w-full flex-col gap-3 rounded-[3px] border border-line bg-surface p-4 shadow-xl lg:hidden">
             {NAVIGATION_DATA.map((cat) => (
               <div key={cat.id} className="flex flex-col border-b border-line-2 pb-2">
                 <span className="font-display text-xs font-bold uppercase text-brass">
