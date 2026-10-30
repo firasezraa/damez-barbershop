@@ -86,7 +86,7 @@ export function Hero6() {
     setProgressPercent(0);
   }, []);
 
-  // Interval-driven progress update without impure Date.now() calls
+  // Interval-driven progress update ensuring strictly sequential progression (1 -> 2 -> 3 -> 1)
   useEffect(() => {
     const timer = setInterval(() => {
       setProgressPercent((prev) => {
@@ -152,7 +152,7 @@ export function Hero6() {
                   <div
                     className="h-full bg-brass transition-all duration-75"
                     style={{
-                      width: active ? `${progressPercent}%` : idx < currentIndex ? "100%" : "0%",
+                      width: active ? `${progressPercent}%` : "0%",
                     }}
                   />
                 </button>
@@ -177,7 +177,7 @@ export function Hero6() {
                 <div
                   className="w-full bg-brass transition-all duration-75"
                   style={{
-                    height: active ? `${progressPercent}%` : idx < currentIndex ? "100%" : "0%",
+                    height: active ? `${progressPercent}%` : "0%",
                   }}
                 />
               </button>
