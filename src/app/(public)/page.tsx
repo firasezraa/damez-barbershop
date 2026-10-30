@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero6 } from "@/components/hero/Hero6";
+import { CipherReveal } from "@/components/ui/CipherReveal";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 import { SlotCell } from "@/components/ui/slot-cell";
@@ -163,7 +164,12 @@ export default async function LandingPage() {
           <div className="flex flex-col gap-5 lg:h-full lg:justify-between lg:border-r lg:border-line lg:px-9 lg:py-9">
             <div className="flex flex-col gap-4">
               <h2 className="font-display text-2xl font-extrabold tracking-tight text-text">
-                Reservasi Kursi
+                <CipherReveal
+                  text="Reservasi Kursi"
+                  as="span"
+                  scrambleColor="var(--color-brass)"
+                  duration={1.2}
+                />
                 <span className="mt-1 block font-mono text-xs font-normal uppercase tracking-wider text-muted">
                   Tiga kursi · Tiga barber · Satu gerai
                 </span>
@@ -351,7 +357,12 @@ export default async function LandingPage() {
             <div className="flex flex-col gap-2">
               <MonoLabel tone="brass">Tim & Dedikasi Keahlian</MonoLabel>
               <h2 className="font-display text-3xl font-extrabold text-text sm:text-4xl">
-                Tiga Master Barber. Karakter Unik di Setiap Kursi.
+                <CipherReveal
+                  text="Tiga Master Barber. Karakter Unik di Setiap Kursi."
+                  as="span"
+                  scrambleColor="var(--color-brass)"
+                  duration={1.4}
+                />
               </h2>
               <p className="max-w-xl text-base text-muted">
                 Di Damez, Anda tidak sekadar dipotong rambutnya. Anda berkonsultasi dengan barber
@@ -417,7 +428,12 @@ export default async function LandingPage() {
             <div>
               <MonoLabel tone="brass">Ketentuan & Kebijakan</MonoLabel>
               <h2 id="faq" className="mt-1 font-display text-3xl font-bold text-text">
-                Pertanyaan yang sering diajukan
+                <CipherReveal
+                  text="Pertanyaan yang sering diajukan"
+                  as="span"
+                  scrambleColor="var(--color-brass)"
+                  duration={1.2}
+                />
               </h2>
             </div>
           </ScrollReveal>
