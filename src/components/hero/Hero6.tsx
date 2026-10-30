@@ -71,13 +71,12 @@ const DAMEZ_HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
-const AUTOPLAY_STEP_MS = 60;
-const AUTOPLAY_TOTAL_MS = 6000;
+const AUTOPLAY_STEP_MS = 40;
+const AUTOPLAY_TOTAL_MS = 3500; // 3.5 detik per slide (lebih dinamis dan gesit)
 const STEP_PERCENT = (AUTOPLAY_STEP_MS / AUTOPLAY_TOTAL_MS) * 100;
 
 export function Hero6() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
 
   const currentSlide = DAMEZ_HERO_SLIDES[currentIndex] ?? DAMEZ_HERO_SLIDES[0]!;
@@ -90,10 +89,6 @@ export function Hero6() {
   // Interval-driven progress update without impure Date.now() calls
   useEffect(() => {
     const timer = setInterval(() => {
-      if (isPaused) {
-        return;
-      }
-
       setProgressPercent((prev) => {
         const next = prev + STEP_PERCENT;
         if (next >= 100) {
@@ -105,13 +100,11 @@ export function Hero6() {
     }, AUTOPLAY_STEP_MS);
 
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, []);
 
   return (
     <section
       aria-label="Hero Spotlight Carousel"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       className="relative overflow-hidden border-b border-line px-6 py-14 lg:px-16 lg:py-20"
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-16">
