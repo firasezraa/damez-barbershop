@@ -110,13 +110,13 @@ export function AdminShell({ role, today, initialCollapsed = false, children }: 
             isDesktopCollapsed ? "lg:flex-col lg:gap-3 lg:justify-center" : ""
           }`}
         >
-          <div className={`flex flex-col gap-0.5 ${isDesktopCollapsed ? "lg:hidden" : ""}`}>
+          <div className={`flex flex-1 flex-col gap-0.5 ${isDesktopCollapsed ? "lg:hidden" : ""}`}>
             <MonoLabel tone="brass">Damez Management</MonoLabel>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <span className="font-display text-lg font-bold tracking-tight text-text">
                 Portal Gerai
               </span>
-              {/* Tombol Toggle Buka/Tutup Sidebar di Sebelah Title Portal Gerai */}
+              {/* Tombol Toggle Buka/Tutup Sidebar di Sebelah Kanan Panel Header */}
               <button
                 type="button"
                 onClick={handleToggleDesktopSidebar}
