@@ -107,14 +107,28 @@ export function AdminShell({ role, today, initialCollapsed = false, children }: 
         {/* Brand Header */}
         <div
           className={`flex items-center justify-between border-b border-line p-4 lg:p-5 ${
-            isDesktopCollapsed ? "lg:justify-center" : ""
+            isDesktopCollapsed ? "lg:flex-col lg:gap-3 lg:justify-center" : ""
           }`}
         >
           <div className={`flex flex-col gap-0.5 ${isDesktopCollapsed ? "lg:hidden" : ""}`}>
             <MonoLabel tone="brass">Damez Management</MonoLabel>
-            <span className="font-display text-lg font-bold tracking-tight text-text">
-              Portal Gerai
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-display text-lg font-bold tracking-tight text-text">
+                Portal Gerai
+              </span>
+              {/* Tombol Toggle Buka/Tutup Sidebar di Sebelah Title Portal Gerai */}
+              <button
+                type="button"
+                onClick={handleToggleDesktopSidebar}
+                title="Ciutkan Sidebar"
+                className="hidden h-7 w-7 items-center justify-center rounded-[3px] border border-line bg-surface-2 text-ghost hover:border-brass/60 hover:text-brass transition-colors lg:flex"
+                aria-label="Ciutkan Sidebar"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
             <div className="mt-1 flex items-center gap-2 font-mono text-[10px] text-muted">
               <span>{today} WIB</span>
               <span className="rounded-[2px] bg-surface-2 px-1.5 py-0.5 uppercase text-brass font-bold">
@@ -123,10 +137,22 @@ export function AdminShell({ role, today, initialCollapsed = false, children }: 
             </div>
           </div>
 
-          {/* Icon Badge when desktop collapsed */}
+          {/* Icon Badge + Expand Toggle when desktop collapsed */}
           {isDesktopCollapsed && (
-            <div className="hidden lg:flex flex-col items-center gap-1 py-1">
-              <span className="rounded-[3px] bg-brass/10 border border-brass/40 px-2 py-1 font-mono text-xs font-bold text-brass">
+            <div className="hidden lg:flex flex-col items-center gap-2 py-1">
+              <button
+                type="button"
+                onClick={handleToggleDesktopSidebar}
+                title="Buka / Perlebar Sidebar"
+                className="flex h-8 w-8 items-center justify-center rounded-[3px] border border-line bg-surface-2 text-ghost hover:border-brass/60 hover:text-brass transition-colors"
+                aria-label="Buka / Perlebar Sidebar"
+              >
+                <svg className="h-4 w-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <span className="rounded-[3px] bg-brass/10 border border-brass/40 px-2 py-0.5 font-mono text-xs font-bold text-brass">
                 DMZ
               </span>
               <span className="font-mono text-[9px] uppercase text-ghost font-bold">{role}</span>
@@ -235,9 +261,8 @@ export function AdminShell({ role, today, initialCollapsed = false, children }: 
           </div>
         </nav>
 
-        {/* Bottom Actions: Sign Out & Desktop Collapse Toggle */}
-        <div className="border-t border-line p-3 flex flex-col gap-2">
-          {/* Sign Out Button */}
+        {/* Bottom Actions: Sign Out */}
+        <div className="border-t border-line p-3">
           <form action="/api/admin/auth/sign-out" method="post">
             <button
               type="submit"
@@ -255,38 +280,16 @@ export function AdminShell({ role, today, initialCollapsed = false, children }: 
               )}
             </button>
           </form>
-
-          {/* Desktop Collapse/Expand Toggle Button at bottom of sidebar */}
-          <button
-            type="button"
-            onClick={handleToggleDesktopSidebar}
-            title={isDesktopCollapsed ? "Perlebar Sidebar" : "Ciutkan Sidebar"}
-            className="hidden lg:flex min-h-9 w-full items-center justify-center gap-2 rounded-[3px] border border-line-2 bg-ink/60 font-mono text-[11px] text-ghost hover:text-text hover:bg-surface-2 transition-colors"
-          >
-            <svg
-              className={`h-4 w-4 transition-transform duration-200 ${
-                isDesktopCollapsed ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-            </svg>
-            {!isDesktopCollapsed && <span>Ciutkan Sidebar</span>}
-          </button>
         </div>
       </aside>
 
       {/* 3. Main Content Wrapper */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Top Navigation Bar with Mobile Hamburger + Desktop Toggle */}
+        {/* Top Navigation Bar with Mobile Hamburger */}
         <AdminTopNav
           role={role}
           today={today}
           onToggleMobileMenu={() => setIsMobileOpen((prev) => !prev)}
-          onToggleDesktopSidebar={handleToggleDesktopSidebar}
-          isDesktopCollapsed={isDesktopCollapsed}
         />
 
         {/* Page Content */}

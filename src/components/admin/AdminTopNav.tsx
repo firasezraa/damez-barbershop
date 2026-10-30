@@ -20,16 +20,12 @@ interface AdminTopNavProps {
   role: string;
   today: string;
   onToggleMobileMenu?: () => void;
-  onToggleDesktopSidebar?: () => void;
-  isDesktopCollapsed?: boolean;
 }
 
 export function AdminTopNav({
   role,
   today,
   onToggleMobileMenu,
-  onToggleDesktopSidebar,
-  isDesktopCollapsed = false,
 }: AdminTopNavProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -100,7 +96,7 @@ export function AdminTopNav({
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full shrink-0 items-center justify-between gap-3 border-b border-line bg-ink/90 px-4 backdrop-blur-md lg:px-8">
-      {/* Sisi Kiri: Hamburger Mobile & Desktop Sidebar Toggle + Search */}
+      {/* Sisi Kiri: Hamburger Mobile + Search */}
       <div className="flex flex-1 items-center gap-3">
         {/* Mobile Hamburger Button */}
         <button
@@ -111,19 +107,6 @@ export function AdminTopNav({
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-
-        {/* Desktop Sidebar Toggle Button */}
-        <button
-          type="button"
-          onClick={onToggleDesktopSidebar}
-          title={isDesktopCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
-          className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-[3px] border border-line bg-surface text-muted hover:border-brass/60 hover:text-text transition-colors lg:flex"
-          aria-label={isDesktopCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h10M4 18h16" />
           </svg>
         </button>
 
