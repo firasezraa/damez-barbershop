@@ -311,25 +311,25 @@ export function Navigation11() {
           </div>
         </nav>
 
-        {/* Expanded White Mega-Menu Grid (React Bits Pro Navigation-11 Structure) */}
+        {/* Expanded Mega-Menu Grid (Dark Luxury Theme aligned with Damez tokens) */}
         {activeCategory ? (
           <div
             id="mega-menu-panel"
             onMouseEnter={cancelClose}
-            className="absolute top-full left-0 z-40 mt-2 w-full overflow-hidden rounded-[4px] border border-stone-300 bg-[#FAF8F5] p-6 text-[#1A1816] shadow-2xl transition-all duration-200 animate-in fade-in slide-in-from-top-2"
+            className="absolute top-full left-0 z-40 mt-2 w-full overflow-hidden rounded-[3px] border border-line bg-surface/98 p-6 text-text shadow-2xl backdrop-blur-xl transition-all duration-200 animate-in fade-in slide-in-from-top-2"
           >
             <div className="flex flex-col gap-6">
               {/* Header Mega Menu */}
-              <div className="flex flex-wrap items-baseline justify-between border-b border-stone-200 pb-3">
+              <div className="flex flex-wrap items-baseline justify-between border-b border-line pb-3">
                 <div className="flex flex-col">
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#8C6D23]">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-brass">
                     {activeCategory.eyebrow}
                   </span>
-                  <span className="font-display text-lg font-bold text-[#141210]">
+                  <span className="font-display text-lg font-bold text-text">
                     {activeCategory.label}
                   </span>
                 </div>
-                <p className="max-w-md font-mono text-xs text-stone-600">
+                <p className="max-w-md font-mono text-xs text-muted">
                   {activeCategory.description}
                 </p>
               </div>
@@ -341,21 +341,21 @@ export function Navigation11() {
                     key={item.title}
                     href={item.href}
                     onClick={() => setActiveTab(null)}
-                    className="group flex flex-col justify-between rounded-[3px] border border-stone-200 bg-white p-4 transition-all hover:border-[#C8A24A] hover:shadow-md"
+                    className="group flex flex-col justify-between rounded-[3px] border border-line bg-surface-2/60 p-4 transition-all hover:border-brass/70 hover:bg-surface-2 hover:shadow-lg"
                   >
                     <div className="flex flex-col gap-1.5">
                       {item.tag ? (
-                        <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#8C6D23]">
+                        <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-brass">
                           {item.tag}
                         </span>
                       ) : null}
-                      <span className="font-display text-sm font-bold text-[#141210] group-hover:text-[#8C6D23]">
+                      <span className="font-display text-sm font-bold text-text group-hover:text-brass">
                         {item.title}
                       </span>
-                      <p className="text-xs leading-relaxed text-stone-600">{item.desc}</p>
+                      <p className="text-xs leading-relaxed text-muted">{item.desc}</p>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-1 font-mono text-[11px] font-semibold text-[#8C6D23] transition-transform group-hover:translate-x-0.5">
+                    <div className="mt-4 flex items-center gap-1 font-mono text-[11px] font-semibold text-brass transition-transform group-hover:translate-x-0.5">
                       <span>Buka detail</span>
                       <span>→</span>
                     </div>
@@ -364,27 +364,27 @@ export function Navigation11() {
               </div>
 
               {/* Sub-footer Mega Menu: Links & Policies */}
-              <div className="flex flex-col justify-between gap-4 border-t border-stone-200 pt-4 font-mono text-xs text-stone-600 sm:flex-row sm:items-center">
+              <div className="flex flex-col justify-between gap-4 border-t border-line pt-4 font-mono text-xs text-muted sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-4">
                   {activeCategory.featuredLinks?.map((fl) => (
                     <Link
                       key={fl.label}
                       href={fl.href}
                       onClick={() => setActiveTab(null)}
-                      className="font-semibold text-[#141210] hover:text-[#8C6D23] hover:underline"
+                      className="font-semibold text-text hover:text-brass hover:underline"
                     >
                       {fl.label} ↗
                     </Link>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-[11px] text-stone-500">
+                <div className="flex flex-wrap items-center gap-4 text-[11px] text-ghost">
                   {activeCategory.policyLinks?.map((pl) => (
                     <Link
                       key={pl.label}
                       href={pl.href}
                       onClick={() => setActiveTab(null)}
-                      className="hover:text-stone-800"
+                      className="hover:text-text"
                     >
                       {pl.label}
                     </Link>
