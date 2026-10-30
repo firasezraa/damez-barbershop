@@ -121,20 +121,22 @@ export default async function LandingPage() {
             </span>
           </Link>
 
-          <dl className="grid gap-2 font-mono text-[13px] text-muted">
-            <div>
+          {/* Daftar biasa, bukan <dl>: axe menolak <dl> yang isinya bukan pasangan
+              dt/dd, dan aturan ini dulu lolos hanya karena form lama tidak memakainya. */}
+          <ul className="grid gap-2 font-mono text-[13px] text-muted">
+            <li>
               Buka <b className="font-semibold text-text">10:00 – 21:00 WIB</b>
-            </div>
-            <div>
+            </li>
+            <li>
               Batal/reschedule <b className="font-semibold text-text">H-{CANCEL_CUTOFF_HOURS} jam</b>
-            </div>
-            <div>
+            </li>
+            <li>
               Pelunasan <b className="font-semibold text-text">di kasir</b>, DP dipotong
-            </div>
-            <div>
+            </li>
+            <li>
               Gerai <b className="font-semibold text-text">Jakarta Selatan</b>
-            </div>
-          </dl>
+            </li>
+          </ul>
 
           <p className="font-mono text-[12.5px] text-muted">
             Tanpa akun · nomor WhatsApp untuk tiket dan pengingat
