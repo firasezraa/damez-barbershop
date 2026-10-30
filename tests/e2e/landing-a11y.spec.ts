@@ -10,6 +10,7 @@ const PAGES = [
   { path: "/", name: "landing" },
   { path: "/booking", name: "booking" },
   { path: "/kebijakan-privasi", name: "kebijakan privasi" },
+  { path: "/halaman-yang-tidak-ada", name: "404" },
 ];
 
 for (const page of PAGES) {
