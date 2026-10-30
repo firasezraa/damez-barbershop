@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
 import { formatRupiah, type PublicBarber, type PublicService } from "@/features/catalogue/types";
 import { DOWN_PAYMENT_IDR } from "@/lib/config/constants";
@@ -71,6 +71,13 @@ export function BookingWizard({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [ticket, setTicket] = useState<HoldResponse | null>(null);
+  /**
+   * Nomor urut permintaan ketersediaan. Memasuki langkah 3 memuat jadwal, dan
+   * tombol "Tampilkan jadwal" memuat lagi; tanpa penanda ini yang menang adalah
+   * jawaban yang TIBA terakhir, bukan yang diminta terakhir — papan bisa
+   * menampilkan keadaan lama sesudah pemuatan yang lebih baru.
+   */
+  const urutanPermintaan = useRef(0);
 
   const durationMinutes = services
     .filter((service) => serviceIds.includes(service.id))
@@ -89,6 +96,9 @@ export function BookingWizard({
   }
 
   async function loadSlots(): Promise<void> {
+    urutanPermintaan.current += 1;
+    const urutan = urutanPermintaan.current;
+
     setError(null);
     setBusy(true);
     try {
@@ -102,6 +112,10 @@ export function BookingWizard({
         }),
       });
 
+      if (urutan !== urutanPermintaan.current) {
+        return;
+      }
+
       if (response.status !== 200) {
         setError("Jadwal tidak bisa dimuat. Coba lagi sebentar.");
         setSlots([]);
@@ -109,6 +123,10 @@ export function BookingWizard({
       }
 
       const body = (await response.json()) as { barbers: { barberId: string; slots: string[] }[] };
+
+      if (urutan !== urutanPermintaan.current) {
+        return;
+      }
 
       // Jangan pernah menampilkan slot barber lain saat pelanggan sudah memilih
       // barber tertentu: itu menyesatkan dan hold-nya akan ditolak server.
@@ -127,9 +145,13 @@ export function BookingWizard({
         setBarberId(fallback.barberId);
       }
     } catch {
-      setError("Koneksi terputus. Periksa jaringan lalu coba lagi.");
+      if (urutan === urutanPermintaan.current) {
+        setError("Koneksi terputus. Periksa jaringan lalu coba lagi.");
+      }
     } finally {
-      setBusy(false);
+      if (urutan === urutanPermintaan.current) {
+        setBusy(false);
+      }
     }
   }
 
