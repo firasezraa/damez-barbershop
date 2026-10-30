@@ -12,6 +12,7 @@ export interface BlurHighlightProps {
     once?: boolean;
     amount?: number;
   };
+  trigger?: "viewport" | "mount"; // "mount" untuk animasi langsung saat landing dibuka
   as?: "div" | "span" | "p" | "h1" | "h2" | "h3";
   className?: string;
   style?: CSSProperties;
@@ -20,7 +21,7 @@ export interface BlurHighlightProps {
 /**
  * BlurHighlight: Komponen reveal berbasis transisi blur murni (tanpa highlight).
  * Teks / konten mengalir dari kabur (blur + translasi ringan) menjadi tajam
- * dan jelas saat memasuki viewport pengguna.
+ * dan jelas saat memasuki viewport pengguna atau saat awal dimount.
  */
 export function BlurHighlight({
   children,
@@ -29,6 +30,7 @@ export function BlurHighlight({
   blurDelay = 0,
   blurDuration = 0.8,
   viewportOptions = { once: true, amount: 0.3 },
+  trigger = "viewport",
   as = "div",
   className = "",
   style,
@@ -42,6 +44,13 @@ export function BlurHighlight({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (trigger === "mount") {
+      const timer = setTimeout(() => {
+        setInView(true);
+      }, 40);
+      return () => clearTimeout(timer);
+    }
+
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
 
@@ -67,10 +76,11 @@ export function BlurHighlight({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [viewportOptions.amount, viewportOptions.once]);
+  }, [trigger, viewportOptions.amount, viewportOptions.once]);
 
   const Component = as;
 
+  // 60 FPS hardware acceleration: transform3d GPU layer + backface-visibility
   const dynamicStyles: CSSProperties = {
     filter: inView ? "blur(0px)" : `blur(${blurAmount}px)`,
     opacity: inView ? 1 : inactiveOpacity,
@@ -80,6 +90,10 @@ export function BlurHighlight({
     transitionDelay: `${blurDelay}s`,
     transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
     willChange: "filter, opacity, transform",
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden",
+    transformStyle: "preserve-3d",
+    contain: "layout style paint",
     ...style,
   };
 

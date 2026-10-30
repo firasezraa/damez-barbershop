@@ -130,13 +130,17 @@ export function Hero6() {
                 <div
                   key={slide.id}
                   style={{
-                    transitionDuration: "800ms",
+                    transitionDuration: "750ms",
                     transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                    willChange: "transform, opacity, filter",
+                    transform: active ? "translate3d(0, 0, 0)" : "translate3d(0, 10px, 0)",
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
                   }}
                   className={`col-start-1 row-start-1 flex flex-col justify-between transition-all ${
                     active
-                      ? "opacity-100 z-10 translate-y-0 filter-none"
-                      : "opacity-0 z-0 pointer-events-none translate-y-4 blur-[8px]"
+                      ? "opacity-100 z-10 filter-none"
+                      : "opacity-0 z-0 pointer-events-none blur-[6px]"
                   }`}
                   aria-hidden={!active}
                 >
@@ -145,13 +149,29 @@ export function Hero6() {
                       <div>
                         <MonoLabel tone="brass">{slide.eyebrow}</MonoLabel>
                       </div>
-                      <h1 className="font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl">
+                      <h1
+                        style={{
+                          transitionDuration: "800ms",
+                          transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                        }}
+                        className={`font-display text-4xl leading-[1.05] font-extrabold tracking-tight text-text sm:text-6xl lg:text-7xl transition-all ${
+                          active ? "blur-none opacity-100" : "blur-[8px] opacity-30"
+                        }`}
+                      >
                         <span className="block">{slide.titlePrimary}</span>
                         <span className="block text-brass">{slide.titleAccent}</span>
                       </h1>
                     </div>
 
-                    <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+                    <p
+                      style={{
+                        transitionDuration: "800ms",
+                        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+                      }}
+                      className={`max-w-xl text-base leading-relaxed text-muted sm:text-lg transition-all ${
+                        active ? "blur-none opacity-100" : "blur-[6px] opacity-30"
+                      }`}
+                    >
                       {slide.description}
                     </p>
                   </div>
@@ -245,7 +265,12 @@ export function Hero6() {
               {DAMEZ_HERO_SLIDES.map((slide, idx) => (
                 <div
                   key={slide.id}
-                  className={`absolute inset-0 transition-all duration-1000 ease-out ${
+                  style={{
+                    willChange: "transform, opacity",
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                  }}
+                  className={`absolute inset-0 transition-all duration-700 ease-out ${
                     idx === currentIndex
                       ? "opacity-100 scale-100 z-10"
                       : "opacity-0 scale-105 z-0 pointer-events-none"

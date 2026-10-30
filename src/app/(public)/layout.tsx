@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigation11 } from "@/components/navigation/Navigation11";
+import { BlurHighlight } from "@/components/ui/BlurHighlight";
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
@@ -7,8 +8,10 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       {/* React Bits Pro Navigation 11 Component */}
       <Navigation11 />
 
-      {/* Main Page Content */}
-      <div className="flex-1">{children}</div>
+      {/* Main Page Content dengan Animasi Reveal Blur Saat Pertama Landing */}
+      <BlurHighlight trigger="mount" blurAmount={10} blurDuration={0.9} className="flex-1">
+        {children}
+      </BlurHighlight>
     </div>
   );
 }
