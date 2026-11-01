@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export type MegaMenuItem = {
@@ -127,10 +128,10 @@ export const NAVIGATION_DATA: NavCategory[] = [
         tag: "Standar Medis",
       },
       {
-        title: "Kemitraan Komunitas & Lokasi",
-        desc: "Berakar di Jakarta Selatan, melayani pria urban yang menghargai ketelitian dan waktu.",
-        href: "/kisah-kami#lokasi",
-        tag: "Gerai Jakarta",
+        title: "Lokasi Gerai & Peta Navigasi",
+        desc: "Jl. Legoso Raya No.80c, Ciputat Timur. Dilengkapi peta interaktif & petunjuk parkir.",
+        href: "/#lokasi",
+        tag: "Gerai Ciputat",
       },
     ],
     featuredLinks: [
@@ -237,9 +238,49 @@ export function Navigation11() {
         {/* Dark Top Nav Capsule (Pill Shape) */}
         <nav
           aria-label="Navigasi Utama Damez"
-          className="relative z-50 flex h-14 w-full items-center justify-between rounded-full border border-line-2 bg-surface px-4 py-2 shadow-2xl backdrop-blur-md transition-all lg:px-6"
+          className="relative z-50 flex h-14 w-full items-center justify-between rounded-full border border-line-2 bg-surface px-3 py-2 shadow-2xl backdrop-blur-md transition-all sm:px-4 lg:px-6"
         >
-          {/* Sisi Kiri: Menu Tabs Desktop with Hover & Click */}
+          {/* Sisi Kiri: Brand Logo Asli & Wordmark + Mobile Toggle */}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              aria-label="Buka menu navigasi"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="flex size-8 items-center justify-center rounded-full border border-line bg-surface-2 text-text transition-colors hover:border-brass lg:hidden"
+            >
+              {mobileOpen ? "✕" : "☰"}
+            </button>
+
+            <Link
+              href="/"
+              onClick={() => setActiveTab(null)}
+              className="group flex items-center gap-2.5 transition-opacity hover:opacity-90"
+            >
+              {/* Authentic Emblem Logo */}
+              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-brass/50 bg-[#f3f3f3] shadow-md transition-transform duration-300 group-hover:scale-105 group-hover:border-brass">
+                <Image
+                  src="/images/damez-logo-circle.png"
+                  alt="Damez Barbershop"
+                  width={36}
+                  height={36}
+                  className="h-full w-full object-cover"
+                  priority
+                />
+              </div>
+
+              {/* Brand Typography */}
+              <div className="flex flex-col justify-center leading-none">
+                <span className="font-display text-sm font-extrabold tracking-wider text-text group-hover:text-brass transition-colors">
+                  DAMEZ
+                </span>
+                <span className="font-mono text-[8px] font-semibold uppercase tracking-widest text-brass mt-0.5">
+                  Barbershop · 2019
+                </span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Tengah: Menu Tabs Desktop with Hover & Click */}
           <div className="hidden items-center gap-1 lg:flex">
             {NAVIGATION_DATA.map((tab) => {
               const isOpen = activeTab === tab.id;
@@ -267,29 +308,6 @@ export function Navigation11() {
                 </button>
               );
             })}
-          </div>
-
-          {/* Tengah: Brand Name / Logo & Mobile Toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              aria-label="Buka menu navigasi"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="flex size-8 items-center justify-center rounded-full border border-line bg-surface-2 text-text transition-colors hover:border-brass lg:hidden"
-            >
-              {mobileOpen ? "✕" : "☰"}
-            </button>
-
-            <Link
-              href="/"
-              onClick={() => setActiveTab(null)}
-              className="flex items-baseline gap-1.5 font-display text-base font-extrabold tracking-tight text-text hover:text-brass"
-            >
-              <span>DAMEZ</span>
-              <span className="font-mono text-[9px] font-semibold uppercase tracking-widest text-brass">
-                Barbershop
-              </span>
-            </Link>
           </div>
 
           {/* Sisi Kanan: Action Buttons */}
