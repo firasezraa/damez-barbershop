@@ -5,18 +5,18 @@ export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero6 } from "@/components/hero/Hero6";
+import { LiveReservationSection } from "@/components/booking/LiveReservationSection";
+import { ServicesCatalogSection } from "@/components/booking/ServicesCatalogSection";
+import { LocationSection } from "@/components/location/LocationSection";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { ACTION_CLASSES, MonoLabel, Plate } from "@/components/ui/plate";
-import { SlotCell } from "@/components/ui/slot-cell";
-import { buildDayBoard, formatHour } from "@/features/catalogue/day-board";
+import { MonoLabel, Plate } from "@/components/ui/plate";
+import { buildDayBoard } from "@/features/catalogue/day-board";
 import {
-  formatRupiah,
   listActiveBarbers,
   listActiveServices,
 } from "@/features/catalogue/queries";
 import {
   CANCEL_CUTOFF_HOURS,
-  DOWN_PAYMENT_IDR,
   HOLD_TTL_SECONDS,
   LATE_TOLERANCE_MINUTES,
 } from "@/lib/config/constants";
@@ -53,20 +53,6 @@ const VALUES = [
   },
 ];
 
-const STEPS = [
-  {
-    title: "Pilih jam yang masih bebas",
-    body: "Papan di sebelah memperlihatkan keadaan sebenarnya hari ini, bukan contoh.",
-  },
-  {
-    title: "Kunci dengan DP",
-    body: `DP ${formatRupiah(DOWN_PAYMENT_IDR)} lewat QRIS atau virtual account; kursi ditahan ${HOLD_LABEL}.`,
-  },
-  {
-    title: "Datang, duduk, selesai",
-    body: `Kasir memotong DP dari total nota. Toleransi ${LATE_TOLERANCE_MINUTES} menit.`,
-  },
-];
 
 const FAQ = [
   {
@@ -156,198 +142,11 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 2. SECTION BOOKING & PAPAN HARI INI */}
-      <section id="papan-jadwal" className="border-b border-line">
-        <div className="grid gap-10 px-6 py-10 lg:grid-cols-[392px_1fr] lg:gap-0 lg:px-0 lg:py-0">
-          {/* Kolom kiri: ringkasan booking & aturan */}
-          <div className="flex flex-col gap-5 lg:h-full lg:justify-between lg:border-r lg:border-line lg:px-9 lg:py-9">
-            <div className="flex flex-col gap-4">
-              <ScrollReveal duration={0.8}>
-                <h2 className="font-display text-2xl font-extrabold tracking-tight text-text">
-                  Reservasi Kursi
-                  <span className="mt-1 block font-mono text-xs font-normal uppercase tracking-wider text-muted">
-                    Tiga kursi · Tiga barber · Satu gerai
-                  </span>
-                </h2>
-              </ScrollReveal>
+      {/* 2. KATALOG LAYANAN & TARIF */}
+      <ServicesCatalogSection services={services} />
 
-              <p className="text-sm leading-relaxed text-text/90">
-                Pilih kursi dan jamnya di papan samping, kunci dengan DP{" "}
-                {formatRupiah(DOWN_PAYMENT_IDR)}. Kursi ditahan {HOLD_LABEL}. Terlambat lebih dari{" "}
-                {LATE_TOLERANCE_MINUTES} menit, DP hangus.
-              </p>
-
-              <Link href="/booking" className={ACTION_CLASSES}>
-                <span>Kunci kursi saya</span>
-                <span className="font-mono text-xs font-semibold opacity-70">
-                  {formatRupiah(DOWN_PAYMENT_IDR)}
-                </span>
-              </Link>
-            </div>
-
-            <ul className="grid gap-2 font-mono text-[13px] text-muted">
-              <li>
-                Buka <b className="font-semibold text-text">10:00 – 21:00 WIB</b>
-              </li>
-              <li>
-                Batal/reschedule <b className="font-semibold text-text">H-{CANCEL_CUTOFF_HOURS} jam</b>
-              </li>
-              <li>
-                Pelunasan <b className="font-semibold text-text">di kasir</b>, DP dipotong
-              </li>
-              <li>
-                Gerai <b className="font-semibold text-text">Jakarta Selatan</b>
-              </li>
-            </ul>
-
-            <p className="font-mono text-xs text-muted">
-              Tanpa akun · nomor WhatsApp hanya untuk tiket dan konfirmasi
-            </p>
-
-            <ol className="hidden flex-col gap-4 border-t border-line pt-5 lg:flex">
-              {STEPS.map((step, index) => (
-                <li key={step.title} className="flex flex-col gap-1.5">
-                  <MonoLabel tone="brass">{`0${index + 1}`}</MonoLabel>
-                  <h3 className="font-display text-sm font-bold text-text">{step.title}</h3>
-                  <p className="font-mono text-xs leading-relaxed text-muted">{step.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Kolom kanan: papan hari */}
-          <div aria-labelledby="papan-hari" className="flex flex-col lg:px-15 lg:py-8">
-            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-3">
-              <h2
-                id="papan-hari"
-                className="font-display text-sm font-semibold tracking-[0.14em] uppercase"
-              >
-                Papan hari ini — {board.label} · {formatHour(board.startHour)}–{formatHour(board.endHour)}
-              </h2>
-              <span className="font-mono text-[12.5px] text-brass">
-                {Math.floor(board.nowMinutes / 60)
-                  .toString()
-                  .padStart(2, "0")}
-                :
-                {(board.nowMinutes % 60).toString().padStart(2, "0")}{" "}
-                WIB sekarang · {board.scheduledCount} slot terjadwal hari ini
-              </span>
-            </div>
-
-            <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-ghost">
-              <li className="whitespace-nowrap">arsir = kursi terjadwal</li>
-              <li className="whitespace-nowrap">garis putus = kursi bebas</li>
-              <li className="whitespace-nowrap">ISTIRAHAT = barber istirahat</li>
-              <li className="whitespace-nowrap">bingkai brass = jam yang Anda pilih</li>
-            </ul>
-
-            {/* Desktop & tablet lebar: grid jam × kursi */}
-            <div className="mt-2 hidden sm:block">
-              <div className="grid grid-cols-[72px_repeat(3,1fr)] lg:grid-cols-[96px_repeat(3,1fr)]">
-                <div aria-hidden="true" />
-                {board.chairs.map((chair) => (
-                  <div
-                    key={chair.chairNumber}
-                    className="flex h-[72px] flex-col justify-center border-l border-line pl-3 lg:pl-4"
-                  >
-                    <MonoLabel tone="brass">Kursi {chair.chairNumber}</MonoLabel>
-                    <span className="mt-0.5 font-display text-[17px] font-bold lg:text-lg">
-                      {chair.barberName}
-                    </span>
-                    {chair.barberTitle === null ? null : (
-                      <span className="mt-0.5 font-mono text-xs text-muted">{chair.barberTitle}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-line">
-                {Array.from({ length: board.endHour - board.startHour }, (_, index) => {
-                  const hour = board.startHour + index;
-
-                  return (
-                    <div
-                      key={hour}
-                      className="grid h-11 grid-cols-[72px_repeat(3,1fr)] border-b border-line-2 lg:grid-cols-[96px_repeat(3,1fr)]"
-                    >
-                      <div className="flex items-center pl-1 font-mono text-[12.5px] text-muted">
-                        {formatHour(hour)}
-                      </div>
-                      {board.chairs.map((chair) => {
-                        const slot = chair.slots.find((item) => item.hour === hour);
-                        return (
-                          <div
-                            key={chair.chairNumber}
-                            className="flex items-center border-l border-line-2 px-0 py-1"
-                          >
-                            <SlotCell
-                              state={slot?.state ?? "free"}
-                              text={slot?.text}
-                              className="justify-self-stretch"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Ponsel: satu blok per kursi */}
-            <div className="mt-2 flex flex-col gap-6 sm:hidden">
-              {board.chairs.map((chair) => (
-                <div key={chair.chairNumber} className="flex flex-col">
-                  <div className="flex items-baseline justify-between border-b border-line pb-2">
-                    <MonoLabel tone="brass">Kursi {chair.chairNumber}</MonoLabel>
-                    <span className="font-display text-base font-bold">{chair.barberName}</span>
-                  </div>
-                  <ul className="flex flex-col">
-                    {chair.slots.map((slot) => (
-                      <li
-                        key={slot.hour}
-                        className="flex h-10 items-center gap-3 border-b border-line-2"
-                      >
-                        <span className="w-14 font-mono text-[12.5px] text-muted">
-                          {formatHour(slot.hour)}
-                        </span>
-                        <SlotCell state={slot.state} text={slot.text} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-            {/* Gulungan 8 layanan */}
-            <div className="mt-4 border-t border-line pt-px sm:pl-[72px] lg:pl-24">
-              <ul className="grid grid-cols-2 gap-px bg-line-2 lg:grid-cols-4">
-                {services.map((service) => (
-                  <li
-                    key={service.id}
-                    className={`flex min-h-[104px] flex-col gap-1 bg-surface px-3.5 py-3 ${
-                      service.recommended ? "shadow-[inset_0_2px_0_var(--color-brass)]" : ""
-                    }`}
-                  >
-                    <h3 className="font-display text-[13px] leading-snug font-semibold sm:line-clamp-2 sm:min-h-[34px]">
-                      {service.name}
-                    </h3>
-                    <p className="font-mono text-xs text-muted">
-                      {service.durationMinutes} menit · {service.category}
-                    </p>
-                    <p className="mt-auto font-mono text-sm text-brass">
-                      {formatRupiah(service.priceIdr)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. PROFIL MASTER BARBER (CRAFTSMANSHIP) */}
-      <section className="border-b border-line px-6 py-16 lg:px-16">
+      {/* 3. PROFIL MASTER BARBER (CRAFTSMANSHIP & PERSONA TIAP KURSI) */}
+      <section id="master-barber" className="border-b border-line px-6 py-16 lg:px-16 scroll-mt-28">
         <div className="mx-auto flex max-w-5xl flex-col gap-10">
           <ScrollReveal duration={0.8}>
             <div className="flex flex-col gap-2">
@@ -356,7 +155,7 @@ export default async function LandingPage() {
                 Tiga Master Barber. Karakter Unik di Setiap Kursi.
               </h2>
               <p className="max-w-xl text-base text-muted">
-                Di Damez, Anda tidak sekadar dipotong rambutnya. Anda berkonsultasi dengan barber
+                Di Damez, Anda tidak sekadar dipotong rambutnya. Anda berkonsultasi dengan master barber
                 yang memahami geometri kepala, jenis rambut, dan kebiasaan styling Anda.
               </p>
             </div>
@@ -386,8 +185,17 @@ export default async function LandingPage() {
                     </p>
                   </div>
 
-                  <div className="mt-6 border-t border-line pt-3 font-mono text-xs text-ghost">
-                    Spesialisasi: <span className="text-text">{b.specialty ?? "All-around Cut"}</span>
+                  <div className="mt-6 flex items-center justify-between border-t border-line pt-3 font-mono text-xs text-ghost">
+                    <div>
+                      Spesialisasi: <span className="text-text">{b.specialty ?? "All-around Cut"}</span>
+                    </div>
+                    <a
+                      href="#papan-jadwal"
+                      className="text-brass hover:underline flex items-center gap-1 font-semibold text-[11px]"
+                    >
+                      <span>Cek Jadwal</span>
+                      <span>↓</span>
+                    </a>
                   </div>
                 </Plate>
               </ScrollReveal>
@@ -396,21 +204,11 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 4. CARA MENGUNCI KURSI (UNTUK MOBILE) */}
-      <section aria-labelledby="cara" className="border-b border-line px-6 py-10 sm:block lg:hidden">
-        <h2 id="cara" className="font-display text-2xl font-bold">
-          Cara mengunci kursi
-        </h2>
-        <ol className="mt-6 grid gap-6 sm:grid-cols-3">
-          {STEPS.map((step, index) => (
-            <li key={step.title} className="flex flex-col gap-2">
-              <MonoLabel tone="brass">{`0${index + 1}`}</MonoLabel>
-              <h3 className="font-display text-lg font-bold">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-muted">{step.body}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* 4. PAPAN STATUS JADWAL & KUNCI KURSI LANGSUNG (REDESIGNED) */}
+      <LiveReservationSection
+        board={board}
+        barbers={barbers}
+      />
 
       {/* 5. FAQ SEPUTAR ATURAN GERAI */}
       <section aria-labelledby="faq" className="border-b border-line px-6 py-14 lg:px-16">
@@ -436,7 +234,10 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 6. FOOTER COMPANY PROFILE */}
+      {/* 6. LOKASI GERAI & PETA INTERAKTIF */}
+      <LocationSection />
+
+      {/* 7. FOOTER COMPANY PROFILE */}
       <footer className="px-6 py-12 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col gap-8">
           <div className="grid gap-6 sm:grid-cols-3">
@@ -445,7 +246,7 @@ export default async function LandingPage() {
                 DAMEZ BARBERSHOP
               </span>
               <p className="font-mono text-xs leading-relaxed text-muted">
-                Ruang santai pangkas rambut pria modern di Jakarta Selatan. Menghormati waktu Anda
+                Ruang santai pangkas rambut pria modern di Ciputat Timur. Menghormati waktu Anda
                 lewat presisi potongan dan kepastian jadwal.
               </p>
             </div>
@@ -454,8 +255,16 @@ export default async function LandingPage() {
               <MonoLabel>Operasional & Lokasi</MonoLabel>
               <p className="font-mono text-xs text-text">Senin – Minggu: 10:00 – 21:00 WIB</p>
               <p className="font-mono text-xs text-muted">
-                Jakarta Selatan · Melayani Booking Online & Tamu Walk-in
+                Jl. Legoso Raya No.80c, Pisangan, Ciputat Timur
               </p>
+              <a
+                href="https://www.google.com/maps/place/Damez+Barbershop/@-6.3164905,106.7536217,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69efc2f4a2ee67:0xf3b8c74fbcf03099!8m2!3d-6.3164905!4d106.7536217!16s%2Fg%2F11z0h5k33v"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-brass underline underline-offset-4"
+              >
+                Lihat di Google Maps ↗
+              </a>
               <p className="font-mono text-xs text-danger">
                 Toleransi keterlambatan: {LATE_TOLERANCE_MINUTES} menit
               </p>
@@ -483,7 +292,7 @@ export default async function LandingPage() {
 
           <div className="flex flex-wrap items-center justify-between border-t border-line pt-6 font-mono text-[11px] text-muted">
             <p>© {new Date().getFullYear()} Damez Barbershop. All rights reserved.</p>
-            <p>Jakarta Selatan, Indonesia.</p>
+            <p>Tangerang Selatan, Banten, Indonesia.</p>
           </div>
         </div>
       </footer>
